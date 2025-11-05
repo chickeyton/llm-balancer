@@ -5,7 +5,7 @@ from typing import List, Tuple
 
 from llm_balancer.balancer.common import Stage
 from llm_balancer.balancer.endpoint import Endpoint
-from llm_balancer.balancer.task import Task
+from llm_balancer.balancer.task import Task, EncodeTask, PrefillTask, DecodeTask, PrefillThenDecodeTask
 from llm_balancer.balancer.task_route import TaskRoute, EncodeRoute, PrefillRoute, DecodeRoute, PrefillThenDecodeRoute
 
 
@@ -26,24 +26,24 @@ class Router:
 
     @staticmethod
     def _create_nonworkload_route(task: Task, endpoint: Endpoint) -> TaskRoute:
-        if task.stage == Stage.ENCODE:
+        if isinstance(task, EncodeTask):
             return EncodeRoute(request_id=task.request_id,
                                endpoint=endpoint,
                                workload=-1)
-        if task.stage == Stage.PREFILL:
+        if isinstance(task, PrefillTask):
             return PrefillRoute(request_id=task.request_id,
                                 endpoint=endpoint,
                                 workload=-1,
                                 num_prompt_tokens=len(task.prompt_tokens),
                                 num_cached_tokens=-1)
-        if task.stage == Stage.DECODE:
+        if isinstance(task, DecodeTask):
             return DecodeRoute(request_id=task.request_id,
                                endpoint=endpoint,
                                workload=-1,
                                prefill_route=task.prefill_route,
                                predicted_decode_len=task.predicted_decode_len,
                                len_extend_rate=task.len_extend_rate)
-        if task.stage == Stage.PREFILL_THEN_DECODE:
+        if isinstance(task, PrefillThenDecodeTask):
             return PrefillThenDecodeRoute(request_id=task.request_id,
                                           endpoint=endpoint,
                                           workload=-1,

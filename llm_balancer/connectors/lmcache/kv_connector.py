@@ -62,6 +62,3 @@ class LMCacheKvConnector(KvConnector):
         self._thread = Thread(target=self._loop.run_forever)
         self._thread.start()
         asyncio.run_coroutine_threadsafe(self._kv_manager.start_all(), self._loop)
-
-
-

@@ -41,6 +41,7 @@ class PrefillTask(Task):
 class DecodeTask(Task):
     prefill_len: int
     predicted_decode_len: int
+    len_extend_rate: float
     prefill_route: "PrefillRoute"
 
     @property
@@ -52,6 +53,7 @@ class DecodeTask(Task):
 class PrefillThenDecodeTask(Task):
     prompt_tokens: List[int]
     predicted_decode_len: int
+    len_extend_rate: float
 
     @property
     def stage(self) -> Stage:
