@@ -47,10 +47,6 @@ class DecodeTask(Task):
     def stage(self) -> Stage:
         raise Stage.DECODE
 
-    @property
-    def predicted_decode_len(self):
-        return self.prefill_route.predicted_decode_len
-
 
 @dataclass
 class PrefillThenDecodeTask(Task):

@@ -7,6 +7,7 @@ from .random import RandomRouter
 from .round_robin import RoundRobinRouter
 from .queue_len import QueueLenRouter
 from .prefill import PrefillRouter
+from .decode import DecodeRouter
 
 __all__ = [
     "Router",
@@ -14,5 +15,6 @@ __all__ = [
     "RandomRouter",
     "RoundRobinRouter",
     "QueueLenRouter",
-    "PrefillRouter"
+    "PrefillRouter",
+    "DecodeRouter"
 ]
