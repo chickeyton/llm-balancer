@@ -13,7 +13,7 @@ class DynamicPd:
     _GOOD_SLOT: int = 1
     _BAD_SLOT: int = 2
     _NUM_SLOTS: int = 3
-    _MAX_Q_LEN_THD: int = 10
+    _MAX_Q_LEN_THD_PRE_EP_REQ: int = 5
 
     class _Action(Enum):
         NONE = 0
@@ -50,7 +50,7 @@ class DynamicPd:
         self._tpot_history = []
         self._last_action = self._Action.NONE
         if self._balancer.config.service_level_obj is None:
-            # no SLO was set, always optimize RPS
+            # SLO was not set, always optimize RPS
             self._decision_makers = [[self._decide_queue_len_guided] * self._NUM_SLOTS] * self._NUM_SLOTS
         else:
             self._decision_makers = [[None] * self._NUM_SLOTS] * self._NUM_SLOTS
@@ -106,12 +106,12 @@ class DynamicPd:
     @staticmethod
     def _find_best_switchable(switchables):
         best = None
-        best_workload = -1
+        min_length = -1
         for endpoint in switchables:
-            workload = endpoint.queue_workload()
-            if best is None or workload < best_workload:
+            length = endpoint.queue_length()
+            if best is None or length < min_length:
                 best = endpoint
-                best_workload = workload
+                min_length = length
         if best is None:
             raise RuntimeError("Cannot find the best switchable")
         return best
@@ -174,21 +174,31 @@ class DynamicPd:
         return self._Action.NONE
 
     def _decide_queue_len_guided(self, state):
+        num_prefill_ep = 0
+        num_decode_ep = 0
         prefill_queue_len = 0
         decode_queue_len = 0
         for endpoint in self._balancer.endpoints:
             if endpoint.stage == Stage.PREFILL:
+                num_prefill_ep += 1
                 prefill_queue_len += endpoint.queue_length()
             elif endpoint.stage == Stage.DECODE:
+                num_decode_ep += 1
                 decode_queue_len += endpoint.queue_length()
-        max_queue_len = max(prefill_queue_len, decode_queue_len)
-        if max_queue_len <= self._MAX_Q_LEN_THD:
+        if prefill_queue_len > decode_queue_len:
+            max_queue_len = prefill_queue_len
+            queue_len_threshold = num_prefill_ep * self._MAX_Q_LEN_THD_PRE_EP_REQ
+        else:
+            max_queue_len = decode_queue_len
+            queue_len_threshold = num_decode_ep * self._MAX_Q_LEN_THD_PRE_EP_REQ
+
+        if max_queue_len <= queue_len_threshold:
             return self._Action.NONE
-        threshold = max_queue_len / 2
-        if prefill_queue_len < threshold:
+        switch_threshold = max_queue_len / 2
+        if prefill_queue_len < switch_threshold:
             if state.can_p2d:
                 return self._Action.P2D
-        elif decode_queue_len < threshold:
+        elif decode_queue_len < switch_threshold:
             if state.can_d2p:
                 return self._Action.D2P
         return self._Action.NONE

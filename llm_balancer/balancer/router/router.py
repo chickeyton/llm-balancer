@@ -42,7 +42,7 @@ class Router:
                                workload=-1,
                                prefill_route=task.prefill_route,
                                predicted_decode_len=task.predicted_decode_len,
-                               len_extend_rate=task.len_extend_rate)
+                               len_extend_rate=0)
         if isinstance(task, PrefillThenDecodeTask):
             return PrefillThenDecodeRoute(request_id=task.request_id,
                                           endpoint=endpoint,
@@ -51,7 +51,7 @@ class Router:
                                           num_cached_tokens=-1,
                                           prefill_workload=-1,
                                           predicted_decode_len=task.predicted_decode_len,
-                                          len_extend_rate=task.len_extend_rate)
+                                          len_extend_rate=0)
         raise ValueError(f"Unsupported stage:{task.stage}")
 
     @staticmethod

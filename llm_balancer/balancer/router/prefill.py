@@ -23,8 +23,9 @@ class PrefillRouter(Router):
         decode_workload: float = -1
         num_cached_tokens: int = 0
 
-    def __init__(self):
+    def __init__(self, len_extend_rate: float = 0.2):
         super().__init__()
+        self._len_extend_rate = len_extend_rate
 
     @property
     def for_stages(self) -> Tuple[Stage, ...]:
@@ -114,7 +115,7 @@ class PrefillRouter(Router):
                                           num_prompt_tokens=len(task.prompt_tokens),
                                           prefill_workload=workloads.prefill_workload,
                                           predicted_decode_len=task.predicted_decode_len,
-                                          len_extend_rate=self._balancer.config.decode_len_pred.len_extend_rate)
+                                          len_extend_rate=self._len_extend_rate)
         elif isinstance(task, PrefillTask):
             return PrefillRoute(request_id=task.request_id,
                                 endpoint=endpoint,
