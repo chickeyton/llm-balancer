@@ -55,7 +55,12 @@ class LMCacheKvConnector(KvConnector):
                         ):
                             layout_info[matched_instance] = (matched_location, end)
             last_end = end
-        return dict(zip(layout_info.keys(), [v[1] for v in layout_info.values()]))
+        result = dict(zip(layout_info.keys(), [v[1] for v in layout_info.values()]))
+        if instance_ids:
+            for instance_id in instance_ids:
+                if result.get(instance_id, -1) == -1:
+                    result[instance_id] = 0
+        return result
 
     def start(self):
         self._loop = asyncio.new_event_loop()

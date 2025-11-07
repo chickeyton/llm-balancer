@@ -73,6 +73,7 @@ class PrefillRouter(Router):
                 min_total_workload = workloads.total_workload
 
         for endpoint in endpoints:
+            # for the endpoint IDs not in the hit_lens dict
             if endpoint.config.cache_instance_id in hit_lens:
                 continue
             workloads = \

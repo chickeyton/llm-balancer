@@ -41,7 +41,7 @@ class Balancer(EndpointTrackerListener, EndpointListener):
                  kv_connector: Optional[KvConnector] = None):
         self.config = config
         self._tracker = tracker
-        self._tracker.set_listener(self)
+        self._tracker.add_listener(self)
         self._kv_connector = kv_connector
         self._routers = routers
         for stage, router in self._routers.items():

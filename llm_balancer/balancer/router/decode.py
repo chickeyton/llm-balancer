@@ -17,7 +17,11 @@ class DecodeRouter(Router):
 
     def route(self, task: Task, endpoints: List[Endpoint]) -> TaskRoute:
         prefill_len = task.prefill_len
-        predicted_decode_len = task.prefill_route.predicted_decode_len
+        predicted_decode_len = task.predicted_decode_len
+        if prefill_len <= 0:
+            raise ValueError("Invalid prefill_len")
+        if predicted_decode_len <= 0:
+            raise ValueError("Invalid predicted_decode_len")
         workload = decode_atten_workload(prefill_len + predicted_decode_len,
                                          prefill_len)
         try:

@@ -11,6 +11,12 @@ class AppConfig:
     balancer: BalancerConfig
 
 
+@dataclass
+class VllmEndpointConfig(EndpointConfig):
+    base_url: str = ""
+    kv_event_endpoint: str = ""
+
+
 def parse_app_config(json_dict) -> AppConfig:
     config = AppConfig()
     config.http_port = int(json_dict.get("http_port", config.http_port))
@@ -40,11 +46,13 @@ def parse_app_config(json_dict) -> AppConfig:
     return config
 
 
-def parse_endpoint_configs(json_list) -> List[EndpointConfig]:
+def parse_endpoint_configs(json_list) -> List[VllmEndpointConfig]:
     config_list = []
     for obj in json_list:
-        config = EndpointConfig()
-        config.endpoint_id = str(obj.get("endpoint_id"))
+        config = VllmEndpointConfig()
+        config.endpoint_id = str(obj.get("endpoint_id")) # i.e. VLLM_INSTANCE_ID
+        config.base_url = str(obj.get("base_url"))
+        config.kv_event_endpoint = str(obj.get("kv_event_endpoint"))
         stage_str = obj.get("stage")
         if stage_str == "PREFILL/DECODE":
             config.is_dynamic_pd = True
