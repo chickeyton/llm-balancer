@@ -23,7 +23,7 @@ class EndpointTracker:
         self._listeners.add(listener)
 
     def remove_listener(self, listener: EndpointTrackerListener):
-        self._listeners.remove(listener)
+        self._listeners.discard(listener)
 
     def on_endpoints_changed(self, new_ups: List[Endpoint], new_downs: List[Endpoint]):
         """To be called by the sub-classes."""
