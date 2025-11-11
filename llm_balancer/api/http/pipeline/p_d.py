@@ -33,8 +33,7 @@ class P_D_Pipline:
     def _to_decode_task(self, prefill_route, predicted_decode_len):
         return DecodeTask(request_id=prefill_route.request_id,
                           prefill_len=prefill_route.num_prompt_tokens + 1,
-                          predicted_decode_len=predicted_decode_len,
-                          prefill_route=prefill_route)
+                          predicted_decode_len=predicted_decode_len)
 
     async def _send(self, request_json, handle):
         try:

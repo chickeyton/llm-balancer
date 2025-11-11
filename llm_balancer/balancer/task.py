@@ -41,7 +41,6 @@ class PrefillTask(Task):
 class DecodeTask(Task):
     prefill_len: int
     predicted_decode_len: int
-    prefill_route: "PrefillRoute"
 
     @property
     def stage(self) -> Stage:

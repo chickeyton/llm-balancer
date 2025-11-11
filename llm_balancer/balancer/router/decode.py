@@ -30,8 +30,7 @@ class DecodeRouter(Router):
                                endpoint=endpoint,
                                workload=workload,
                                predicted_decode_len=predicted_decode_len,
-                               len_extend_rate=self._len_extend_rate,
-                               prefill_route=task.prefill_route)
+                               len_extend_rate=self._len_extend_rate)
         except ValueError:
             pass
         idx = self._route_by_queue_len(endpoints)
@@ -39,8 +38,7 @@ class DecodeRouter(Router):
                            endpoint=endpoints[idx],
                            workload=workload,
                            predicted_decode_len=predicted_decode_len,
-                           len_extend_rate=self._len_extend_rate,
-                           prefill_route=task.prefill_route)
+                           len_extend_rate=self._len_extend_rate)
 
     @staticmethod
     def _find_best_endpoint(endpoints):

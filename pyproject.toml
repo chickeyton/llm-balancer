@@ -13,6 +13,7 @@ dependencies = [
     "vllm",
     "zmq",
     "numpy",
+    "uvicorn"
 ]
 
 [build-system]
