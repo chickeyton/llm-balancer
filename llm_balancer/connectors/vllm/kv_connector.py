@@ -24,6 +24,9 @@ class VllmKvConnector(KvConnector):
     def start(self):
         self._cache_tracker.start()
 
+    def join(self):
+        self._cache_tracker.join()
+
     def _hash(self, tokens) -> List[BlockHash]:
         # TODO: by using vllm hasher
         pass
