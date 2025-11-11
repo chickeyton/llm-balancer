@@ -13,7 +13,7 @@ class LMCacheConfig:
 
 @dataclass
 class RouterConfig:
-    type: str = ""
+    name: str = ""
     len_extend_rate: float = 0.2
 
 
@@ -23,7 +23,7 @@ class AppConfig:
     tokenizer: str = ""
     balancer: BalancerConfig = BalancerConfig()
     routers: Dict[RouterConfig] = None
-    lmcache: LmcacheConfig = None
+    lmcache: LMCacheConfig = None
 
 
 def parse_app_config(json_dict) -> AppConfig:
@@ -56,8 +56,12 @@ def parse_app_config(json_dict) -> AppConfig:
     if router_objs:
         config.routers = {}
         for stage, obj in router_objs.items():
-            config.routers[Stage[stage]] = \
-                RouterConfig(str(obj.get("type")), float(obj.get("len_extend_rate", 0.2)))
+            if isinstance(obj, str):
+                config.routers[Stage[stage]] = RouterConfig(name=obj)
+            else:
+                config.routers[Stage[stage]] = \
+                    RouterConfig(str(obj.get("router")),
+                                 float(obj.get("len_extend_rate", 0.2)))
 
     lmcache_obj = json_dict.get("lmcache")
     if lmcache_obj:
@@ -72,7 +76,7 @@ def parse_endpoint_configs(json_list) -> List[VllmEndpointConfig]:
     config_list = []
     for obj in json_list:
         config = VllmEndpointConfig()
-        config.endpoint_id = str(obj.get("endpoint_id")) # i.e. VLLM_INSTANCE_ID
+        config.endpoint_id = str(obj.get("endpoint_id"))  # i.e. VLLM_INSTANCE_ID
         config.base_url = str(obj.get("base_url"))
         config.kv_event_endpoint = str(obj.get("kv_event_endpoint"))
         stage_str = obj.get("stage")

@@ -29,17 +29,17 @@ def parse_args():
 def create_routers(router_configs):
     endpoints = {}
     for stage, config in router_configs.items():
-        if config.type == "PREFILL":
+        if config.name == "PREFILL":
             endpoints[stage] = PrefillRouter(config.len_extend_rate)
-        elif config.type == "DECODE":
+        elif config.name == "DECODE":
             endpoints[stage] = DecodeRouter(config.len_extend_rate)
-        elif config.type == "KVAWARE":
+        elif config.name == "KVAWARE":
             endpoints[stage] = KvawareRouter()
-        elif config.type == "ROUND_ROBIN":
+        elif config.name == "ROUND_ROBIN":
             endpoints[stage] = RoundRobinRouter()
-        elif config.type == "RANDOM":
+        elif config.name == "RANDOM":
             endpoints[stage] = RandomRouter()
-        elif config.type == "QUEUE_LEN":
+        elif config.name == "QUEUE_LEN":
             endpoints[stage] = QueueLenRouter()
         else:
             raise ValueError(f"Unsupported Router type:{config.type}")

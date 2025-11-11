@@ -12,7 +12,7 @@ from llm_balancer.connectors.lmcache import LMCacheKvConnector
 @dataclass
 class ZmqEndpointConfig(EndpointConfig):
     # put extra settings or states here for the endpoint
-    zmq_addr: str
+    zmq_addr: str = ""
 
 
 class RedisEndpointTracker(EndpointTracker):
