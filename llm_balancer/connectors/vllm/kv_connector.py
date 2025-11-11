@@ -1,4 +1,5 @@
 from typing import Optional, Set, List, Dict
+
 from vllm.v1.codre.kv_cache_utils import BlockHash
 
 from llm_balancer.balancer.connector import KvConnector
@@ -17,11 +18,12 @@ class VllmKvConnector(KvConnector):
         return self._is_p2p_enabled
 
     def query_hit_len(self, tokens: List[int], instance_ids: Optional[Set[str]] = None) -> Dict[str, int]:
-        hashes = self._hash(tokens)
-        return self._cache_tracker.query_hit_len(self._block_size, hashes, instance_ids)
+        block_hashes = self._hash(tokens)
+        return self._cache_tracker.query_hit_len(self._block_size, block_hashes, instance_ids)
 
     def start(self):
         self._cache_tracker.start()
 
     def _hash(self, tokens) -> List[BlockHash]:
+        # TODO: by using vllm hasher
         pass

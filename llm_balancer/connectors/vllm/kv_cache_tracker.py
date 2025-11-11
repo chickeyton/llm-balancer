@@ -6,7 +6,7 @@ from vllm.v1.codre.kv_cache_utils import BlockHash
 from vllm.distributed.kv_events import BlockStored, BlockRemoved, AllBlocksCleared, KVEventBatch
 
 from llm_balancer.balancer import EndpointTracker, EndpointTrackerListener, Endpoint
-from llm_balancer.config import VllmEndpointConfig
+from llm_balancer.api.http.config import VllmEndpointConfig
 
 
 class KVCacheTracker(Thread, EndpointTrackerListener):

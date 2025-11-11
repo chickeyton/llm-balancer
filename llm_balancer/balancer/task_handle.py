@@ -15,6 +15,7 @@ class TaskHandle:
         self.submit_time: float = submit_time
         self.finish_time: float = -1
         self.responded_len: int = 0
+        self.error: Exception = None
 
     @property
     def request_id(self) -> str:
@@ -40,7 +41,8 @@ class TaskHandle:
     def on_respond(self, chunk_len: int):
         self.responded_len += chunk_len
 
-    def on_finished(self):
+    def on_finished(self, error: Exception = None):
+        self.error = error
         self.finish_time = time.time()
         self.endpoint.on_task_finished(self)
 

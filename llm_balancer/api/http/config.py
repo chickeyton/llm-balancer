@@ -1,20 +1,29 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict
 
-from llm_balancer.balancer import BalancerConfig, EndpointConfig, Stage
+from llm_balancer.balancer import BalancerConfig, Stage
+from llm_balancer.connectors.vllm.endpoint import VllmEndpointConfig
+
+
+@dataclass
+class LMCacheConfig:
+    ctl_mgr_port: int = -1
+    is_p2p_enabled: bool = False
+
+
+@dataclass
+class RouterConfig:
+    type: str = ""
+    len_extend_rate: float = 0.2
 
 
 @dataclass
 class AppConfig:
-    http_port: int
-    tokenizer: str
-    balancer: BalancerConfig
-
-
-@dataclass
-class VllmEndpointConfig(EndpointConfig):
-    base_url: str = ""
-    kv_event_endpoint: str = ""
+    http_port: int = -1
+    tokenizer: str = ""
+    balancer: BalancerConfig = BalancerConfig()
+    routers: Dict[RouterConfig] = None
+    lmcache: LmcacheConfig = None
 
 
 def parse_app_config(json_dict) -> AppConfig:
@@ -42,6 +51,19 @@ def parse_app_config(json_dict) -> AppConfig:
             int(obj.get("update_on_requests", config.balancer.dynamic_pd.update_on_requests))
         config.balancer.dynamic_pd.min_update_time = \
             float(obj.get("min_update_time", config.balancer.dynamic_pd.min_update_time))
+
+    router_objs = json_dict.get("routers")
+    if router_objs:
+        config.routers = {}
+        for stage, obj in router_objs.items():
+            config.routers[Stage[stage]] = \
+                RouterConfig(str(obj.get("type")), float(obj.get("len_extend_rate", 0.2)))
+
+    lmcache_obj = json_dict.get("lmcache")
+    if lmcache_obj:
+        config.lmcache = LMCacheConfig()
+        config.lmcache.ctl_mgr_port = int(lmcache_obj.get("ctl_mgr_port"))
+        config.lmcache.is_p2p_enabled = bool(lmcache_obj.get("is_p2p_enabled"))
 
     return config
 
