@@ -3,10 +3,16 @@ from typing import Dict, Set, List, Optional
 import zmq
 from msgspec.msgpack import Decoder
 from vllm.v1.codre.kv_cache_utils import BlockHash
-from vllm.distributed.kv_events import BlockStored, BlockRemoved, AllBlocksCleared, KVEventBatch
+from vllm.distributed.kv_events import BlockStored, BlockRemoved, AllBlocksCleared, EventBatch
 
 from llm_balancer.balancer import EndpointTracker, EndpointTrackerListener, Endpoint
 from llm_balancer.api.http.config import VllmEndpointConfig
+
+
+# copy from vll as vllm_instance_id is added by the patch
+class KVEventBatch(EventBatch):
+    events: list[BlockStored | BlockRemoved | AllBlocksCleared]
+    vllm_instance_id: str
 
 
 class KVCacheTracker(Thread, EndpointTrackerListener):

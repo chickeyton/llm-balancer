@@ -1,4 +1,5 @@
 import os
+from vllm.distributed.kv_events import KVEventBatch
 
 
 def _kv_event_batch_init(self, *arg, **kwargs):

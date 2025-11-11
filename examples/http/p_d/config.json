@@ -1,0 +1,21 @@
+{
+  "http_port": 9088,
+  "tokenizer": "llama",
+  "service_level_obj": {
+    "ttft": 2.0,
+    "tpot": 0.1,
+    "quantile": 0.99
+  },
+  "dynamic_pd": {
+    "update_on_requests": 100,
+    "min_update_time": 0.1
+  },
+  "routers": {
+    "PREFILL": "PREFILL",
+    "DECODE": "QUEUE_LEN"
+  },
+  "lmcache": {
+    "ctl_mgr_port": 9188,
+    "is_p2p_enabled": true
+  }
+}

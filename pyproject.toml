@@ -16,6 +16,9 @@ dependencies = [
     "uvicorn"
 ]
 
+[tool.setuptools.packages.find]
+include = [llm_balancer*]
+
 [build-system]
 requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
