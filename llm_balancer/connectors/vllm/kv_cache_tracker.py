@@ -9,7 +9,7 @@ from llm_balancer.balancer import EndpointTracker, EndpointTrackerListener, Endp
 from llm_balancer.api.http.config import VllmEndpointConfig
 
 
-# copy from vll as vllm_instance_id is added by the patch
+# copy from vllm as vllm_instance_id is added by the patch
 class KVEventBatch(EventBatch):
     events: list[BlockStored | BlockRemoved | AllBlocksCleared]
     vllm_instance_id: str
