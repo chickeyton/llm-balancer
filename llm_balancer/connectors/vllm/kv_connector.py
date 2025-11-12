@@ -24,8 +24,8 @@ class VllmKvConnector(KvConnector):
     def start(self):
         self._cache_tracker.start()
 
-    def stop(self):
-        self._cache_tracker.stop()
+    def die(self):
+        self._cache_tracker.die()
 
     def join(self):
         self._cache_tracker.join()

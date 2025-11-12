@@ -88,10 +88,16 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
                 if subscription is not None:
                     subscription.is_endpoint_up = False
         # let the run() thread to update the connections
-        self._zmq_ctrl_cmd.send_string("YIELD")
+        self._zmq_ctrl_cmd.send_string("UPDATE_CONN")
 
     def stop(self):
         self._zmq_ctrl_cmd.send_string("STOP")
+
+    def die(self):
+        self._tracker.remove_listener(self)
+        self._tracker = None
+        self.stop()
+        self._zmq_ctrl_cmd.close()
 
     def run(self):
         zmq_sub = self._zmq_ctx.socket(zmq.SUB)
@@ -103,24 +109,27 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
         poller.register(zmq_sub, zmq.POLLIN)
         poller.register(zmq_ctrl, zmq.POLLIN)
 
+        update_connections = True
         decoder = Decoder(type=KVEventBatch)
         while True:
-            with self._lock:
-                # as zmq_sub is not thread-safe, we handle all connect/disconnect here
-                remove_list = []
-                for subscription in self._subscriptions.values():
-                    if subscription.is_endpoint_up:
-                        if not subscription.is_connected:
-                            zmq_sub.connect(subscription.event_endpoint)
-                            subscription.is_connected = True
-                    else:
-                        if subscription.is_connected:
-                            zmq_sub.disconnect(subscription.event_endpoint)
-                            subscription.is_connected = False
-                        if not self._preserve_down_records:
-                            remove_list.append(subscription.endpoint_id)
-                for endpoint_id in remove_list:
-                    self._subscriptions.pop(endpoint_id)
+            if update_connections:
+                with self._lock:
+                    # as zmq_sub is not thread-safe, we handle all connect/disconnect here
+                    remove_list = []
+                    for subscription in self._subscriptions.values():
+                        if subscription.is_endpoint_up:
+                            if not subscription.is_connected:
+                                zmq_sub.connect(subscription.event_endpoint)
+                                subscription.is_connected = True
+                        else:
+                            if subscription.is_connected:
+                                zmq_sub.disconnect(subscription.event_endpoint)
+                                subscription.is_connected = False
+                            if not self._preserve_down_records:
+                                remove_list.append(subscription.endpoint_id)
+                    for endpoint_id in remove_list:
+                        self._subscriptions.pop(endpoint_id)
+                update_connections = False
 
             poll_socks = dict(poller.poll())
             if zmq_sub in poll_socks:
@@ -146,8 +155,8 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
                 cmd = zmq_ctrl.recv_string()
                 if cmd == "STOP":
                     break
-                elif cmd == "YIELD":
-                    continue
+                elif cmd == "UPDATE_CONN":
+                    update_connections = True
                 else:
                     raise RuntimeError(f"Unknown ZMQ control Command: {cmd}")
 
