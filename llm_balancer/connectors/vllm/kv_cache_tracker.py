@@ -40,10 +40,11 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
         self._tracker.add_listener(self)
         with self._lock:
             for endpoint in self._tracker.get_up_endpoints():
-                if endpoint.config.kv_event_endpoint:
-                    subscription = self._Subscription(endpoint.id,
-                                                      endpoint.config.kv_event_endpoint)
-                    self._subscriptions[endpoint.id] = subscription
+                if not endpoint.config.kv_event_endpoint:
+                    raise ValueError(f"Endpoint:{endpoint.id} provides no kv_event_endpoint")
+                subscription = self._Subscription(endpoint.id,
+                                                  endpoint.config.kv_event_endpoint)
+                self._subscriptions[endpoint.id] = subscription
 
     def query_hit_len(self,
                       block_size: int,
