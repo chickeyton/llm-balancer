@@ -36,7 +36,7 @@ def create_routers(router_configs):
             endpoints[stage] = DecodeRouter(config.len_extend_rate)
         elif config.name == "kvaware":
             endpoints[stage] = KvawareRouter()
-        elif config.name == "round_roubin":
+        elif config.name == "round_robin":
             endpoints[stage] = RoundRobinRouter()
         elif config.name == "random":
             endpoints[stage] = RandomRouter()
