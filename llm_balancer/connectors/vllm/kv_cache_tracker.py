@@ -16,7 +16,7 @@ class KVEventBatch(EventBatch):
     vllm_instance_id: str
 
 
-class KvCacheTracker(Thread, EndpointTrackerListener):
+class VllmKvCacheTracker(Thread, EndpointTrackerListener):
 
     class _Subscription:
         def __init__(self, endpoint_id, event_endpoint):
