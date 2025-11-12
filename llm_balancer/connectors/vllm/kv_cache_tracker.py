@@ -16,7 +16,7 @@ class KVEventBatch(EventBatch):
     vllm_instance_id: str
 
 
-class KVCacheTracker(Thread, EndpointTrackerListener):
+class KvCacheTracker(Thread, EndpointTrackerListener):
 
     class _Subscription:
         def __init__(self, endpoint_id, event_endpoint):
@@ -76,7 +76,7 @@ class KVCacheTracker(Thread, EndpointTrackerListener):
                 subscription = self._subscriptions.get(new_up.id)
                 if subscription is None:
                     if not new_up.config.kv_event_endpoint:
-                        raise ValueError("Endpoint:{new_up.id} provides no kv_event_endpoint")
+                        raise ValueError(f"Endpoint:{new_up.id} provides no kv_event_endpoint")
                     subscription = self._Subscription(new_up.id,
                                                       new_up.config.kv_event_endpoint)
                     self._subscriptions[new_up.id] = subscription

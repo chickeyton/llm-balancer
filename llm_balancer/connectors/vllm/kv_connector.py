@@ -4,12 +4,12 @@ from vllm.v1.codre.kv_cache_utils import BlockHash
 
 from llm_balancer.balancer.connector import KvConnector
 from llm_balancer.balancer import EndpointTracker
-from .kv_cache_tracker import KVCacheTracker
+from .kv_cache_tracker import KvCacheTracker
 
 
 class VllmKvConnector(KvConnector):
     def __init__(self, tracker: EndpointTracker, block_size: int, is_p2p_enabled: bool):
-        self._cache_tracker = KVCacheTracker(tracker)
+        self._cache_tracker = KvCacheTracker(tracker)
         self._block_size = block_size
         self._is_p2p_enabled = is_p2p_enabled
 
