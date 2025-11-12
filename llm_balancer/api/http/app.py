@@ -59,7 +59,6 @@ def main():
     tracker = StaticEndpointTracker([VllmEndpoint(c) for c in endpoint_configs])
     routers = create_routers(app_config.routers)
     balancer = Balancer(app_config.balancer, tracker, routers, kv_connector)
-    tracker.start()
     kv_connector.start()
 
     tokenizer = AutoTokenizer.from_pretrained(app_config.tokenizer)
