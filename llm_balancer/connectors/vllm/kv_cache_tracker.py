@@ -31,7 +31,7 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
         self._preserve_down_records = preserve_down_records
         self._lock = Lock()
         self._zmq_ctx = zmq.Context()
-        self._zmq_ctrl_endpoint = f"inproc://ctrl_{uuid.uuid4().hex}"
+        self._zmq_ctrl_endpoint = f"inproc://{uuid.uuid4().hex}"
         self._zmq_ctrl_cmd = self._zmq_ctx.socket(zmq.PAIR)
         self._zmq_ctrl_cmd.bind(self._zmq_ctrl_endpoint)
 
