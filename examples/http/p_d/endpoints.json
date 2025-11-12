@@ -3,28 +3,24 @@
     "endpoint_id": "instance0",
     "base_url": "abc",
     "kv_event_endpoint": "ipc://abc",
-    "cache_instance_id": "instance0",
     "stage": "PREFILL"
   },
   {
     "endpoint_id": "instance1",
     "base_url": "abc",
     "kv_event_endpoint": "ipc://abc",
-    "cache_instance_id": "instance1",
     "stage": "PREFILL"
   },
   {
     "endpoint_id": "instance2",
     "base_url": "abc",
     "kv_event_endpoint": "ipc://abc",
-    "cache_instance_id": "instance2",
     "stage": "DECODE"
   },
   {
     "endpoint_id": "instance3",
     "base_url": "abc",
     "kv_event_endpoint": "ipc://abc",
-    "cache_instance_id": "instance3",
     "stage": "DECODE"
   }
 ]

@@ -77,6 +77,7 @@ def parse_endpoint_configs(json_list) -> List[VllmEndpointConfig]:
     for obj in json_list:
         config = VllmEndpointConfig()
         config.endpoint_id = str(obj.get("endpoint_id"))  # i.e. VLLM_INSTANCE_ID
+        config.cache_instance_id = str(obj.get("cache_instance_id", config.endpoint_id))
         config.base_url = str(obj.get("base_url"))
         config.kv_event_endpoint = str(obj.get("kv_event_endpoint"))
         stage_str = obj.get("stage")

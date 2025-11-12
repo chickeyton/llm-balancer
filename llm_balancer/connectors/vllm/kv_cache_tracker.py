@@ -29,6 +29,7 @@ class KVCacheTracker(Thread, EndpointTrackerListener):
         super(Thread, self).__init__()
         self._preserve_down_records = preserve_down_records
         self._lock = Lock()
+        self._zmq_ctx = zmq.Context()
         self._subscriptions: Dict[str, KVCacheTracker._Subscription] = {}
         self._tracker = tracker
         self._tracker.add_listener(self)
@@ -81,9 +82,11 @@ class KVCacheTracker(Thread, EndpointTrackerListener):
                 if subscription is not None:
                     subscription.is_endpoint_up = False
 
+    def stop(self):
+        self._zmq_ctx.term()
+
     def run(self):
-        zmq_ctx = zmq.Context()
-        zmq_sub = zmq_ctx.socket(zmq.SUB)
+        zmq_sub = self._zmq_ctx.socket(zmq.SUB)
         zmq_sub.setsockopt_string(zmq.SUBSCRIBE, "kv-events")
         decoder = Decoder(type=KVEventBatch)
         while True:
@@ -105,12 +108,12 @@ class KVCacheTracker(Thread, EndpointTrackerListener):
                 with self._lock:
                     for endpoint_id in remove_list:
                         self._subscriptions.pop(endpoint_id)
-
             try:
-                # TODO: use blocking and catch timeout
-                _, seq_bytes, payload = zmq_sub.recv_multipart(flags=zmq.NOBLOCK)
+                _, seq_bytes, payload = zmq_sub.recv_multipart()
             except zmq.Again:
                 continue
+            except zmq.ContextTerminated:
+                return
 
             event_batch = decoder.decode(payload)
             with self._lock:
