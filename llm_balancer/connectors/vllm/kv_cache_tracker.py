@@ -1,3 +1,4 @@
+import uuid
 from threading import Thread, Lock
 from typing import Dict, Set, List, Optional
 import zmq
@@ -30,6 +31,10 @@ class KVCacheTracker(Thread, EndpointTrackerListener):
         self._preserve_down_records = preserve_down_records
         self._lock = Lock()
         self._zmq_ctx = zmq.Context()
+        self._zmq_ctrl_endpoint = f"inproc://ctrl_{uuid.uuid4().hex}"
+        self._zmq_ctrl_cmd = self._zmq_ctx.socket(zmq.PAIR)
+        self._zmq_ctrl_cmd.bind(self._zmq_ctrl_endpoint)
+
         self._subscriptions: Dict[str, KVCacheTracker._Subscription] = {}
         self._tracker = tracker
         self._tracker.add_listener(self)
@@ -82,54 +87,73 @@ class KVCacheTracker(Thread, EndpointTrackerListener):
                 if subscription is not None:
                     subscription.is_endpoint_up = False
 
+            self._zmq_ctrl_cmd.send_string("YIELD")
+
     def stop(self):
-        self._zmq_ctx.term()
+        self._zmq_ctrl_cmd.send_string("STOP")
 
     def run(self):
         zmq_sub = self._zmq_ctx.socket(zmq.SUB)
         zmq_sub.setsockopt_string(zmq.SUBSCRIBE, "kv-events")
+        zmq_ctrl = self._zmq_ctx.socket(zmq.PAIR)
+        zmq_ctrl.connect(self._zmq_ctrl_endpoint)
+
+        poller = zmq.Poller()
+        poller.register(zmq_sub, zmq.POLLIN)
+        poller.register(zmq_ctrl, zmq.POLLIN)
+
         decoder = Decoder(type=KVEventBatch)
         while True:
             with self._lock:
-                subscriptions = self._subscriptions.copy()
-            remove_list = []
-            for subscription in subscriptions.values():
-                if subscription.is_endpoint_up:
-                    if not subscription.is_connected:
-                        zmq_sub.connect(subscription.event_endpoint)
-                        subscription.is_connected = True
-                else:
-                    if subscription.is_connected:
-                        zmq_sub.disconnect(subscription.event_endpoint)
-                        subscription.is_connected = False
-                    if not self._preserve_down_records:
-                        remove_list.append(subscription.endpoint_id)
-            if remove_list:
-                with self._lock:
+                # as zmq_sub is not thread-safe, we handle all connect/disconnect here
+                remove_list = []
+                for subscription in self._subscriptions.values():
+                    if subscription.is_endpoint_up:
+                        if not subscription.is_connected:
+                            zmq_sub.connect(subscription.event_endpoint)
+                            subscription.is_connected = True
+                    else:
+                        if subscription.is_connected:
+                            zmq_sub.disconnect(subscription.event_endpoint)
+                            subscription.is_connected = False
+                        if not self._preserve_down_records:
+                            remove_list.append(subscription.endpoint_id)
+                if remove_list:
                     for endpoint_id in remove_list:
                         self._subscriptions.pop(endpoint_id)
-            try:
-                _, seq_bytes, payload = zmq_sub.recv_multipart()
-            except zmq.Again:
-                continue
-            except zmq.ContextTerminated:
-                return
 
-            event_batch = decoder.decode(payload)
-            with self._lock:
-                # TODO: event_batch.vllm_instance_id needs to be added by vllm
-                subscription = self._subscriptions.get(event_batch.vllm_instance_id)
-                if not subscription:
+            poll_socks = dict(poller.poll())
+            if zmq_sub in poll_socks:
+                _, seq_bytes, payload = zmq_sub.recv_multipart()
+                event_batch = decoder.decode(payload)
+                with self._lock:
+                    # TODO: event_batch.vllm_instance_id needs to be added by vllm
+                    subscription = self._subscriptions.get(event_batch.vllm_instance_id)
+                    if not subscription:
+                        continue
+                    for event in event_batch.events:
+                        if isinstance(event, BlockStored):
+                            for block_hash in event.block_hashes:
+                                subscription.block_hashes.add(block_hash)
+                        elif isinstance(event, BlockRemoved):
+                            for block_hash in event.block_hashes:
+                                subscription.block_hashes.discard(block_hash)
+                        elif isinstance(event, AllBlocksCleared):
+                            subscription.block_hashes.clear()
+                        else:
+                            raise RuntimeError(f"Unknown KV event type: {event.__class__}")
+
+            if zmq_ctrl in poll_socks:
+                cmd = zmq_ctrl.recv_string()
+                if cmd == "STOP":
+                    break
+                elif cmd == "YIELD":
                     continue
-                for event in event_batch.events:
-                    if isinstance(event, BlockStored):
-                        for block_hash in event.block_hashes:
-                            subscription.block_hashes.add(block_hash)
-                    elif isinstance(event, BlockRemoved):
-                        for block_hash in event.block_hashes:
-                            subscription.block_hashes.discard(block_hash)
-                    elif isinstance(event, AllBlocksCleared):
-                        subscription.block_hashes.clear()
+                else:
+                    raise RuntimeError(f"Unknown ZMQ control Command: {cmd}")
+
+        zmq_sub.close()
+        zmq_ctrl.close()
 
     @staticmethod
     def _find_num_hit_blocks(cache_block_hashes, prefix_block_hashes):
