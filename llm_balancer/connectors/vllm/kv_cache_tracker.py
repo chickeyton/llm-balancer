@@ -75,10 +75,11 @@ class KVCacheTracker(Thread, EndpointTrackerListener):
                     raise ValueError("config is not VllmEndpointConfig")
                 subscription = self._subscriptions.get(new_up.id)
                 if subscription is None:
-                    if new_up.config.kv_event_endpoint:
-                        subscription = self._Subscription(new_up.id,
-                                                          new_up.config.kv_event_endpoint)
-                        self._subscriptions[new_up.id] = subscription
+                    if not new_up.config.kv_event_endpoint:
+                        raise ValueError("Endpoint:{new_up.id} provides no kv_event_endpoint")
+                    subscription = self._Subscription(new_up.id,
+                                                      new_up.config.kv_event_endpoint)
+                    self._subscriptions[new_up.id] = subscription
                 else:
                     subscription.is_endpoint_up = True
 
@@ -118,16 +119,14 @@ class KVCacheTracker(Thread, EndpointTrackerListener):
                             subscription.is_connected = False
                         if not self._preserve_down_records:
                             remove_list.append(subscription.endpoint_id)
-                if remove_list:
-                    for endpoint_id in remove_list:
-                        self._subscriptions.pop(endpoint_id)
+                for endpoint_id in remove_list:
+                    self._subscriptions.pop(endpoint_id)
 
             poll_socks = dict(poller.poll())
             if zmq_sub in poll_socks:
                 _, seq_bytes, payload = zmq_sub.recv_multipart()
                 event_batch = decoder.decode(payload)
                 with self._lock:
-                    # TODO: event_batch.vllm_instance_id needs to be added by vllm
                     subscription = self._subscriptions.get(event_batch.vllm_instance_id)
                     if not subscription:
                         continue
