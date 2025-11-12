@@ -25,3 +25,6 @@ build-backend = "setuptools.build_meta"
 
 [project.entry-points."vllm.general_plugins"]
 vllm_balancer_required_patch = "llm_balancer.connectors.vllm.plugin:monkey_patch"
+
+[project.scripts]
+llm-balancer-http = "llm_balancer.api.http.app:main"

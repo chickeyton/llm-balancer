@@ -11,7 +11,7 @@ class VllmEndpointConfig(EndpointConfig):
     kv_event_endpoint: str = ""
 
 
-class VllmEndpont(Endpoint):
+class VllmEndpoint(Endpoint):
 
     def __init__(self, config: VllmEndpointConfig):
         super().__init__(config)

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: Copyright contributors to the llm-service project
-
+from threading import Lock
 from typing import List, Optional, Tuple, Set
 
 from llm_balancer.balancer import Stage
@@ -16,19 +16,38 @@ class EndpointTracker:
     def __init__(self):
         self._listeners: Set[EndpointTrackerListener] = set()
 
+    def get_lock(self) -> Optional[Lock]:
+        return None
+
     def get_up_endpoints(self, stages: Optional[Tuple[Stage, ...], List[Stage]] = None) -> List[Endpoint]:
         raise NotImplementedError
 
     def add_listener(self, listener: EndpointTrackerListener):
-        self._listeners.add(listener)
+        lock = self.get_lock()
+        if lock:
+            with lock:
+                self._listeners.add(listener)
+        else:
+            self._listeners.add(listener)
 
     def remove_listener(self, listener: EndpointTrackerListener):
-        self._listeners.discard(listener)
+        lock = self.get_lock()
+        if lock:
+            with lock:
+                self._listeners.discard(listener)
+        else:
+            self._listeners.discard(listener)
 
     def on_endpoints_changed(self, new_ups: List[Endpoint], new_downs: List[Endpoint]):
         """To be called by the sub-classes."""
-        for listener in self._listeners:
-            listener.on_endpoints_changed(new_ups, new_downs)
+        lock = self.get_lock()
+        if lock:
+            with lock:
+                for listener in self._listeners:
+                    listener.on_endpoints_changed(new_ups, new_downs)
+        else:
+            for listener in self._listeners:
+                listener.on_endpoints_changed(new_ups, new_downs)
 
 
 class StaticEndpointTracker(EndpointTracker):

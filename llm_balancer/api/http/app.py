@@ -12,7 +12,7 @@ from llm_balancer.balancer import Balancer, StaticEndpointTracker
 from llm_balancer.balancer.router import DecodeRouter, PrefillRouter, KvawareRouter, RoundRobinRouter, RandomRouter, \
     QueueLenRouter
 from llm_balancer.connectors.lmcache import LMCacheKvConnector
-from llm_balancer.connectors.vllm.endpoint import VllmEndpont
+from llm_balancer.connectors.vllm.endpoint import VllmEndpoint
 
 app = FastAPI()
 app.include_router(api_router)
@@ -30,17 +30,17 @@ def parse_args():
 def create_routers(router_configs):
     endpoints = {}
     for stage, config in router_configs.items():
-        if config.name == "PREFILL":
+        if config.name == "prefill":
             endpoints[stage] = PrefillRouter(config.len_extend_rate)
-        elif config.name == "DECODE":
+        elif config.name == "decode":
             endpoints[stage] = DecodeRouter(config.len_extend_rate)
-        elif config.name == "KVAWARE":
+        elif config.name == "kvaware":
             endpoints[stage] = KvawareRouter()
-        elif config.name == "ROUND_ROBIN":
+        elif config.name == "round_roubin":
             endpoints[stage] = RoundRobinRouter()
-        elif config.name == "RANDOM":
+        elif config.name == "random":
             endpoints[stage] = RandomRouter()
-        elif config.name == "QUEUE_LEN":
+        elif config.name == "queue_len":
             endpoints[stage] = QueueLenRouter()
         else:
             raise ValueError(f"Unsupported Router type:{config.type}")
@@ -56,7 +56,7 @@ def main():
 
     kv_connector = LMCacheKvConnector(app_config.lmcache.ctl_mgr_port,
                                       app_config.lmcache.is_p2p_enabled)
-    tracker = StaticEndpointTracker([VllmEndpont(c) for c in endpoint_configs])
+    tracker = StaticEndpointTracker([VllmEndpoint(c) for c in endpoint_configs])
     routers = create_routers(app_config.routers)
     balancer = Balancer(app_config.balancer, tracker, routers, kv_connector)
     tracker.start()

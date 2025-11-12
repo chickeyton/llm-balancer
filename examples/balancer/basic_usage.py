@@ -139,7 +139,7 @@ def initialize_balancer():
     routers = {Stage.ENCODE: RoundRobinRouter(),
                Stage.PREFILL: PrefillRouter(),
                Stage.DECODE: QueueLenRouter()}
-    kv_connector = LMCacheKvConnector(lmcache_port=9876, is_p2p_enabled=True)
+    kv_connector = LMCacheKvConnector(ctl_mgr_port=9876, is_p2p_enabled=True)
     balancer = Balancer(tracker=tracker,
                         routers=routers,
                         kv_connector=kv_connector)
