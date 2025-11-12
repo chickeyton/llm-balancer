@@ -1,13 +1,15 @@
 import os
-from vllm.distributed.kv_events import KVEventBatch
+from vllm.distributed.kv_events import KVEventBatch as KVEventBatchOri
 
 
-def _kv_event_batch_init(self, *arg, **kwargs):
-    self._init_ori(self, *arg, **kwargs)
-    self.vllm_instance_id = os.getenv("VLLM_INSTANCE_ID", "")
+class KVEventBatch(KVEventBatchOri):
+
+    vllm_instance_id: str = ""
+
+    def __post_init__(self):
+        self.vllm_instance_id = os.getenv("VLLM_INSTANCE_ID", "")
 
 
 def monkey_patch():
-    if KVEventBatch.__init__ is not _kv_event_batch_init:
-        KVEventBatch._init_ori = KVEventBatch.__init__
-        KVEventBatch.__init__ = _kv_event_batch_init
+    if vllm.distributed.kv_events.KVEventBatch is not KVEventBatch:
+        vllm.distributed.kv_events.KVEventBatch = KVEventBatch

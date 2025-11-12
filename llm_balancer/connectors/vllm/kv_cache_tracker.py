@@ -8,12 +8,7 @@ from vllm.distributed.kv_events import BlockStored, BlockRemoved, AllBlocksClear
 
 from llm_balancer.balancer import EndpointTracker, EndpointTrackerListener, Endpoint
 from llm_balancer.api.http.config import VllmEndpointConfig
-
-
-# copy from vllm as vllm_instance_id is added by the patch
-class KVEventBatch(EventBatch):
-    events: list[BlockStored | BlockRemoved | AllBlocksCleared]
-    vllm_instance_id: str
+from llm_balancer.connectors.vllm.plugin import KVEventBatch
 
 
 class VllmKvCacheTracker(Thread, EndpointTrackerListener):
