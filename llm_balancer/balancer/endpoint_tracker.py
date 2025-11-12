@@ -17,7 +17,7 @@ class EndpointTracker:
         self._listeners: Set[EndpointTrackerListener] = set()
 
     def get_lock(self) -> Optional[Lock]:
-        return None
+        raise NotImplementedError
 
     def get_up_endpoints(self, stages: Optional[Tuple[Stage, ...], List[Stage]] = None) -> List[Endpoint]:
         raise NotImplementedError
@@ -54,6 +54,9 @@ class StaticEndpointTracker(EndpointTracker):
     def __init__(self, endpoints: List[Endpoint]):
         super().__init__()
         self._endpoints = endpoints
+
+    def get_lock(self) -> Optional[Lock]:
+        return None
 
     def get_up_endpoints(self, stages: Optional[Tuple[Stage, ...], List[Stage]] = None) -> List[Endpoint]:
         if stages:
