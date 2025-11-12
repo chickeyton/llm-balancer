@@ -8,5 +8,6 @@ def _kv_event_batch_init(self, *arg, **kwargs):
 
 
 def monkey_patch():
-    KVEventBatch._init_ori = KVEventBatch.__init__
-    KVEventBatch.__init__ = _kv_event_batch_init
+    if KVEventBatch.__init__ is not _kv_event_batch_init:
+        KVEventBatch._init_ori = KVEventBatch.__init__
+        KVEventBatch.__init__ = _kv_event_batch_init

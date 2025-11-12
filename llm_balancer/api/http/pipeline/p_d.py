@@ -52,8 +52,8 @@ class P_D_Pipline:
                 handle.on_respond(chunk_len)
                 stream_data = chunk.model_dump_json()
                 yield f"data: {stream_data}\n\n"
-            yield "data: [DONE]\n\n"
             handle.on_finished()
+            yield "data: [DONE]\n\n"
 
             if handle.stage == Stage.PREFILL:
                 messages = request_json["message"]

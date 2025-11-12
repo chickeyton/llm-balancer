@@ -12,7 +12,7 @@ from llm_balancer.balancer import Balancer, StaticEndpointTracker
 from llm_balancer.balancer.router import DecodeRouter, PrefillRouter, KvawareRouter, RoundRobinRouter, RandomRouter, \
     QueueLenRouter
 from llm_balancer.connectors.lmcache import LMCacheKvConnector
-from llm_balancer.connectors.vllm.endpoint import VllmEndpoint
+from llm_balancer.connectors.vllm import VllmEndpoint
 
 app = FastAPI()
 app.include_router(api_router)
@@ -64,3 +64,7 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(app_config.tokenizer)
     app.state.pipeline = P_D_Pipline(tokenizer, balancer)
     uvicorn.run(app, host=args.host, port=int(args.port))
+
+
+if __name__ == "__main__":
+    main()
