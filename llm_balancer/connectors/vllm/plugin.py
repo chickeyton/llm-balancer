@@ -11,4 +11,5 @@ class KVEventBatch(KVEventBatchOri):
 
 
 def monkey_patch():
+    vllm.distributed.kv_events.KVEventBatchOri = vllm.distributed.kv_events.KVEventBatch
     vllm.distributed.kv_events.KVEventBatch = KVEventBatch
