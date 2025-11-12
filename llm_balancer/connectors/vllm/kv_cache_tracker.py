@@ -35,7 +35,7 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
         self._zmq_ctrl_cmd = self._zmq_ctx.socket(zmq.PAIR)
         self._zmq_ctrl_cmd.bind(self._zmq_ctrl_endpoint)
 
-        self._subscriptions: Dict[str, KVCacheTracker._Subscription] = {}
+        self._subscriptions: Dict[str, VllmKvCacheTracker._Subscription] = {}
         self._tracker = tracker
         self._tracker.add_listener(self)
         with self._lock:
@@ -87,17 +87,15 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
                 subscription = self._subscriptions.get(new_down.id)
                 if subscription is not None:
                     subscription.is_endpoint_up = False
-        # let the run() thread to update the connections
-        self._zmq_ctrl_cmd.send_string("UPDATE_CONN")
-
-    def stop(self):
-        self._zmq_ctrl_cmd.send_string("STOP")
+            # let the run() thread to update the connections
+            self._zmq_ctrl_cmd.send_string("UPDATE_CONN")
 
     def die(self):
+        with self._lock:
+            self._zmq_ctrl_cmd.send_string("STOP")
+            self._zmq_ctrl_cmd.close()
         self._tracker.remove_listener(self)
         self._tracker = None
-        self.stop()
-        self._zmq_ctrl_cmd.close()
 
     def run(self):
         zmq_sub = self._zmq_ctx.socket(zmq.SUB)
@@ -109,8 +107,8 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
         poller.register(zmq_sub, zmq.POLLIN)
         poller.register(zmq_ctrl, zmq.POLLIN)
 
-        update_connections = True
         decoder = Decoder(type=KVEventBatch)
+        update_connections = True
         while True:
             if update_connections:
                 with self._lock:
@@ -132,6 +130,7 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
                 update_connections = False
 
             poll_socks = dict(poller.poll())
+
             if zmq_sub in poll_socks:
                 _, seq_bytes, payload = zmq_sub.recv_multipart()
                 event_batch = decoder.decode(payload)
