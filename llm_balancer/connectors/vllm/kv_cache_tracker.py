@@ -86,8 +86,8 @@ class KVCacheTracker(Thread, EndpointTrackerListener):
                 subscription = self._subscriptions.get(new_down.id)
                 if subscription is not None:
                     subscription.is_endpoint_up = False
-
-            self._zmq_ctrl_cmd.send_string("YIELD")
+        # let the run() thread to update the connections
+        self._zmq_ctrl_cmd.send_string("YIELD")
 
     def stop(self):
         self._zmq_ctrl_cmd.send_string("STOP")
