@@ -136,19 +136,18 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
                 event_batch = decoder.decode(payload)
                 with self._lock:
                     subscription = self._subscriptions.get(event_batch.vllm_instance_id)
-                    if not subscription:
-                        continue
-                    for event in event_batch.events:
-                        if isinstance(event, BlockStored):
-                            for block_hash in event.block_hashes:
-                                subscription.block_hashes.add(block_hash)
-                        elif isinstance(event, BlockRemoved):
-                            for block_hash in event.block_hashes:
-                                subscription.block_hashes.discard(block_hash)
-                        elif isinstance(event, AllBlocksCleared):
-                            subscription.block_hashes.clear()
-                        else:
-                            raise RuntimeError(f"Unknown KV event type: {event.__class__}")
+                    if subscription:
+                        for event in event_batch.events:
+                            if isinstance(event, BlockStored):
+                                for block_hash in event.block_hashes:
+                                    subscription.block_hashes.add(block_hash)
+                            elif isinstance(event, BlockRemoved):
+                                for block_hash in event.block_hashes:
+                                    subscription.block_hashes.discard(block_hash)
+                            elif isinstance(event, AllBlocksCleared):
+                                subscription.block_hashes.clear()
+                            else:
+                                raise RuntimeError(f"Unknown KV event type: {event.__class__}")
 
             if zmq_ctrl in poll_socks:
                 cmd = zmq_ctrl.recv_string()
