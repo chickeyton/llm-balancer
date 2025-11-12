@@ -93,7 +93,6 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
     def die(self):
         with self._lock:
             self._zmq_ctrl_cmd.send_string("STOP")
-            self._zmq_ctrl_cmd.close()
         self._tracker.remove_listener(self)
         self._tracker = None
 
