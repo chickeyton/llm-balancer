@@ -1,8 +1,7 @@
 import os
-from vllm.distributed.kv_events import KVEventBatch as KVEventBatchOri
 
 
-class KVEventBatch(KVEventBatchOri):
+class KVEventBatch(vllm.distributed.kv_events.KVEventBatch):
 
     vllm_instance_id: str = ""
 
