@@ -38,7 +38,8 @@ class KvawareRouter(Router):
             raise ValueError
         return hit_lens
 
-    def _find_best_endpoint(self, endpoints, hit_lens) -> Endpoint:
+    @staticmethod
+    def _find_best_endpoint(endpoints, hit_lens) -> Endpoint:
         max_hit_len = -1
         max_hit_instance = None
         for instance_id, hit_len in hit_lens.items():
