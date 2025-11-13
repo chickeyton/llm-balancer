@@ -6,6 +6,7 @@ from .kvaware import KvawareRouter
 from .random import RandomRouter
 from .round_robin import RoundRobinRouter
 from .queue_len import QueueLenRouter
+from .encode import EncodeRouter
 from .prefill import PrefillRouter
 from .decode import DecodeRouter
 
@@ -15,6 +16,7 @@ __all__ = [
     "RandomRouter",
     "RoundRobinRouter",
     "QueueLenRouter",
+    "EncodeRouter",
     "PrefillRouter",
     "DecodeRouter"
 ]
