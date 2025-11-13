@@ -117,9 +117,7 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
                 _, seq_bytes, payload = zmq_sub.recv_multipart()
                 event_batch = decoder.decode(payload)
                 with self._lock:
-                    subscription = self._subscriptions.get(event_batch.vllm_instance_id)
-                    if subscription:
-                        self._handle_events(subscription, event_batch.events)
+                    self._handle_events(event_batch)
 
             if zmq_ctrl in poll_socks:
                 cmd = zmq_ctrl.recv_string()
@@ -149,9 +147,11 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
         for endpoint_id in remove_list:
             self._subscriptions.pop(endpoint_id)
 
-    @staticmethod
-    def _handle_events(subscription, events):
-        for event in events:
+    def _handle_events(self, event_batch):
+        subscription = self._subscriptions.get(event_batch.vllm_instance_id)
+        if subscription is None:
+            return
+        for event in  event_batch.events:
             if isinstance(event, BlockStored):
                 for block_hash in event.block_hashes:
                     subscription.block_hashes.add(block_hash)
