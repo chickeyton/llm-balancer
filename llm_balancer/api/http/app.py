@@ -7,7 +7,7 @@ from transformers import AutoTokenizer
 
 from llm_balancer.api.http.api import api_router
 from llm_balancer.api.http.config import parse_app_config, parse_endpoint_configs
-from llm_balancer.api.http.pipeline.p_d import P_D_Pipline
+from llm_balancer.api.http.pipeline.p_d import P_D_Pipeline
 from llm_balancer.balancer import Balancer, StaticEndpointTracker
 from llm_balancer.balancer.router import DecodeRouter, PrefillRouter, KvawareRouter, RoundRobinRouter, RandomRouter, \
     QueueLenRouter
@@ -65,7 +65,7 @@ def main():
     kv_connector.start()
 
     tokenizer = AutoTokenizer.from_pretrained(app_config.tokenizer)
-    app.state.pipeline = P_D_Pipline(tokenizer, balancer)
+    app.state.pipeline = P_D_Pipeline(tokenizer, balancer)
     uvicorn.run(app, host=args.host, port=int(args.port))
 
 

@@ -2,7 +2,7 @@ from .utils import to_prefill_task, to_decode_task, async_send_task
 from llm_balancer.balancer import Balancer
 
 
-class P_D_Pipline:
+class P_D_Pipeline:
 
     def __init__(self, tokenizer, balancer: Balancer):
         self._tokenizer = tokenizer
