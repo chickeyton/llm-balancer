@@ -108,20 +108,7 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
             if update_connections:
                 with self._lock:
                     # as zmq_sub is not thread-safe, we handle all connect/disconnect here
-                    remove_list = []
-                    for subscription in self._subscriptions.values():
-                        if subscription.is_endpoint_up:
-                            if not subscription.is_connected:
-                                zmq_sub.connect(subscription.event_endpoint)
-                                subscription.is_connected = True
-                        else:
-                            if subscription.is_connected:
-                                zmq_sub.disconnect(subscription.event_endpoint)
-                                subscription.is_connected = False
-                            if not self._preserve_down_records:
-                                remove_list.append(subscription.endpoint_id)
-                    for endpoint_id in remove_list:
-                        self._subscriptions.pop(endpoint_id)
+                    self._update_connections(zmq_sub)
                 update_connections = False
 
             poll_socks = dict(poller.poll())
@@ -132,17 +119,7 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
                 with self._lock:
                     subscription = self._subscriptions.get(event_batch.vllm_instance_id)
                     if subscription:
-                        for event in event_batch.events:
-                            if isinstance(event, BlockStored):
-                                for block_hash in event.block_hashes:
-                                    subscription.block_hashes.add(block_hash)
-                            elif isinstance(event, BlockRemoved):
-                                for block_hash in event.block_hashes:
-                                    subscription.block_hashes.discard(block_hash)
-                            elif isinstance(event, AllBlocksCleared):
-                                subscription.block_hashes.clear()
-                            else:
-                                raise RuntimeError(f"Unknown KV event type: {event.__class__}")
+                        self._handle_events(subscription, event_batch.events)
 
             if zmq_ctrl in poll_socks:
                 cmd = zmq_ctrl.recv_string()
@@ -155,6 +132,36 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
 
         zmq_sub.close()
         zmq_ctrl.close()
+
+    def _update_connections(self, zmq_sub):
+        remove_list = []
+        for subscription in self._subscriptions.values():
+            if subscription.is_endpoint_up:
+                if not subscription.is_connected:
+                    zmq_sub.connect(subscription.event_endpoint)
+                    subscription.is_connected = True
+            else:
+                if subscription.is_connected:
+                    zmq_sub.disconnect(subscription.event_endpoint)
+                    subscription.is_connected = False
+                if not self._preserve_down_records:
+                    remove_list.append(subscription.endpoint_id)
+        for endpoint_id in remove_list:
+            self._subscriptions.pop(endpoint_id)
+
+    @staticmethod
+    def _handle_events(subscription, events):
+        for event in events:
+            if isinstance(event, BlockStored):
+                for block_hash in event.block_hashes:
+                    subscription.block_hashes.add(block_hash)
+            elif isinstance(event, BlockRemoved):
+                for block_hash in event.block_hashes:
+                    subscription.block_hashes.discard(block_hash)
+            elif isinstance(event, AllBlocksCleared):
+                subscription.block_hashes.clear()
+            else:
+                raise RuntimeError(f"Unknown KV event type: {event.__class__}")
 
     @staticmethod
     def _find_num_hit_blocks(cache_block_hashes, prefix_block_hashes):
