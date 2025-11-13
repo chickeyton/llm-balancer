@@ -11,8 +11,14 @@ from llm_balancer.connectors.lmcache import LMCacheKvConnector
 
 @dataclass
 class ZmqEndpointConfig(EndpointConfig):
-    # put extra settings or states here for the endpoint
+    # put extra settings here
     zmq_addr: str = ""
+
+class ZmqEndpoint(Endpoint):
+    def __init__(self, config: ZmqEndpointConfig):
+        super().__init__(config)
+        # put extra states here
+
 
 
 class RedisEndpointTracker(EndpointTracker):
@@ -22,7 +28,7 @@ class RedisEndpointTracker(EndpointTracker):
         self._port = port
         self._lock = Lock()
         self._is_running = True
-        self._endpoints = []
+        self._endpoints:list[ZmqEndpoint] = []
         self._thread = None
 
     def get_up_endpoints(self, stages: Optional[Tuple[Stage, ...], List[Stage]] = None) -> List[Endpoint]:
@@ -63,7 +69,7 @@ class RedisEndpointTracker(EndpointTracker):
 
             # create newly up endpoints
             old_up_ids = set([ep.id for ep in old_endpoints])
-            new_ups: List[Endpoint] = [Endpoint(c) for c in updated_configs if c.endpoint_id not in old_up_ids]
+            new_ups: List[Endpoint] = [ZmqEndpoint(c) for c in updated_configs if c.endpoint_id not in old_up_ids]
             self._endpoints.extend(new_ups)
 
             # gather newly down endpoints
