@@ -22,10 +22,17 @@ class EncodeTask(Task):
     def stage(self) -> Stage:
         raise Stage.ENCODE
 
+    def estimate_workload(self) -> float:
+        raise NotImplementedError
+
 
 @dataclass
 class ViTEncodeTask(EncodeTask):
     num_patches: int
+
+    def estimate_workload(self) -> float:
+        plus_one = self.num_patches + 1
+        return float(plus_one * plus_one)
 
 
 @dataclass

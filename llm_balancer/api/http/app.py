@@ -11,6 +11,7 @@ from llm_balancer.api.http.pipeline.p_d import P_D_Pipeline
 from llm_balancer.balancer import Balancer, StaticEndpointTracker
 from llm_balancer.balancer.router import DecodeRouter, PrefillRouter, KvawareRouter, RoundRobinRouter, RandomRouter, \
     QueueLenRouter
+from llm_balancer.balancer.router.encode import EncodeRouter
 from llm_balancer.connectors.lmcache import LMCacheKvConnector
 from llm_balancer.connectors.vllm import VllmEndpoint
 
@@ -30,7 +31,9 @@ def parse_args():
 def create_routers(router_configs):
     endpoints = {}
     for stage, config in router_configs.items():
-        if config.name == "prefill":
+        if config.name == "encode":
+            endpoints[stage] = EncodeRouter()
+        elif config.name == "prefill":
             endpoints[stage] = PrefillRouter(config.len_extend_rate)
         elif config.name == "decode":
             endpoints[stage] = DecodeRouter(config.len_extend_rate)
