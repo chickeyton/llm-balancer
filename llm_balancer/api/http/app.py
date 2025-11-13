@@ -58,7 +58,10 @@ def main():
                                       app_config.lmcache.is_p2p_enabled)
     tracker = StaticEndpointTracker([VllmEndpoint(c) for c in endpoint_configs])
     routers = create_routers(app_config.routers)
-    balancer = Balancer(app_config.balancer, tracker, routers, kv_connector)
+    balancer = Balancer(config=app_config.balancer,
+                        tracker=tracker,
+                        routers=routers,
+                        kv_connector=kv_connector)
     kv_connector.start()
 
     tokenizer = AutoTokenizer.from_pretrained(app_config.tokenizer)
