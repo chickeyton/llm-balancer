@@ -12,9 +12,9 @@ from llm_balancer.balancer.connector import KvConnector
 
 class LMCacheKvConnector(KvConnector):
 
-    def __init__(self, ctl_mgr_port: int, is_p2p_enabled: bool):
+    def __init__(self, ctrl_mgr_port: int, is_p2p_enabled: bool):
         self._kv_manager = controller_manager.LMCacheControllerManager(
-            {"pull": f"0.0.0.0:{ctl_mgr_port}", "reply": None}
+            {"pull": f"0.0.0.0:{ctrl_mgr_port}", "reply": None}
         )
         self._is_p2p_enabled = is_p2p_enabled
         self._thread = None

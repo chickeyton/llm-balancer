@@ -7,7 +7,7 @@ from llm_balancer.connectors.vllm.endpoint import VllmEndpointConfig
 
 @dataclass
 class LMCacheConfig:
-    ctl_mgr_port: int = -1
+    ctrl_mgr_port: int = -1
     is_p2p_enabled: bool = False
 
 

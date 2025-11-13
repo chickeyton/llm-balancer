@@ -91,7 +91,7 @@ class PrefillRouter(Router):
         if self._balancer.kv_connector is None or not self._balancer.kv_connector.is_p2p_enabled:
             num_cached_tokens = hit_len
         else:
-            num_cached_tokens = max(hit_len, max_hit_len)
+            num_cached_tokens = max(max_hit_len, 0)
         prompt_len = len(task.prompt_tokens)
         prefill_workload = prefill_atten_workload(prompt_len, num_cached_tokens)
         decode_workload = decode_atten_workload(prompt_len, task.predicted_decode_len, 0)
