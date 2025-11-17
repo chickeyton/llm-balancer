@@ -2,13 +2,13 @@
   {
     "endpoint_id": "instance0",
     "base_url": "http://localhost:8100",
-    "kv_event_endpoint": "ipc://abc",
+    "kv_event_endpoint": "tcp://localhost:8101",
     "stage": "PREFILL_THEN_DECODE"
   },
   {
     "endpoint_id": "instance1",
-    "base_url": "http://localhost:8101",
-    "kv_event_endpoint": "ipc://abc",
+    "base_url": "http://localhost:8200",
+    "kv_event_endpoint": "tcp://localhost:8101",
     "stage": "PREFILL_THEN_DECODE"
   }
 ]
