@@ -22,7 +22,7 @@ class AppConfig:
     http_port: int = -1
     tokenizer: str = ""
     balancer: BalancerConfig = BalancerConfig()
-    routers: Dict[RouterConfig] = None
+    routers: Dict[Stage, RouterConfig] = None
     lmcache: LMCacheConfig = None
 
 
