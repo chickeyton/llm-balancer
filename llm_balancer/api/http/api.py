@@ -1,10 +1,5 @@
-from fastapi import (
-    APIRouter,
-    BackgroundTasks,
-    Request,
-    StreamingResponse
-)
-
+from fastapi import APIRouter, BackgroundTasks, Request
+from fastapi.responses import StreamingResponse
 
 api_router = APIRouter()
 
