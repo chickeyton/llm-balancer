@@ -142,7 +142,7 @@ class TaskHandleFactory:
     _constructors = {
         Stage.ENCODE: EncodeHandle.__init__,
         Stage.PREFILL: PrefillHandle.__init__,
-        Stage.DECOCE: DecodeHandle.__init__,
+        Stage.DECODE: DecodeHandle.__init__,
         Stage.PREFILL_THEN_DECODE: PrefillThenDecodeHandle.__init__,
     }
 
