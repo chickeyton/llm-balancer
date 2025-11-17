@@ -1,6 +1,6 @@
 from typing import Optional, Set, List, Dict
 
-from vllm.v1.codre.kv_cache_utils import BlockHash
+from vllm.v1.core.kv_cache_utils import BlockHash
 
 from llm_balancer.balancer.connector import KvConnector
 from llm_balancer.balancer import EndpointTracker
