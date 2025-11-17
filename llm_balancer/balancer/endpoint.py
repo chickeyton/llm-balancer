@@ -12,9 +12,9 @@ from llm_balancer.balancer.task_route import TaskRoute
 
 @dataclass
 class EndpointConfig:
-    endpoint_id: str
-    stage: Stage
-    cache_instance_id: str
+    endpoint_id: str = ""
+    stage: Stage = Stage.PREFILL
+    cache_instance_id: str = ""
     is_dynamic_pd: bool = False
 
 

@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import List, Dict, Type
 
 from llm_balancer.balancer import BalancerConfig, Stage
 from llm_balancer.connectors.vllm.endpoint import VllmEndpointConfig
+from .pipeline import PD_Pipeline, P_D_Pipeline
 
 
 @dataclass
@@ -79,7 +80,8 @@ def parse_endpoint_configs(json_list) -> List[VllmEndpointConfig]:
         config.endpoint_id = str(obj.get("endpoint_id"))  # i.e. VLLM_INSTANCE_ID
         config.cache_instance_id = str(obj.get("cache_instance_id", config.endpoint_id))
         config.base_url = str(obj.get("base_url"))
-        config.kv_event_endpoint = str(obj.get("kv_event_endpoint"))
+        config.api_key = str(obj.get("api_key", config.api_key))
+        config.kv_event_endpoint = str(obj.get("kv_event_endpoint", config.kv_event_endpoint))
         stage_str = obj.get("stage")
         if stage_str == "PREFILL/DECODE":
             config.is_dynamic_pd = True
@@ -94,3 +96,24 @@ def parse_endpoint_configs(json_list) -> List[VllmEndpointConfig]:
             str(obj.get("cache_instance_id", config.cache_instance_id))
         config_list.append(config)
     return config_list
+
+
+def detect_pipline(endpoints: List[VllmEndpointConfig]) -> Type:
+    if not endpoints:
+        raise ValueError("No Endpoint")
+    stage_counts = {}
+    for endpoint in endpoints:
+        stage_counts[endpoint.stage] = stage_counts.get(endpoint.stage, 0) + 1
+
+    if stage_counts.get(Stage.PREFILL_THEN_DECODE):
+        if stage_counts[Stage.PREFILL_THEN_DECODE] != len(stage_counts):
+            raise ValueError("Not all Endpoints' are PREFILL_THEN_DECODE")
+        return PD_Pipeline
+
+    if not stage_counts.get(Stage.PREFILL):
+        raise ValueError("No PREFILLE Endpoint")
+
+    if not stage_counts.get(Stage.DECODE):
+        raise ValueError("No DECODE Endpoint")
+
+    return P_D_Pipeline
