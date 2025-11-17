@@ -1,0 +1,14 @@
+[
+  {
+    "endpoint_id": "instance0",
+    "base_url": "http://localhost:8100",
+    "kv_event_endpoint": "ipc://abc",
+    "stage": "PREFILL_THEN_DECODE"
+  },
+  {
+    "endpoint_id": "instance1",
+    "base_url": "http://localhost:8101",
+    "kv_event_endpoint": "ipc://abc",
+    "stage": "PREFILL_THEN_DECODE"
+  }
+]

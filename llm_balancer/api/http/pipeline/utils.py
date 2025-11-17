@@ -1,15 +1,23 @@
 import json
 import uuid
 
-from llm_balancer.balancer import PrefillTask, DecodeTask, Stage
+from llm_balancer.balancer import PrefillTask, DecodeTask, PrefillThenDecodeTask, Stage
 
 
 def to_prefill_task(tokenizer, request, request_json):
     request_id = request.headhers.get("X-Request-Id") or str(uuid.uuid4())
     prompt_tokens = tokenizer.apply_chat_template(request_json["messages"])
-    prefill_task = PrefillTask(request_id=request_id,
-                               prompt_tokens=prompt_tokens)
-    return prefill_task
+    task = PrefillTask(request_id=request_id, prompt_tokens=prompt_tokens)
+    return task
+
+
+def to_prefill_then_decode_task(tokenizer, request, request_json):
+    request_id = request.headhers.get("X-Request-Id") or str(uuid.uuid4())
+    prompt_tokens = tokenizer.apply_chat_template(request_json["messages"])
+    task = PrefillThenDecodeTask(request_id=request_id,
+                                 prompt_tokens=prompt_tokens,
+                                 predicted_decode_len=-1)
+    return task
 
 
 def to_decode_task(prefill_route, predicted_decode_len):
