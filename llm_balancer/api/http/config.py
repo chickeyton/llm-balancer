@@ -66,7 +66,7 @@ def parse_app_config(json_dict) -> AppConfig:
     lmcache_obj = json_dict.get("lmcache")
     if lmcache_obj:
         config.lmcache = LMCacheConfig()
-        config.lmcache.ctl_mgr_port = int(lmcache_obj.get("ctl_mgr_port"))
+        config.lmcache.ctrl_mgr_port = int(lmcache_obj.get("ctrl_mgr_port"))
         config.lmcache.is_p2p_enabled = bool(lmcache_obj.get("is_p2p_enabled"))
 
     return config
