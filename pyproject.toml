@@ -24,7 +24,7 @@ lmcache = [
 ]
 
 [tool.setuptools.packages.find]
-include = [llm_balancer*, "llm_balancer_vllm_plugin*"]
+include = ["llm_balancer*", "llm_balancer_vllm_plugin*"]
 
 [build-system]
 requires = ["setuptools>=61.0.0", "wheel"]
