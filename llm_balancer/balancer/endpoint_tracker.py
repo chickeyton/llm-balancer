@@ -3,7 +3,7 @@
 from threading import Lock
 from typing import List, Optional, Tuple, Set
 
-from llm_balancer.balancer import Stage
+from llm_balancer.balancer.common import Stage
 from llm_balancer.balancer.endpoint import Endpoint
 
 
