@@ -1,7 +1,7 @@
-from .plugin import KVEventBatch, monkey_batch
+from .plugin import KVEventBatch, monkey_patch
 
 
 __all__ = [
     "KVEventBatch",
-    "monkey_batch"
+    "monkey_patch"
 ]
