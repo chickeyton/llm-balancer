@@ -14,7 +14,6 @@ from llm_balancer.balancer.task import Task
 from llm_balancer.balancer.task_route import TaskRoute
 
 
-@dataclass
 class BalancerConfig:
 
     @dataclass
@@ -28,8 +27,9 @@ class BalancerConfig:
         update_on_requests: int = 100
         min_update_time: float = 10
 
-    service_level_obj: ServiceLevelObj = None
-    dynamic_pd: DynamicPd = DynamicPd()
+    def __init__(self):
+        self.service_level_obj: BalancerConfig.ServiceLevelObj = None
+        self.dynamic_pd: DynamicPd = BalancerConfig.DynamicPd()
 
 
 class Balancer(EndpointTrackerListener, EndpointListener):
