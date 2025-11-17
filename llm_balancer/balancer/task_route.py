@@ -4,7 +4,6 @@
 from dataclasses import dataclass
 
 from llm_balancer.balancer.common import Stage
-from llm_balancer.balancer.task_handle import TaskHandle
 
 
 @dataclass
@@ -17,7 +16,7 @@ class TaskRoute:
     def stage(self) -> Stage:
         raise NotImplementedError
 
-    def on_submit(self) -> TaskHandle:
+    def on_submit(self) -> "TaskHandle":
         return self.endpoint.on_task_submit(self)
 
 
