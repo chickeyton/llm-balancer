@@ -9,7 +9,8 @@ dependencies = [
     "transformers",
     "fastapi",
     "numpy",
-    "uvicorn"
+    "uvicorn",
+    "openai"
 ]
 
 [project.optional-dependencies]
