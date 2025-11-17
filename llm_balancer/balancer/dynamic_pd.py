@@ -4,7 +4,9 @@ from enum import Enum
 from typing import List, Tuple
 import numpy as np
 
-from llm_balancer.balancer import Endpoint, TaskHandle, PrefillHandle, DecodeHandle, Stage
+from llm_balancer.balancer.common import Stage
+from llm_balancer.balancer.endpoint import Endpoint
+from llm_balancer.balancer.task_handle import TaskHandle, PrefillHandle, DecodeHandle
 
 
 class DynamicPd:

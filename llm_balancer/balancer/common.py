@@ -9,7 +9,3 @@ class Stage(Enum):
     PREFILL = "PREFILL"
     DECODE = "DECODE"
     PREFILL_THEN_DECODE = "PREFILL_THEN_DECODE"
-
-
-class Role(Stage):
-    PREFILL_OR_DECODE = "PREFILL_OR_DECODE"

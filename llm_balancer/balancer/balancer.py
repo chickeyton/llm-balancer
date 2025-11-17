@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import List, Dict, Optional
 
-from llm_balancer.balancer import TaskHandle
+from llm_balancer.balancer.task_handle import TaskHandle
 from llm_balancer.balancer.common import Stage
 from llm_balancer.balancer.connector.kv_connector import KvConnector
 from llm_balancer.balancer.dynamic_pd import DynamicPd

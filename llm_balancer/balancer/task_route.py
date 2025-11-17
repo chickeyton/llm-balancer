@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 
 from llm_balancer.balancer.common import Stage
-from llm_balancer.balancer.task_handle import TaskHandle, PrefillHandle, DecodeHandle, PrefillThenDecodeHandle
+from llm_balancer.balancer.task_handle import TaskHandle
 
 
 @dataclass
