@@ -3,7 +3,7 @@ from threading import Thread, Lock
 from typing import Dict, Set, List, Optional
 import zmq
 from msgspec.msgpack import Decoder
-from vllm.v1.codre.kv_cache_utils import BlockHash
+from vllm.v1.core.kv_cache_utils import BlockHash
 from vllm.distributed.kv_events import BlockStored, BlockRemoved, AllBlocksCleared
 
 from llm_balancer.balancer import EndpointTracker, EndpointTrackerListener, Endpoint
