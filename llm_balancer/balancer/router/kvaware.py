@@ -17,7 +17,7 @@ class KvawareRouter(Router):
 
     @property
     def for_stages(self) -> Tuple[Stage, ...]:
-        raise (Stage.PREFILL, Stage.PREFILL_THEN_DECODE)
+        return (Stage.PREFILL, Stage.PREFILL_THEN_DECODE)
 
     def route(self, task: Task, endpoints: List[Endpoint]) -> TaskRoute:
         if self._balancer.kv_connector is None:

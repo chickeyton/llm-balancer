@@ -14,7 +14,7 @@ class EncodeRouter(Router):
 
     @property
     def for_stages(self) -> Tuple[Stage, ...]:
-        raise (Stage.ENCODE,)
+        return (Stage.ENCODE,)
 
     def route(self, task: Task, endpoints: List[Endpoint]) -> TaskRoute:
         workload = task.estimate_workload()

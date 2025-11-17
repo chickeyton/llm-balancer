@@ -18,7 +18,7 @@ class RoundRobinRouter(Router):
 
     @property
     def for_stages(self) -> Tuple[Stage, ...]:
-        raise (Stage.ENCODE, Stage.PREFILL, Stage.DECODE, Stage.PREFILL_THEN_DECODE)
+        return (Stage.ENCODE, Stage.PREFILL, Stage.DECODE, Stage.PREFILL_THEN_DECODE)
 
     def route(self, task: Task, endpoints: List[Endpoint]) -> TaskRoute:
         self._endpoint_index = (self._endpoint_index + 1) % len(endpoints)
