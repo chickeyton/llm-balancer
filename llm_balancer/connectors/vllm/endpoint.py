@@ -4,11 +4,11 @@ from llm_balancer.balancer import EndpointConfig, Endpoint
 from openai import AsyncOpenAI
 
 
-@dataclass
-class VllmEndpointConfig(EndpointConfig):
-    base_url: str = ""
-    api_key: str = ""
-    kv_event_endpoint: str = ""
+class VllmEndpointConfig:
+    def __init__(self):
+        self.base_url: str = ""
+        self.api_key: str = ""
+        self.kv_event_endpoint: str = ""
 
 
 class VllmEndpoint(Endpoint):
