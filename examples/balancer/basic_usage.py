@@ -31,7 +31,7 @@ class RedisEndpointTracker(EndpointTracker):
         self._endpoints:list[ZmqEndpoint] = []
         self._thread = None
 
-    def get_up_endpoints(self, stages: Optional[Tuple[Stage, ...], List[Stage]] = None) -> List[Endpoint]:
+    def get_up_endpoints(self, stages = None) -> List[Endpoint]:
         with self._lock:
             if stages:
                 return [ep for ep in self._endpoints if ep.stage in stages]

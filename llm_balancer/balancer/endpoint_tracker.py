@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: Copyright contributors to the llm-service project
 from threading import Lock
-from typing import List, Optional, Tuple, Set
+from typing import List, Optional, Tuple, Set, Union
 
 from llm_balancer.balancer.common import Stage
 from llm_balancer.balancer.endpoint import Endpoint
@@ -19,7 +19,7 @@ class EndpointTracker:
     def get_lock(self) -> Optional[Lock]:
         raise NotImplementedError
 
-    def get_up_endpoints(self, stages: Optional[Tuple[Stage, ...], List[Stage]] = None) -> List[Endpoint]:
+    def get_up_endpoints(self, stages: Optional[Union[Tuple[Stage, ...], List[Stage]]] = None) -> List[Endpoint]:
         raise NotImplementedError
 
     def add_listener(self, listener: EndpointTrackerListener):
@@ -58,7 +58,7 @@ class StaticEndpointTracker(EndpointTracker):
     def get_lock(self) -> Optional[Lock]:
         return None
 
-    def get_up_endpoints(self, stages: Optional[Tuple[Stage, ...], List[Stage]] = None) -> List[Endpoint]:
+    def get_up_endpoints(self, stages: Optional[Union[Tuple[Stage, ...], List[Stage]]] = None) -> List[Endpoint]:
         if stages:
             return [ep for ep in self._endpoints if ep.stage in stages]
         return self._endpoints.copy()
