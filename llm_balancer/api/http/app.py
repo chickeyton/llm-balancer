@@ -21,7 +21,7 @@ app.include_router(api_router)
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-h", "--host", default="0.0.0.0")
+    parser.add_argument("-m", "--host", default="0.0.0.0")
     parser.add_argument("-p", "--port")
     parser.add_argument("-c", "--config", default="config.json")
     parser.add_argument("-e", "--endpoints", default="endpoints.json")
