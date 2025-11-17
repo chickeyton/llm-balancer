@@ -40,8 +40,8 @@ def parse_app_config(json_dict) -> AppConfig:
             float(obj.get("ttft", config.balancer.service_level_obj.ttft))
         config.balancer.service_level_obj.tpot = \
             float(obj.get("tpot", config.balancer.service_level_obj.tpot))
-        config.balancer.service_level_obj.quantile_level = \
-            float(obj.get("quantile_level", config.balancer.service_level_obj.quantile_level))
+        config.balancer.service_level_obj.quantile_p = \
+            float(obj.get("quantile_p", config.balancer.service_level_obj.quantile_p))
 
     obj = json_dict.get("dynamic_pd")
     if obj:
