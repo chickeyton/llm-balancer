@@ -18,7 +18,7 @@ class BalancerConfig:
 
     @dataclass
     class ServiceLevelObj:
-        cut_point: float = 0.99
+        quantile_level: float = 0.99
         ttft: float = 1
         tpot: float = 0.25
 

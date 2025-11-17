@@ -4,7 +4,7 @@
   "service_level_obj": {
     "ttft": 2.0,
     "tpot": 0.1,
-    "cut_point": 0.99
+    "quantile_level": 0.99
   },
   "dynamic_pd": {
     "update_on_requests": 100,

@@ -121,8 +121,8 @@ class DynamicPd:
     def _gather_state(self):
         switchable_prefills, switchable_decodes, num_prefill_only, num_decode_only = \
             self._gather_endpoints()
-        ttft_quantile = np.quantile(self._ttft_history, self._balancer.config.service_level_obj.cut_point)
-        tpot_quantile = np.quantile(self._tpot_history, self._balancer.config.service_level_obj.cut_point)
+        ttft_quantile = np.quantile(self._ttft_history, self._balancer.config.service_level_obj.quantile_level)
+        tpot_quantile = np.quantile(self._tpot_history, self._balancer.config.service_level_obj.quantile_level)
         ttft_slot = self._quantize_slo(ttft_quantile, self._balancer.config.service_level_obj.ttft)
         tpot_slot = self._quantize_slo(tpot_quantile, self._balancer.config.service_level_obj.tpot)
         return self._State(
