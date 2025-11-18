@@ -106,7 +106,7 @@ def detect_pipeline(endpoints: List[VllmEndpointConfig]) -> Type:
         stage_counts[endpoint.stage] = stage_counts.get(endpoint.stage, 0) + 1
 
     if stage_counts.get(Stage.PREFILL_THEN_DECODE):
-        if stage_counts[Stage.PREFILL_THEN_DECODE] != len(stage_counts):
+        if stage_counts[Stage.PREFILL_THEN_DECODE] != len(endpoints):
             raise ValueError("Not all Endpoints' are PREFILL_THEN_DECODE")
         return PD_Pipeline
 
