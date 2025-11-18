@@ -17,5 +17,5 @@ class PD_Pipeline(Pipeline):
         handle = self._balancer.route(task).on_submit()
         print(f"handle_chat_completions 4")
         async for resp in async_send_task(request_json, handle):
-            print(f"handle_chat_completions async_send_task yield")
+            print(f"handle_chat_completions async_send_task yield: {resp}")
             yield resp
