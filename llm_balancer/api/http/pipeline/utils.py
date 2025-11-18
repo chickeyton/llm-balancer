@@ -27,7 +27,7 @@ def to_decode_task(prefill_route, predicted_decode_len):
                       predicted_decode_len=predicted_decode_len)
 
 
-async def async_send_task(request_json, task_handle):
+async def async_send_stream_task(request_json, task_handle):
     try:
         response_text = ""
         client = task_handle.route.endpoint.get_openai_client()
@@ -54,7 +54,10 @@ async def async_send_task(request_json, task_handle):
         yield "data: [DONE]\n\n"
 
         if task_handle.stage == Stage.PREFILL:
+            # restore the overwritten settings
             request_json["max_tokens"] = max_tokens_bak
+
+            # append the first token if needed
             if response_text:
                 messages = request_json["message"]
                 if messages[-1]["role"] == "assistant":
