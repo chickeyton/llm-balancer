@@ -33,30 +33,20 @@ async def async_send_task(request_json, task_handle):
         client = task_handle.route.endpoint.get_openai_client()
         request_json["stream"] = True
         if task_handle.stage == Stage.PREFILL:
+            max_tokens_bak = request_json.get("max_tokens")
             request_json["max_tokens"] = 1
         request_json["extra_body"] = {"return_token_ids": True}
 
         stream = client.chat.completions.create(**request_json)
-
-        #    model=request_json["model"],
-        #    messages=request_json["messages"],
-        #    stream=True,
-        #    logprobs=True,
-        #    max_tokens=1 if task_handle.stage == Stage.PREFILL else request_json.get("max_tokens"),
-        #    extra_body={
-        #        "return_token_ids": True
-        #    }
-        #)
         # yield the header and status code first
         yield stream.response.headers, stream.response.status_code
         for chunk in stream:
             choice = chunk.choices[0]
             response_text += choice.delta.content
             if hasattr(choice, "token_ids"):
-                # sometimes choice.token_ids may not exists
+                # sometimes choice.token_ids doesn't not exists
                 chunk_len = len(choice.token_ids)
                 task_handle.on_respond(chunk_len)
-                print(f"========= {chunk_len}")
 
             stream_data = chunk.model_dump_json()
             yield f"data: {stream_data}\n\n"
@@ -64,16 +54,18 @@ async def async_send_task(request_json, task_handle):
         yield "data: [DONE]\n\n"
 
         if task_handle.stage == Stage.PREFILL:
-            messages = request_json["message"]
-            if messages[-1]["role"] == "assistant":
-                messages[-1]["content"] += response_text
-            else:
-                messages.append(
-                    {
-                        "role": "assistant",
-                        "content": response_text
-                    }
-                )
+            request_json["max_tokens"] = max_tokens_bak
+            if response_text:
+                messages = request_json["message"]
+                if messages[-1]["role"] == "assistant":
+                    messages[-1]["content"] += response_text
+                else:
+                    messages.append(
+                        {
+                            "role": "assistant",
+                            "content": response_text
+                        }
+                    )
     except Exception as e:
         task_handle.on_finished(e)
         raise HTTPException(status_code=500, detail=str(e))
