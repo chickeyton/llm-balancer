@@ -61,6 +61,7 @@ async def async_send_task(request_json, task_handle):
                     }
                 )
     except Exception as e:
+        print(f"=========== async_send_task error:{e}")
         task_handle.on_finished(e)
         error_message = {"error": {"message": str(e), "type": "api_error"}}
         yield f"data: {json.dumps(error_message)}\n\n"
