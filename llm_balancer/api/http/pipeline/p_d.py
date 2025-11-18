@@ -1,12 +1,12 @@
+from .pipeline import Pipeline
 from .utils import to_prefill_task, to_decode_task, async_send_task
 from llm_balancer.balancer import Balancer
 
 
-class P_D_Pipeline:
+class P_D_Pipeline(Pipeline):
 
     def __init__(self, tokenizer, balancer: Balancer):
-        self._tokenizer = tokenizer
-        self._balancer = balancer
+        super().__init__(tokenizer, balancer)
 
     async def handle_chat_completions(self, request, _):
         request_json = await request.json()
