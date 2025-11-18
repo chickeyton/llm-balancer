@@ -64,8 +64,8 @@ class PrefillHandle(TaskHandle):
         super().on_respond(chunk_len)
         self._update_ttft()
 
-    def on_finished(self):
-        super().on_finished()
+    def on_finished(self, error: Exception = None):
+        super().on_finished(error)
         self._update_ttft()
 
     def _update_ttft(self):
@@ -95,8 +95,8 @@ class DecodeHandle(TaskHandle):
             return max(workload, 0)
         return -1
 
-    def on_finished(self):
-        super().on_finished()
+    def on_finished(self, error: Exception = None):
+        super().on_finished(error)
         elapsed = self.finish_time - self.submit_time
         if elapsed > 0:
             self.tpot = self.responded_len / elapsed
@@ -131,8 +131,8 @@ class PrefillThenDecodeHandle(TaskHandle):
             self.first_token_time = time.time()
             self.ttft = self.first_token_time - self.submit_time
 
-    def on_finished(self):
-        super().on_finished()
+    def on_finished(self, error: Exception = None):
+        super().on_finished(error)
         elapsed = self.finish_time - self.submit_time
         if elapsed > 0:
             self.tpot = self.responded_len / elapsed
