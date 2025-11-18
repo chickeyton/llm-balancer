@@ -56,8 +56,9 @@ async def async_send_task(request_json, task_handle):
             print(f"===========  {choice}")
             d = choice.to_dict()
             for k, v in d.items():
-                print(f"{k}:{v}")
-                
+                if k == "token_ids":
+                    print(f"{k}:{v}")
+
             if not request_json.get("logprobs"):
                 choice.logprobs = None
             stream_data = chunk.model_dump_json()
