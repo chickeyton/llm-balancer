@@ -37,9 +37,9 @@ async def async_send_task(request_json, task_handle):
             logprobs=True,
             max_tokens=1 if task_handle.stage == Stage.PREFILL else request_json.get("max_tokens")
         )
-        #rint(f"====== before yield stream.headers:{stream.response.headers}, stream.status_code:{stream.response.status_code}")
-        #yield stream.response.headers, stream.response.status_code
-        #print(f"====== after yield stream.headers, stream.status_code")
+        print(f"====== before yield stream.headers:{stream.response.headers}, stream.status_code:{stream.response.status_code}")
+        yield stream.response.headers, stream.response.status_code
+        print(f"====== after yield stream.headers, stream.status_code")
         for chunk in stream:
 
             print(f"======= chunk: {chunk}")
