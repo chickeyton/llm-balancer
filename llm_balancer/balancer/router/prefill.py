@@ -114,6 +114,7 @@ class PrefillRouter(Router):
                                           endpoint=endpoint,
                                           workload=workloads.task_workload,
                                           num_prompt_tokens=len(task.prompt_tokens),
+                                          num_cached_tokens=workloads.num_cached_tokens,
                                           prefill_workload=workloads.prefill_workload,
                                           predicted_decode_len=task.predicted_decode_len,
                                           len_extend_rate=self._len_extend_rate)
