@@ -9,13 +9,8 @@ class PD_Pipeline(Pipeline):
         super().__init__(tokenizer, balancer)
 
     async def handle_chat_completions(self, request, _):
-        print(f"handle_chat_completions 1")
         request_json = await request.json()
-        print(f"handle_chat_completions 2")
         task = to_prefill_then_decode_task(self._tokenizer, request, request_json)
-        print(f"handle_chat_completions 3")
         handle = self._balancer.route(task).on_submit()
-        print(f"handle_chat_completions 4")
         async for resp in async_send_task(request_json, handle):
-            print(f"handle_chat_completions async_send_task yield: {resp}")
             yield resp

@@ -11,7 +11,7 @@
     "min_update_time": 0.1
   },
   "routers": {
-    "PREFILL_THEN_DECODE": "random"
+    "PREFILL_THEN_DECODE": "queue_len"
   },
   "lmcache": {
     "ctrl_mgr_port": 9188,

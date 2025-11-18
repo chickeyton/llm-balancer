@@ -38,15 +38,7 @@ async def async_send_task(request_json, task_handle):
             logprobs=True,
             max_tokens=1 if task_handle.stage == Stage.PREFILL else request_json.get("max_tokens")
         )
-        """
-        stream = client.chat.completions.create(
-            model=request_json["model"],
-            messages=request_json["messages"],
-            stream=True,
-            logprobs=True,
-            max_tokens=request_json.get("max_tokens")
-        )
-        """
+        # yield the header and status code first
         yield stream.response.headers, stream.response.status_code
         for chunk in stream:
             choice = chunk.choices[0]
