@@ -17,7 +17,7 @@ class QueueLenRouter(Router):
 
     @property
     def for_stages(self) -> Tuple[Stage, ...]:
-        return (Stage.ENCODE, Stage.PREFILL, Stage.DECODE, Stage.PREFILL_THEN_DECODE)
+        return Stage.ENCODE, Stage.PREFILL, Stage.DECODE, Stage.PREFILL_THEN_DECODE
 
     def route(self, task: Task, endpoints: List[Endpoint]) -> TaskRoute:
         endpoint_index = self._route_by_queue_len(endpoints)

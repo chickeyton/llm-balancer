@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: Copyright contributors to the llm-service project
 
-from random import random
+import random
 from typing import Tuple, List
 
 from llm_balancer.balancer.common import Stage
@@ -18,7 +18,7 @@ class RandomRouter(Router):
 
     @property
     def for_stages(self) -> Tuple[Stage, ...]:
-        return (Stage.ENCODE, Stage.PREFILL, Stage.DECODE, Stage.PREFILL_THEN_DECODE)
+        return Stage.ENCODE, Stage.PREFILL, Stage.DECODE, Stage.PREFILL_THEN_DECODE
 
     def route(self, task: Task, endpoints: List[Endpoint]) -> TaskRoute:
         endpoint_index = random.randint(0, len(endpoints) - 1)

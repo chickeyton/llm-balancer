@@ -16,7 +16,7 @@ class DecodeRouter(Router):
 
     @property
     def for_stages(self) -> Tuple[Stage, ...]:
-        return (Stage.DECODE,)
+        return Stage.DECODE,
 
     def route(self, task: Task, endpoints: List[Endpoint]) -> TaskRoute:
         prefill_len = task.prefill_len
