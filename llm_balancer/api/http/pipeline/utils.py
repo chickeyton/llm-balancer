@@ -36,7 +36,7 @@ async def async_send_task(request_json, task_handle):
             request_json["max_tokens"] = 1
         request_json["extra_body"] = {"return_token_ids": True}
 
-        stream = client.chat.completions.create(request_json)
+        stream = client.chat.completions.create(**request_json)
 
         #    model=request_json["model"],
         #    messages=request_json["messages"],
