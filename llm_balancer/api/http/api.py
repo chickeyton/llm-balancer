@@ -8,7 +8,6 @@ api_router = APIRouter()
 
 @api_router.post("/v1/chat/completions")
 async def chat_completions(request: Request, background_tasks: BackgroundTasks):
-    print(f"========> chat_completions thread:{threading.get_native_id()}")
     stream = request.app.state.pipeline.handle_chat_completions(request, background_tasks)
     headers, status = await anext(stream)
     headers_dict = dict(headers.items())
