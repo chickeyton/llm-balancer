@@ -24,7 +24,7 @@ class TaskRoute:
 class EncodeRoute(TaskRoute):
     @property
     def stage(self) -> Stage:
-        raise Stage.ENCODE
+        return Stage.ENCODE
 
 
 @dataclass
@@ -34,7 +34,7 @@ class PrefillRoute(TaskRoute):
 
     @property
     def stage(self) -> Stage:
-        raise Stage.PREFILL
+        return Stage.PREFILL
 
 
 @dataclass
@@ -44,7 +44,7 @@ class DecodeRoute(TaskRoute):
 
     @property
     def stage(self) -> Stage:
-        raise Stage.DECODE
+        return Stage.DECODE
 
 
 @dataclass
@@ -57,4 +57,4 @@ class PrefillThenDecodeRoute(TaskRoute):
 
     @property
     def stage(self) -> Stage:
-        raise Stage.PREFILL_THEN_DECODE
+        return Stage.PREFILL_THEN_DECODE
