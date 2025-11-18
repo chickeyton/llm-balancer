@@ -11,7 +11,7 @@
     "min_update_time": 0.1
   },
   "routers": {
-    "PREFILL_THEN_DECODE": "round_robin"
+    "PREFILL_THEN_DECODE": "prefill"
   },
   "lmcache": {
     "ctrl_mgr_port": 9188,
