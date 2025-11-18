@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from llm_balancer.balancer import EndpointConfig, Endpoint
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, OpenAI
 
 
 class VllmEndpointConfig(EndpointConfig):
@@ -19,7 +19,7 @@ class VllmEndpoint(Endpoint):
 
     def get_openai_client(self):
         if self._openai_client is None:
-            self._openai_client = AsyncOpenAI(
+            self._openai_client = OpenAI(
                 api_key=self.config.api_key,
                 base_url=self.config.base_url
             )
