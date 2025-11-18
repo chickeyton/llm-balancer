@@ -31,43 +31,33 @@ async def async_send_task(request_json, task_handle):
     try:
         response_text = ""
         client = task_handle.route.endpoint.get_openai_client()
-        stream = client.chat.completions.create(
-            model=request_json["model"],
-            messages=request_json["messages"],
-            stream=True,
-            logprobs=True,
-            max_tokens=1 if task_handle.stage == Stage.PREFILL else request_json.get("max_tokens"),
-            extra_body={
-                "return_token_ids": True
-            }
-        )
+        request_json["stream"] = True
+        if task_handle.stage == Stage.PREFILL:
+            request_json["max_tokens"] = 1
+        request_json["extra_body"] = {"return_token_ids": True}
+
+        stream = client.chat.completions.create(request_json)
+
+        #    model=request_json["model"],
+        #    messages=request_json["messages"],
+        #    stream=True,
+        #    logprobs=True,
+        #    max_tokens=1 if task_handle.stage == Stage.PREFILL else request_json.get("max_tokens"),
+        #    extra_body={
+        #        "return_token_ids": True
+        #    }
+        #)
         # yield the header and status code first
         yield stream.response.headers, stream.response.status_code
         for chunk in stream:
             choice = chunk.choices[0]
             response_text += choice.delta.content
             if hasattr(choice, "token_ids"):
+                # sometimes choice.token_ids may not exists
                 chunk_len = len(choice.token_ids)
-                print(f"=============== {chunk_len}")
                 task_handle.on_respond(chunk_len)
-            else:
-                print(f"=============== no token_ids")
+                print(f"========= {chunk_len}")
 
-            #if choice.logprobs and choice.logprobs.content:
-            #    chunk_len = len(choice.logprobs.content)
-            #else:
-            #    chunk_len = 0
-            #if choice.token_ids:
-            #    print(f"=============== {len(choice.token_ids)}")
-            #    task_handle.on_respond(len(choice.token_ids))
-            #print(f"===========  {choice}")
-            #d = choice.to_dict()
-            #for k, v in d.items():
-            #    if k == "token_ids":
-            #        print(f"{k}:{v}")
-
-            if not request_json.get("logprobs"):
-                choice.logprobs = None
             stream_data = chunk.model_dump_json()
             yield f"data: {stream_data}\n\n"
         task_handle.on_finished()
