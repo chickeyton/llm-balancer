@@ -139,16 +139,16 @@ class PrefillThenDecodeHandle(TaskHandle):
 
 
 class TaskHandleFactory:
-    _constructors = {
-        Stage.ENCODE: EncodeHandle.__init__,
-        Stage.PREFILL: PrefillHandle.__init__,
-        Stage.DECODE: DecodeHandle.__init__,
-        Stage.PREFILL_THEN_DECODE: PrefillThenDecodeHandle.__init__,
+    _handle_classes = {
+        Stage.ENCODE: EncodeHandle,
+        Stage.PREFILL: PrefillHandle,
+        Stage.DECODE: DecodeHandle,
+        Stage.PREFILL_THEN_DECODE: PrefillThenDecodeHandle,
     }
 
     @classmethod
     def create(cls, route: "Route", submit_time: float) -> TaskHandle:
-        constructor = cls._constructors.get(route.stage)
-        if constructor is None:
+        handle_cls = cls._handle_classes.get(route.stage)
+        if handle_cls is None:
             raise ValueError(f"Unsupported stage: {route.stage}")
-        return constructor(route, submit_time)
+        return handle_cls(route, submit_time)
