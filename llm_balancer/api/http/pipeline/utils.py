@@ -46,6 +46,13 @@ async def async_send_task(request_json, task_handle):
         for chunk in stream:
             choice = chunk.choices[0]
             response_text += choice.delta.content
+            if hasattr(choice, "token_ids"):
+                chunk_len = len(choice.token_ids)
+                print(f"=============== {chunk_len}")
+                task_handle.on_respond(chunk_len)
+            else:
+                print(f"=============== no token_ids")
+
             #if choice.logprobs and choice.logprobs.content:
             #    chunk_len = len(choice.logprobs.content)
             #else:
@@ -53,11 +60,11 @@ async def async_send_task(request_json, task_handle):
             #if choice.token_ids:
             #    print(f"=============== {len(choice.token_ids)}")
             #    task_handle.on_respond(len(choice.token_ids))
-            print(f"===========  {choice}")
-            d = choice.to_dict()
-            for k, v in d.items():
-                if k == "token_ids":
-                    print(f"{k}:{v}")
+            #print(f"===========  {choice}")
+            #d = choice.to_dict()
+            #for k, v in d.items():
+            #    if k == "token_ids":
+            #        print(f"{k}:{v}")
 
             if not request_json.get("logprobs"):
                 choice.logprobs = None
