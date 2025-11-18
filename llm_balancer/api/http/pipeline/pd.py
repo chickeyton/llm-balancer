@@ -9,6 +9,8 @@ class PD_Pipeline(Pipeline):
         super().__init__(tokenizer, balancer)
 
     async def handle_chat_completions(self, request, _):
+        async for chunk in request.stream():
+            yield
         request_json = await request.json()
         task = to_prefill_then_decode_task(self._tokenizer, request, request_json)
         handle = self._balancer.route(task).on_submit()
