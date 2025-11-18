@@ -98,7 +98,7 @@ def parse_endpoint_configs(json_list) -> List[VllmEndpointConfig]:
     return config_list
 
 
-def detect_pipline(endpoints: List[VllmEndpointConfig]) -> Type:
+def detect_pipeline(endpoints: List[VllmEndpointConfig]) -> Type:
     if not endpoints:
         raise ValueError("No Endpoint")
     stage_counts = {}
