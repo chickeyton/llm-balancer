@@ -37,7 +37,9 @@ async def async_send_task(request_json, task_handle):
             logprobs=True,
             max_tokens=1 if task_handle.stage == Stage.PREFILL else request_json.get("max_tokens")
         )
+        print(f"====== before yield stream.headers:{stream.headers}, stream.status_code:{stream.status_code}")
         yield stream.headers, stream.status_code
+        print(f"====== after yield stream.headers, stream.status_code")
         for chunk in stream:
             response_text += chunk.choices[0].delta.content
             chunk_len = len(chunk.choices[0].delta.logprobs.contents)
