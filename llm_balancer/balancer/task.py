@@ -41,7 +41,7 @@ class PrefillTask(Task):
 
     @property
     def stage(self) -> Stage:
-        raise Stage.PREFILL
+        return Stage.PREFILL
 
 
 @dataclass
@@ -51,7 +51,7 @@ class DecodeTask(Task):
 
     @property
     def stage(self) -> Stage:
-        raise Stage.DECODE
+        return Stage.DECODE
 
 
 @dataclass
@@ -61,4 +61,4 @@ class PrefillThenDecodeTask(Task):
 
     @property
     def stage(self) -> Stage:
-        raise Stage.PREFILL_THEN_DECODE
+        return Stage.PREFILL_THEN_DECODE
