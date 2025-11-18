@@ -30,7 +30,6 @@ async def async_send_task(request_json, task_handle):
     try:
         response_text = ""
         client = task_handle.route.endpoint.get_openai_client()
-        """
         stream = client.chat.completions.create(
             model=request_json["model"],
             messages=request_json["messages"],
@@ -46,16 +45,16 @@ async def async_send_task(request_json, task_handle):
             logprobs=True,
             max_tokens=request_json.get("max_tokens")
         )
+        """
         yield stream.response.headers, stream.response.status_code
         for chunk in stream:
-
-            print(f"======= chunk: {chunk}")
-            #choice = chunk.choices[0]
-            #response_text += choice.delta.content
-            #if choice.logprobs and choice.logprobs.contents:
-            #    chunk_len = len(choice.logprobs.contents)
-            #else:
-            chunk_len = 0
+            choice = chunk.choices[0]
+            response_text += choice.delta.content
+            if choice.logprobs and choice.logprobs.content:
+                chunk_len = len(choice.logprobs.content)
+            else:
+                chunk_len = 0
+            print(f"======= chunk_len: {chunk_len}")
             if chunk_len > 0:
                 task_handle.on_respond(chunk_len)
             stream_data = chunk.model_dump_json()
