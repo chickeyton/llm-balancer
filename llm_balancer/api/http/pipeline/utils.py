@@ -49,7 +49,8 @@ async def async_send_task(request_json, task_handle):
                 chunk_len = 0
             if chunk_len > 0:
                 task_handle.on_respond(chunk_len)
-            choice.logprobs = None
+            if not request_json.get("logprobs"):
+                choice.logprobs = None
             stream_data = chunk.model_dump_json()
             yield f"data: {stream_data}\n\n"
         task_handle.on_finished()
