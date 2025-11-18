@@ -1,5 +1,6 @@
 import json
 import uuid
+from fastapi import HTTPException, status
 
 from llm_balancer.balancer import PrefillTask, DecodeTask, PrefillThenDecodeTask, Stage
 
@@ -54,7 +55,6 @@ async def async_send_task(request_json, task_handle):
                 chunk_len = len(choice.logprobs.content)
             else:
                 chunk_len = 0
-            print(f"======= chunk_len: {chunk_len}")
             if chunk_len > 0:
                 task_handle.on_respond(chunk_len)
             stream_data = chunk.model_dump_json()
@@ -74,8 +74,5 @@ async def async_send_task(request_json, task_handle):
                     }
                 )
     except Exception as e:
-        print(f"=========== async_send_task error:{e}")
         task_handle.on_finished(e)
-        error_message = {"error": {"message": str(e), "type": "api_error"}}
-        yield f"data: {json.dumps(error_message)}\n\n"
-        yield "data: [DONE]\n\n"
+        raise HTTPException(status_code=500, detail=str(e))
