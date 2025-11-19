@@ -12,6 +12,7 @@ class PD_Pipeline(Pipeline):
         request_json = await request.json()
         task = to_prefill_then_decode_task(self._tokenizer, request, request_json)
         handle = self._balancer.route(task).on_submit()
+        print(f"Send prefill then decode -> {handle.endpoint.id}")
         async for resp in async_send_stream_p_then_d(request_json, handle, yield_headers=True):
             yield resp
         yield STREAM_DONE
