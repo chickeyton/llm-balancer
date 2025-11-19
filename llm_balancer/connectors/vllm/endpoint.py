@@ -19,7 +19,7 @@ class VllmEndpoint(Endpoint):
 
     def get_openai_client(self):
         if self._openai_client is None:
-            self._openai_client = OpenAI(
+            self._openai_client = AsyncOpenAI(
                 api_key=self.config.api_key,
                 base_url=self.config.base_url
             )

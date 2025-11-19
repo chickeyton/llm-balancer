@@ -90,19 +90,16 @@ async def async_send_stream_task(request_json, task_handle, yield_headers=True, 
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def async_send_prefill(request_json, prefill_handle, yield_headers=False):
+async def async_send_prefill(request_json, prefill_handle):
     try:
         client = prefill_handle.route.endpoint.get_openai_client()
         max_tokens_bak = request_json.get("max_tokens")
         request_json["max_tokens"] = 1
 
-        response = client.chat.completions.with_raw_response.create(**request_json)
+        await client.chat.completions.create(**request_json)
 
         request_json["max_tokens"] = max_tokens_bak
 
-        if yield_headers:
-            # print(f"========================= yield header")
-            yield response.headers, response.status_code
         prefill_handle.on_finished()
 
     except Exception as e:
@@ -118,7 +115,7 @@ async def async_send_stream_decode(request_json, decode_handle, yield_headers=Fa
         request_json["stream"] = True
         request_json["extra_body"] = {"return_token_ids": True}
 
-        stream = client.chat.completions.create(**request_json)
+        stream = await client.chat.completions.create(**request_json)
 
         if yield_headers:
             # print(f"========================= yield header")
@@ -148,7 +145,7 @@ async def async_send_stream_p_then_d(request_json, task_handle, yield_headers=Fa
         request_json["stream"] = True
         request_json["extra_body"] = {"return_token_ids": True}
 
-        stream = client.chat.completions.create(**request_json)
+        stream = await client.chat.completions.create(**request_json)
         if yield_headers:
             # print(f"========================= yield header")
             yield stream.response.headers, stream.response.status_code
