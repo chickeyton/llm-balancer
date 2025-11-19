@@ -20,7 +20,6 @@ class PrefillRouter(Router):
         total_workload: float = -1
         task_workload: float = -1
         prefill_workload: float = -1
-        decode_workload: float = -1
         num_cached_tokens: int = 0
 
     def __init__(self, len_extend_rate: float = 0.2):
@@ -94,8 +93,8 @@ class PrefillRouter(Router):
             num_cached_tokens = max(max_hit_len, 0)
         prompt_len = len(task.prompt_tokens)
         prefill_workload = prefill_atten_workload(prompt_len, num_cached_tokens)
-        decode_workload = decode_atten_workload(prompt_len, task.predicted_decode_len, 0)
         if isinstance(task, PrefillThenDecodeTask):
+            decode_workload = decode_atten_workload(prompt_len, task.predicted_decode_len, 0)
             task_workload = prefill_workload + decode_workload
         else:
             task_workload = prefill_workload
@@ -103,7 +102,6 @@ class PrefillRouter(Router):
         return self._Workloads(total_workload=total_workload,
                                task_workload=task_workload,
                                prefill_workload=prefill_workload,
-                               decode_workload=decode_workload,
                                num_cached_tokens=num_cached_tokens)
 
     def _create_route(self, task, endpoint, workloads):

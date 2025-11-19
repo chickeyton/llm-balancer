@@ -25,7 +25,8 @@ class DecodeRouter(Router):
             raise ValueError("Invalid prefill_len")
         if predicted_decode_len <= 0:
             raise ValueError("Invalid predicted_decode_len")
-        workload = decode_atten_workload(prefill_len + predicted_decode_len,
+        workload = decode_atten_workload(prefill_len,
+                                         predicted_decode_len ,
                                          prefill_len)
         try:
             endpoint = self._find_best_endpoint(endpoints)
