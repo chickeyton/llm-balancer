@@ -16,6 +16,7 @@ class P_D_Pipeline(Pipeline):
             yield resp
         if handle.error:
             return
+        return
         decode_task = to_decode_task(handle.route, 100)
         handle = self._balancer.route(decode_task).on_submit()
         async for resp in async_send_stream_task(request_json, handle):
