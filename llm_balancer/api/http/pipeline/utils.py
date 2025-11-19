@@ -93,8 +93,7 @@ async def async_send_prefill(request_json, prefill_handle, yield_headers=False):
         max_tokens_bak = request_json.get("max_tokens")
         request_json["max_tokens"] = 1
 
-        with client.chat.completions.with_raw_response as with_raw_response:
-            response = with_raw_response.create(**request_json)
+        response = client.chat.completions.with_raw_response.create(**request_json)
 
         request_json["max_tokens"] = max_tokens_bak
 
