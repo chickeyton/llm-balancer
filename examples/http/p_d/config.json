@@ -12,7 +12,7 @@
   },
   "routers": {
     "PREFILL": "prefill",
-    "DECODE": "queue_len"
+    "DECODE": "decode"
   },
   "lmcache": {
     "ctrl_mgr_port": 9188,

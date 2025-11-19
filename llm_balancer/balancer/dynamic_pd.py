@@ -37,12 +37,12 @@ class DynamicPd:
 
         @property
         def can_p2d(self):
-            return len(self.switchable_prefills) + self.num_prefill_only >= 1 \
+            return len(self.switchable_prefills) + self.num_prefill_only >= 2 \
                 and len(self.switchable_prefills) >= 1
 
         @property
         def can_d2p(self):
-            return len(self.switchable_decodes) + self.num_decode_only >= 1 \
+            return len(self.switchable_decodes) + self.num_decode_only >= 2 \
                    and len(self.switchable_decodes) >= 1
 
     def __init__(self, balancer: "Balancer"):

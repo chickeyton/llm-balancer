@@ -1,26 +1,14 @@
 [
   {
     "endpoint_id": "instance0",
-    "base_url": "abc",
-    "kv_event_endpoint": "ipc://abc",
+    "base_url": "http://localhost:8100/v1",
+    "kv_event_endpoint": "tcp://localhost:8101",
     "stage": "PREFILL"
   },
   {
     "endpoint_id": "instance1",
-    "base_url": "abc",
-    "kv_event_endpoint": "ipc://abc",
-    "stage": "PREFILL"
-  },
-  {
-    "endpoint_id": "instance2",
-    "base_url": "abc",
-    "kv_event_endpoint": "ipc://abc",
-    "stage": "DECODE"
-  },
-  {
-    "endpoint_id": "instance3",
-    "base_url": "abc",
-    "kv_event_endpoint": "ipc://abc",
+    "base_url": "http://localhost:8200/v1",
+    "kv_event_endpoint": "tcp://localhost:8201",
     "stage": "DECODE"
   }
 ]

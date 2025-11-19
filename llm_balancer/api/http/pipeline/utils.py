@@ -46,7 +46,8 @@ async def async_send_stream_task(request_json, task_handle):
             if hasattr(choice, "token_ids"):
                 # sometimes choice.token_ids doesn't not exists
                 chunk_len = len(choice.token_ids)
-                task_handle.on_respond(chunk_len)
+                if chunk_len > 0:
+                    task_handle.on_respond(chunk_len)
 
             stream_data = chunk.model_dump_json()
             yield f"data: {stream_data}\n\n"
