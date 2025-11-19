@@ -1,5 +1,5 @@
 from .pipeline import Pipeline
-from .utils import to_prefill_then_decode_task, async_send_stream_p_then_d
+from .utils import to_prefill_then_decode_task, async_send_stream_p_then_d, STREAM_DONE
 from llm_balancer.balancer import Balancer
 
 
@@ -12,5 +12,6 @@ class PD_Pipeline(Pipeline):
         request_json = await request.json()
         task = to_prefill_then_decode_task(self._tokenizer, request, request_json)
         handle = self._balancer.route(task).on_submit()
-        async for resp in async_send_stream_p_then_d(request_json, handle, yield_headers=True, yield_done=True):
+        async for resp in async_send_stream_p_then_d(request_json, handle, yield_headers=True):
             yield resp
+        yield STREAM_DONE

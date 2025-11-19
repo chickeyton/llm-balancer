@@ -1,5 +1,5 @@
 from .pipeline import Pipeline
-from .utils import to_prefill_task, to_decode_task, async_send_prefill, async_send_stream_decode
+from .utils import to_prefill_task, to_decode_task, async_send_prefill, async_send_stream_decode, STREAM_DONE
 from llm_balancer.balancer import Balancer
 
 
@@ -15,10 +15,9 @@ class P_D_Pipeline(Pipeline):
         print(f"Send prefill -> {handle.endpoint.id}")
         async for _ in async_send_prefill(request_json, handle):
             pass
-        if handle.error:
-            return
         decode_task = to_decode_task(handle.route, 100)
         handle = self._balancer.route(decode_task).on_submit()
         print(f"Send decode -> {handle.endpoint.id}")
-        async for resp in async_send_stream_decode(request_json, handle, yield_headers=True, yield_done=True):
+        async for resp in async_send_stream_decode(request_json, handle, yield_headers=True):
             yield resp
+        yield STREAM_DONE

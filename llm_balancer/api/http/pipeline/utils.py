@@ -5,6 +5,9 @@ from fastapi import HTTPException, status
 from llm_balancer.balancer import PrefillTask, DecodeTask, PrefillThenDecodeTask, Stage
 
 
+STREAM_DONE = "data: [DONE]\n\n"
+
+
 def to_prefill_task(tokenizer, request, request_json):
     request_id = request.headers.get("X-Request-Id") or str(uuid.uuid4())
     prompt_tokens = tokenizer.apply_chat_template(request_json["messages"])
@@ -50,7 +53,7 @@ async def async_send_stream_task(request_json, task_handle, yield_headers=True, 
                 chunk_len = len(choice.token_ids)
             else:
                 chunk_len = 0
-            print(f"========================= chunk_len: {chunk_len}")
+            # print(f"========================= chunk_len: {chunk_len}")
             if chunk_len > 0:
                 task_handle.on_respond(chunk_len)
 
@@ -59,10 +62,10 @@ async def async_send_stream_task(request_json, task_handle, yield_headers=True, 
         task_handle.on_finished()
 
         if yield_done:
-            print(f"========================= yield done")
+            # print(f"========================= yield done")
             yield "data: [DONE]\n\n"
 
-        print(f"========================= response_text: [{response_text}]")
+        # print(f"========================= response_text: [{response_text}]")
 
         if task_handle.stage == Stage.PREFILL:
             # restore the overwritten settings
@@ -83,7 +86,7 @@ async def async_send_stream_task(request_json, task_handle, yield_headers=True, 
         """
     except Exception as e:
         task_handle.on_error(e)
-        print(f"========================= raise error")
+        # print(f"========================= raise error")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -98,19 +101,19 @@ async def async_send_prefill(request_json, prefill_handle, yield_headers=False):
         request_json["max_tokens"] = max_tokens_bak
 
         if yield_headers:
-            print(f"========================= yield header")
+            # print(f"========================= yield header")
             yield response.headers, response.status_code
         prefill_handle.on_finished()
 
     except Exception as e:
         prefill_handle.on_error(e)
-        print(f"========================= raise error {e}")
+        # print(f"========================= raise error {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def async_send_stream_decode(request_json, decode_handle, yield_headers=False, yield_done=False):
+async def async_send_stream_decode(request_json, decode_handle, yield_headers=False):
     try:
-        response_text = ""
+        # response_text = ""
         client = decode_handle.route.endpoint.get_openai_client()
         request_json["stream"] = True
         request_json["extra_body"] = {"return_token_ids": True}
@@ -118,32 +121,28 @@ async def async_send_stream_decode(request_json, decode_handle, yield_headers=Fa
         stream = client.chat.completions.create(**request_json)
 
         if yield_headers:
-            print(f"========================= yield header")
+            # print(f"========================= yield header")
             yield stream.response.headers, stream.response.status_code
         for chunk in stream:
             choice = chunk.choices[0]
-            response_text += choice.delta.content
+            # response_text += choice.delta.content
             if hasattr(choice, "token_ids"):
                 # sometimes choice.token_ids doesn't not exists
                 chunk_len = len(choice.token_ids)
-                print(f"========================= chunk_len: {chunk_len}")
+                # print(f"========================= chunk_len: {chunk_len}")
                 decode_handle.on_respond(chunk_len)
             stream_data = chunk.model_dump_json()
             yield f"data: {stream_data}\n\n"
         decode_handle.on_finished()
 
-        if yield_done:
-            print(f"========================= yield done")
-            yield "data: [DONE]\n\n"
-
-        print(f"========================= response_text: [{response_text}]")
+        # print(f"========================= response_text: [{response_text}]")
     except Exception as e:
         decode_handle.on_error(e)
-        print(f"========================= raise error")
+        # print(f"========================= raise error")
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def async_send_stream_p_then_d(request_json, task_handle, yield_headers=False, yield_done=False):
+async def async_send_stream_p_then_d(request_json, task_handle, yield_headers=False):
     try:
         client = task_handle.route.endpoint.get_openai_client()
         request_json["stream"] = True
@@ -171,13 +170,9 @@ async def async_send_stream_p_then_d(request_json, task_handle, yield_headers=Fa
             yield f"data: {stream_data}\n\n"
         task_handle.on_finished()
 
-        if yield_done:
-            print(f"========================= yield done")
-            yield "data: [DONE]\n\n"
-
         print(f"========================= response_text: [{response_text}]")
 
     except Exception as e:
         task_handle.on_error(e)
-        print(f"========================= raise error")
+        print(f"========================= raise error {e}")
         raise HTTPException(status_code=500, detail=str(e))
