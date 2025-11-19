@@ -100,6 +100,7 @@ async def async_send_prefill(request_json, prefill_handle, yield_headers=False):
         if yield_headers:
             print(f"========================= yield header")
             print(f"{response.headers}")
+            # del response.headers["content-length"]
             yield response.headers, response.status_code
         prefill_handle.on_finished()
 
@@ -118,6 +119,7 @@ async def async_send_stream_decode(request_json, decode_handle, yield_headers=Fa
 
         stream = client.chat.completions.create(**request_json)
 
+        print(f"{stream.response.headers}")
         if yield_headers:
             print(f"========================= yield header")
             yield stream.response.headers, stream.response.status_code
