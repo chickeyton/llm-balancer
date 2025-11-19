@@ -93,13 +93,14 @@ async def async_send_prefill(request_json, prefill_handle, yield_headers=False):
         max_tokens_bak = request_json.get("max_tokens")
         request_json["max_tokens"] = 1
 
-        response = client.chat.completions.create(**request_json)
+        with client.chat.completions.with_raw_response as with_raw_response:
+            response = with_raw_response.create(**request_json)
 
         request_json["max_tokens"] = max_tokens_bak
 
         if yield_headers:
             print(f"========================= yield header")
-            yield dict(response._headers), 200
+            yield response.headers, response.status_code
         prefill_handle.on_finished()
 
     except Exception as e:
