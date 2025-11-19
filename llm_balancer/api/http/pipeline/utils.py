@@ -120,7 +120,7 @@ async def async_send_stream_decode(request_json, decode_handle, yield_headers=Fa
         if yield_headers:
             # print(f"========================= yield header")
             yield stream.response.headers, stream.response.status_code
-        for chunk in stream:
+        async for chunk in stream:
             choice = chunk.choices[0]
             # response_text += choice.delta.content
             if hasattr(choice, "token_ids"):
@@ -151,7 +151,7 @@ async def async_send_stream_p_then_d(request_json, task_handle, yield_headers=Fa
             yield stream.response.headers, stream.response.status_code
 
         response_text = ""
-        for chunk in stream:
+        async for chunk in stream:
             choice = chunk.choices[0]
             response_text += choice.delta.content
             if hasattr(choice, "token_ids"):
