@@ -99,7 +99,7 @@ async def async_send_prefill(request_json, prefill_handle, yield_headers=False):
 
         if yield_headers:
             print(f"========================= yield header")
-            yield response.headers, response.status_code
+            yield dict(response._headers), 200
         prefill_handle.on_finished()
 
     except Exception as e:
