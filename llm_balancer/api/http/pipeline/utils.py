@@ -6,7 +6,7 @@ from llm_balancer.balancer import PrefillTask, DecodeTask, PrefillThenDecodeTask
 
 
 def to_prefill_task(tokenizer, request, request_json):
-    request_id = request.headhers.get("X-Request-Id") or str(uuid.uuid4())
+    request_id = request.headers.get("X-Request-Id") or str(uuid.uuid4())
     prompt_tokens = tokenizer.apply_chat_template(request_json["messages"])
     task = PrefillTask(request_id=request_id, prompt_tokens=prompt_tokens)
     return task
