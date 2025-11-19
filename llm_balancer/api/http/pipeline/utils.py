@@ -107,7 +107,7 @@ async def async_send_prefill(request_json, prefill_handle, yield_headers=False):
 
     except Exception as e:
         prefill_handle.on_error(e)
-        # print(f"========================= raise error {e}")
+        print(f"========================= raise error {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -138,7 +138,7 @@ async def async_send_stream_decode(request_json, decode_handle, yield_headers=Fa
         # print(f"========================= response_text: [{response_text}]")
     except Exception as e:
         decode_handle.on_error(e)
-        # print(f"========================= raise error")
+        print(f"========================= raise error {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -150,7 +150,7 @@ async def async_send_stream_p_then_d(request_json, task_handle, yield_headers=Fa
 
         stream = client.chat.completions.create(**request_json)
         if yield_headers:
-            print(f"========================= yield header")
+            # print(f"========================= yield header")
             yield stream.response.headers, stream.response.status_code
 
         response_text = ""
@@ -162,7 +162,7 @@ async def async_send_stream_p_then_d(request_json, task_handle, yield_headers=Fa
                 chunk_len = len(choice.token_ids)
             else:
                 chunk_len = 0
-            print(f"========================= chunk_len: {chunk_len}")
+            # print(f"========================= chunk_len: {chunk_len}")
             if chunk_len > 0:
                 task_handle.on_respond(chunk_len)
 
@@ -170,7 +170,7 @@ async def async_send_stream_p_then_d(request_json, task_handle, yield_headers=Fa
             yield f"data: {stream_data}\n\n"
         task_handle.on_finished()
 
-        print(f"========================= response_text: [{response_text}]")
+        # print(f"========================= response_text: [{response_text}]")
 
     except Exception as e:
         task_handle.on_error(e)
