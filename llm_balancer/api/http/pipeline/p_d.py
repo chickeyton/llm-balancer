@@ -13,12 +13,12 @@ class P_D_Pipeline(Pipeline):
         prefill_task = to_prefill_task(self._tokenizer, request, request_json)
         handle = self._balancer.route(prefill_task).on_submit()
         print(f"Send prefill -> {handle.endpoint.id}")
-        async for resp in async_send_prefill(request_json, handle, yield_headers=True):
-            yield resp
+        async for _ in async_send_prefill(request_json, handle):
+            pass
         if handle.error:
             return
         decode_task = to_decode_task(handle.route, 100)
         handle = self._balancer.route(decode_task).on_submit()
         print(f"Send decode -> {handle.endpoint.id}")
-        async for resp in async_send_stream_decode(request_json, handle, yield_done=True):
+        async for resp in async_send_stream_decode(request_json, handle, yield_headers=True, yield_done=True):
             yield resp
