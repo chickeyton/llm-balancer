@@ -84,6 +84,7 @@ class Endpoint:
         return handle
 
     def on_task_finished(self, handle: TaskHandle):
+        print(f"====== {self._unfinished_tasks}")
         self._unfinished_tasks.remove(handle)
         if self._listener:
             self._listener.on_task_finished(handle)
