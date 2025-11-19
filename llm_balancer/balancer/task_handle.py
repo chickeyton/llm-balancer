@@ -13,7 +13,7 @@ class TaskHandle:
     def __init__(self, route: "TaskRoute", submit_time: float):
         self.route: "TaskRoute" = route
         self.submit_time: float = submit_time
-        self.finish_time: float = -1
+        self.end_time: float = -1
         self.responded_len: int = 0
         self.error: Exception = None
 
@@ -30,21 +30,28 @@ class TaskHandle:
         return self.route.endpoint
 
     @property
-    def is_finished(self):
-        return self.finish_time != -1
+    def is_ended(self):
+        return self.end_time != -1
 
     def todo_workload(self) -> float:
-        if self.is_finished:
+        if self.is_ended:
             return 0
         return self.route.worload
 
     def on_respond(self, chunk_len: int):
         self.responded_len += chunk_len
 
-    def on_finished(self, error: Exception = None):
+    def on_finished(self):
+        if self.end_time != -1:
+            raise RuntimeError("Task already finished")
+        self.end_time = time.time()
+        self.endpoint.on_task_ended(self)
+
+    def on_error(self, error: Exception):
         self.error = error
-        self.finish_time = time.time()
-        self.endpoint.on_task_finished(self)
+        if self.end_time == -1:
+            self.end_time = time.time()
+            self.endpoint.on_task_ended(self)
 
 
 class EncodeHandle(TaskHandle):
@@ -64,8 +71,8 @@ class PrefillHandle(TaskHandle):
         super().on_respond(chunk_len)
         self._update_ttft()
 
-    def on_finished(self, error: Exception = None):
-        super().on_finished(error)
+    def on_finished(self):
+        super().on_finished()
         self._update_ttft()
 
     def _update_ttft(self):
@@ -81,7 +88,7 @@ class DecodeHandle(TaskHandle):
         self.tpot: float = -1
 
     def todo_workload(self) -> float:
-        if self.is_finished:
+        if self.is_ended:
             return 0
         if self.route.predicted_decode_len > 0:
             decode_len = \
@@ -95,9 +102,9 @@ class DecodeHandle(TaskHandle):
             return max(workload, 0)
         return -1
 
-    def on_finished(self, error: Exception = None):
-        super().on_finished(error)
-        elapsed = self.finish_time - self.submit_time
+    def on_finished(self):
+        super().on_finished()
+        elapsed = self.end_time - self.submit_time
         if elapsed > 0:
             self.tpot = self.responded_len / elapsed
 
@@ -111,7 +118,7 @@ class PrefillThenDecodeHandle(TaskHandle):
         self.tpot: float = -1
 
     def todo_workload(self) -> float:
-        if self.is_finished:
+        if self.is_ended:
             return 0
         workload = 0
         if self.first_token_time == -1:
@@ -131,9 +138,9 @@ class PrefillThenDecodeHandle(TaskHandle):
             self.first_token_time = time.time()
             self.ttft = self.first_token_time - self.submit_time
 
-    def on_finished(self, error: Exception = None):
-        super().on_finished(error)
-        elapsed = self.finish_time - self.submit_time
+    def on_finished(self):
+        super().on_finished()
+        elapsed = self.end_time - self.submit_time
         if elapsed > 0:
             self.tpot = self.responded_len / elapsed
 

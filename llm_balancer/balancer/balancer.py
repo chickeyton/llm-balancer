@@ -80,5 +80,5 @@ class Balancer(EndpointTrackerListener, EndpointListener):
         for endpoint in new_ups:
             endpoint.set_listener(self)
 
-    def on_task_finished(self, handle: TaskHandle):
-        self._dynamic_pd.on_task_finished(handle)
+    def on_task_ended(self, handle: TaskHandle):
+        self._dynamic_pd.on_task_ended(handle)

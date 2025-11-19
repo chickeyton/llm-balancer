@@ -66,7 +66,7 @@ class DynamicPd:
             self._decision_makers[self._EXCEL_SLOT][self._BAD_SLOT] = self._decide_excel_ttft_bad_tpot
             self._decision_makers[self._BAD_SLOT][self._EXCEL_SLOT] = self._decide_bad_ttft_excel_tpot
 
-    def on_task_finished(self, handle: TaskHandle):
+    def on_task_ended(self, handle: TaskHandle):
         if isinstance(handle, PrefillHandle):
             if handle.ttft > 0:
                 self._ttft_history.append(handle.ttft)

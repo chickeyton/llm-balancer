@@ -54,6 +54,7 @@ async def async_send_stream_task(request_json, task_handle):
         task_handle.on_finished()
         yield "data: [DONE]\n\n"
 
+        """
         if task_handle.stage == Stage.PREFILL:
             # restore the overwritten settings
             request_json["max_tokens"] = max_tokens_bak
@@ -70,6 +71,7 @@ async def async_send_stream_task(request_json, task_handle):
                             "content": response_text
                         }
                     )
+        """
     except Exception as e:
-        task_handle.on_finished(e)
+        task_handle.on_error(e)
         raise HTTPException(status_code=500, detail=str(e))
