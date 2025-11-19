@@ -59,11 +59,10 @@ async def async_send_stream_task(request_json, task_handle, yield_headers=True, 
         if yield_done:
             yield "data: [DONE]\n\n"
 
-        """
         if task_handle.stage == Stage.PREFILL:
             # restore the overwritten settings
             request_json["max_tokens"] = max_tokens_bak
-
+        """
             # append the first token if needed
             if response_text:
                 messages = request_json["message"]
