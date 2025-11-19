@@ -6,17 +6,18 @@ from llm_balancer.balancer import PrefillTask, DecodeTask, PrefillThenDecodeTask
 
 
 STREAM_DONE = "data: [DONE]\n\n"
+X_REQUEST_ID = "X-Request-ID"
 
 
 def to_prefill_task(tokenizer, request, request_json):
-    request_id = request.headers.get("X-Request-Id") or str(uuid.uuid4())
+    request_id = request.headers.get(X_REQUEST_ID) or str(uuid.uuid4())
     prompt_tokens = tokenizer.apply_chat_template(request_json["messages"])
     task = PrefillTask(request_id=request_id, prompt_tokens=prompt_tokens)
     return task
 
 
 def to_prefill_then_decode_task(tokenizer, request, request_json):
-    request_id = request.headers.get("X-Request-Id") or str(uuid.uuid4())
+    request_id = request.headers.get(X_REQUEST_ID) or str(uuid.uuid4())
     prompt_tokens = tokenizer.apply_chat_template(request_json["messages"])
     task = PrefillThenDecodeTask(request_id=request_id,
                                  prompt_tokens=prompt_tokens,
@@ -44,7 +45,7 @@ async def async_send_stream_task(request_json, task_handle, yield_headers=True, 
         # yield the header and status code first
         print(f"========================= yield header")
         if yield_headers:
-            stream.response.headers["X-Request-Id"] = task_handle.request_id
+            stream.response.headers[X_REQUEST_ID] = task_handle.request_id
             yield stream.response.headers, stream.response.status_code
         for chunk in stream:
             choice = chunk.choices[0]
@@ -120,7 +121,7 @@ async def async_send_stream_decode(request_json, decode_handle, yield_headers=Fa
 
         if yield_headers:
             # print(f"========================= yield header")
-            stream.response.headers["X-Request-Id"] = decode_handle.request_id
+            stream.response.headers[X_REQUEST_ID] = decode_handle.request_id
             yield stream.response.headers, stream.response.status_code
         async for chunk in stream:
             choice = chunk.choices[0]
@@ -150,7 +151,7 @@ async def async_send_stream_p_then_d(request_json, task_handle, yield_headers=Fa
         stream = await client.chat.completions.create(**request_json)
         if yield_headers:
             # print(f"========================= yield header")
-            stream.response.headers["X-Request-Id"] = task_handle.request_id
+            stream.response.headers[X_REQUEST_ID] = task_handle.request_id
             yield stream.response.headers, stream.response.status_code
 
         response_text = ""
