@@ -14,7 +14,7 @@ class P_D_Pipeline(Pipeline):
         handle = self._balancer.route(prefill_task).on_submit()
         print(f"Send prefill -> {handle.endpoint.id}")
         await async_send_prefill(request_json, handle)
-        decode_task = to_decode_task(handle.route, 100)
+        decode_task = to_decode_task(handle.route, 100)  # TODO: decode length prediction
         handle = self._balancer.route(decode_task).on_submit()
         print(f"Send decode -> {handle.endpoint.id}")
         async for resp in async_send_stream_decode(request_json, handle, yield_headers=True):

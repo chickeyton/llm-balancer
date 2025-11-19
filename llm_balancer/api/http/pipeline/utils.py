@@ -44,6 +44,7 @@ async def async_send_stream_task(request_json, task_handle, yield_headers=True, 
         # yield the header and status code first
         print(f"========================= yield header")
         if yield_headers:
+            stream.response.headers["X-Request-Id"] = task_handle.request_id
             yield stream.response.headers, stream.response.status_code
         for chunk in stream:
             choice = chunk.choices[0]
@@ -119,6 +120,7 @@ async def async_send_stream_decode(request_json, decode_handle, yield_headers=Fa
 
         if yield_headers:
             # print(f"========================= yield header")
+            stream.response.headers["X-Request-Id"] = decode_handle.request_id
             yield stream.response.headers, stream.response.status_code
         async for chunk in stream:
             choice = chunk.choices[0]
@@ -148,6 +150,7 @@ async def async_send_stream_p_then_d(request_json, task_handle, yield_headers=Fa
         stream = await client.chat.completions.create(**request_json)
         if yield_headers:
             # print(f"========================= yield header")
+            stream.response.headers["X-Request-Id"] = task_handle.request_id
             yield stream.response.headers, stream.response.status_code
 
         response_text = ""
