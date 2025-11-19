@@ -39,6 +39,7 @@ async def async_send_stream_task(request_json, task_handle):
 
         stream = client.chat.completions.create(**request_json)
         # yield the header and status code first
+        print(f"========================= yield header")
         yield stream.response.headers, stream.response.status_code
         for chunk in stream:
             choice = chunk.choices[0]
@@ -50,8 +51,10 @@ async def async_send_stream_task(request_json, task_handle):
                     task_handle.on_respond(chunk_len)
 
             stream_data = chunk.model_dump_json()
+            print(f"========================= yield chunk")
             yield f"data: {stream_data}\n\n"
         task_handle.on_finished()
+        print(f"========================= yield done")
         yield "data: [DONE]\n\n"
 
         """
@@ -74,4 +77,5 @@ async def async_send_stream_task(request_json, task_handle):
         """
     except Exception as e:
         task_handle.on_error(e)
+        print(f"========================= raise error")
         raise HTTPException(status_code=500, detail=str(e))
