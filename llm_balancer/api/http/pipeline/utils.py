@@ -105,7 +105,7 @@ async def async_send_prefill(request_json, prefill_handle, yield_headers=False):
 
     except Exception as e:
         prefill_handle.on_error(e)
-        print(f"========================= raise error")
+        print(f"========================= raise error {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
