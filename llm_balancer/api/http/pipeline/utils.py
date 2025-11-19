@@ -27,7 +27,7 @@ def to_decode_task(prefill_route, predicted_decode_len):
                       predicted_decode_len=predicted_decode_len)
 
 
-async def async_send_stream_task(request_json, task_handle):
+async def async_send_stream_task(request_json, task_handle, ret_headers=True):
     try:
         response_text = ""
         client = task_handle.route.endpoint.get_openai_client()
@@ -40,7 +40,8 @@ async def async_send_stream_task(request_json, task_handle):
         stream = client.chat.completions.create(**request_json)
         # yield the header and status code first
         print(f"========================= yield header")
-        yield stream.response.headers, stream.response.status_code
+        if ret_headers:
+            yield stream.response.headers, stream.response.status_code
         for chunk in stream:
             choice = chunk.choices[0]
             response_text += choice.delta.content

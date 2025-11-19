@@ -20,5 +20,5 @@ class P_D_Pipeline(Pipeline):
         decode_task = to_decode_task(handle.route, 100)
         handle = self._balancer.route(decode_task).on_submit()
         print(f"Send decode -> {handle.endpoint.id}")
-        async for resp in async_send_stream_task(request_json, handle):
+        async for resp in async_send_stream_task(request_json, handle, ret_headers=False):
             yield resp
