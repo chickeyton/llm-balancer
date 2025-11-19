@@ -99,6 +99,7 @@ async def async_send_prefill(request_json, prefill_handle, yield_headers=False):
 
         if yield_headers:
             print(f"========================= yield header")
+            print(f"{response.headers}")
             yield response.headers, response.status_code
         prefill_handle.on_finished()
 
@@ -116,9 +117,9 @@ async def async_send_stream_decode(request_json, decode_handle, yield_headers=Fa
         request_json["extra_body"] = {"return_token_ids": True}
 
         stream = client.chat.completions.create(**request_json)
-        # yield the header and status code first
-        print(f"========================= yield header")
+
         if yield_headers:
+            print(f"========================= yield header")
             yield stream.response.headers, stream.response.status_code
         for chunk in stream:
             choice = chunk.choices[0]
