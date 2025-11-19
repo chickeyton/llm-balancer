@@ -60,7 +60,7 @@ async def async_send_stream_task(request_json, task_handle, yield_headers=True, 
             print(f"========================= yield done")
             yield "data: [DONE]\n\n"
 
-        print(f"========================= response_text: {response_text}")
+        print(f"========================= response_text: [{response_text}]")
 
         if task_handle.stage == Stage.PREFILL:
             # restore the overwritten settings
