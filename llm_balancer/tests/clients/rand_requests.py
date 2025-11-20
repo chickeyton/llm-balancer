@@ -11,9 +11,9 @@ model = "Qwen/Qwen2-7B"
 num_requests = 100
 num_workers = 10
 num_max_active_requests = 5
-max_tokens = 1
-fixed_prefix_len = 260
-subfix_len = 20000
+fixed_prefix_len = 0
+subfix_len = 100
+max_tokens = 100
 
 
 word_pool = ["hi", "hello", "yes", "no", "cat", "dog", "pig", "game", "coffee", "cake", "noodles", "burger", "football", "tennis", "ship", "car", "ship", "boat"]
@@ -24,6 +24,8 @@ lock = Lock()
 
 
 def gen_prompt(num_words):
+    if num_words == 0:
+        return ""
     rand_nums = np.random.randint(0, len(word_pool), num_words)
     return " ".join([word_pool[n] for n in rand_nums])
 
