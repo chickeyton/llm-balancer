@@ -1,7 +1,7 @@
 import time
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 import numpy as np
 
 from llm_balancer.balancer.common import Stage
@@ -89,7 +89,7 @@ class DynamicPd:
             if handle.tpot > 0:
                 self._tpot_history.append(handle.tpot)
 
-    def update(self, advice_only: bool = False):
+    def update(self, advice_only: bool = False) -> Optional[DynamicPdAdvice]:
         if len(self._ttft_history) < self._balancer.config.dynamic_pd.update_on_requests \
                 or len(self._tpot_history) < self._balancer.config.dynamic_pd.update_on_requests:
             return None
@@ -223,7 +223,7 @@ class DynamicPd:
         num_decode_ep = 0
         prefill_queue_len = 0
         decode_queue_len = 0
-        for endpoint in self._balancer.endpoints:
+        for endpoint in self._balancer.get_up_endpoints():
             if endpoint.stage == Stage.PREFILL:
                 num_prefill_ep += 1
                 prefill_queue_len += endpoint.queue_length()
