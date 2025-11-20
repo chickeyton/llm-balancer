@@ -7,7 +7,7 @@
     "p_quantile": 0.99
   },
   "dynamic_pd": {
-    "update_on_requests": 100,
+    "update_on_requests": 10,
     "min_update_time": 0.1
   },
   "routers": {
