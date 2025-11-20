@@ -3,6 +3,7 @@
 
 from .balancer import BalancerConfig, Balancer
 from .common import Stage
+from .dynamic_pd import DynamicPdAdvice, DynamicPd
 from .endpoint import EndpointConfig, EndpointListener, Endpoint
 from .endpoint_tracker import EndpointTrackerListener, EndpointTracker, StaticEndpointTracker
 from .task import Task, EncodeTask, ViTEncodeTask, PrefillTask, DecodeTask, PrefillThenDecodeTask
@@ -34,5 +35,7 @@ __all__ = [
     "EncodeRoute",
     "PrefillRoute",
     "DecodeRoute",
-    "PrefillThenDecodeRoute"
+    "PrefillThenDecodeRoute",
+    "DynamicPdAdvice",
+    "DynamicPd"
 ]
