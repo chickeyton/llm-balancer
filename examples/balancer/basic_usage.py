@@ -126,9 +126,8 @@ def to_decode_task(request, prefill_handle):y
     # TODO
     # return DecodeTask(
     #     request_id=prefill_handle.request_id,
-    #     prefill_len=prefill_handle.route.num_prompt_tokens,
-    #     predicted_decode_len=predicted_decode_len,
-    #     prefill_route=prefill_handle.route
+    #     num_prompt_tokens=prefill_handle.route.num_prompt_tokens,
+    #     predicted_decode_len=predicted_decode_len
     # )
     pass
 

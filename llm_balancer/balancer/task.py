@@ -46,7 +46,6 @@ class PrefillTask(Task):
 
 @dataclass
 class DecodeTask(Task):
-    prefill_len: int
     num_prompt_tokens: int
     predicted_decode_len: int
 
