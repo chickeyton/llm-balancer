@@ -83,10 +83,10 @@ def parse_endpoint_configs(json_list) -> List[VllmEndpointConfig]:
         config.api_key = str(obj.get("api_key", config.api_key))
         config.kv_event_endpoint = str(obj.get("kv_event_endpoint", config.kv_event_endpoint))
         stage_str = obj.get("stage")
-        if stage_str == "PREFILL/DECODE":
+        if stage_str == "PREFILL/":
             config.is_dynamic_pd = True
             config.stage = Stage.PREFILL
-        elif stage_str == "DECODE/PREFILL":
+        elif stage_str == "DECODE/":
             config.is_dynamic_pd = True
             config.stage = Stage.DECODE
         else:

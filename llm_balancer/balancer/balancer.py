@@ -57,8 +57,11 @@ class Balancer(EndpointTrackerListener, EndpointListener):
     def kv_connector(self) -> Optional[KvConnector]:
         return self._kv_connector
 
+    @property
+    def dynamic_pd(self) -> DynamicPd:
+        return self._dynamic_pd
+
     def get_candidates(self, task) -> List[Endpoint]:
-        self._dynamic_pd.update()
         return self._tracker.get_up_endpoints(stages=(task.stage,))
 
     def get_up_endpoints(self) -> List[Endpoint]:

@@ -9,6 +9,15 @@ from llm_balancer.balancer.endpoint import Endpoint
 from llm_balancer.balancer.task_handle import TaskHandle, PrefillHandle, DecodeHandle
 
 
+@dataclass
+class DynamicPdAdvice:
+    new_stage: Stage = None
+    best_switchable: Endpoint = None
+    switchables: List[Endpoint] = None
+    new_num_prefills: int = -1
+    new_num_decodes: int = -1
+
+
 class DynamicPd:
 
     _EXCEL_SLOT: int = 0
@@ -18,12 +27,12 @@ class DynamicPd:
     _MAX_Q_LEN_THD_PRE_EP_REQ: int = 5
 
     class _Action(Enum):
-        NONE = 0
+        NO_ACTION = 0
         P2D = 1
         D2P = 2
         KEEP_P2D_BY_BAD_TPOT = 3
         KEEP_D2P_BY_BAD_TTFT = 4
-
+        
     @dataclass
     class _State:
         switchable_prefills: List[Endpoint] = None
@@ -37,20 +46,26 @@ class DynamicPd:
 
         @property
         def can_p2d(self):
-            return len(self.switchable_prefills) + self.num_prefill_only >= 2 \
-                and len(self.switchable_prefills) >= 1
+            return self.num_prefills >= 2 and len(self.switchable_prefills) >= 1
 
         @property
         def can_d2p(self):
-            return len(self.switchable_decodes) + self.num_decode_only >= 2 \
-                   and len(self.switchable_decodes) >= 1
+            return self.num_decodes >= 2 and len(self.switchable_decodes) >= 1
+
+        @property
+        def num_prefills(self):
+            return len(self.switchable_prefills) + self.num_prefill_only
+
+        @property
+        def num_decodes(self):
+            return len(self.switchable_decodes) + self.num_decode_only
 
     def __init__(self, balancer: "Balancer"):
         self._balancer = balancer
         self._last_update_time = -1
         self._ttft_history = []
         self._tpot_history = []
-        self._last_action = self._Action.NONE
+        self._last_action = self._Action.NO_ACTION
         if self._balancer.config.service_level_obj is None:
             # SLO was not set, always optimize RPS
             self._decision_makers = [[self._decide_queue_len_guided] * self._NUM_SLOTS] * self._NUM_SLOTS
@@ -74,23 +89,51 @@ class DynamicPd:
             if handle.tpot > 0:
                 self._tpot_history.append(handle.tpot)
 
-    def update(self):
+    def update(self, advice_only: bool = False):
         if len(self._ttft_history) < self._balancer.config.dynamic_pd.update_on_requests \
                 or len(self._tpot_history) < self._balancer.config.dynamic_pd.update_on_requests:
-            return
+            return None
         if self._last_update_time > 0:
             elapsed = time.time() - self._last_update_time
             if elapsed < self._balancer.config.dynamic_pd.min_update_time:
-                return
-        self._update()
+                return None
+        advice = self._update(advice_only)
         self._ttft_history.clear()
         self._tpot_history.clear()
         self._last_update_time = time.time()
+        return advice
 
-    def _update(self):
+    def _update(self, advice_only):
         state = self._gather_state()
         action = self._decision_makers[state.ttft_slot][state.tpot_slot](state)
-        self._take_action(state, action)
+        advice = self._get_advice(state, action)
+        if not advice_only and advice.best_switchable is not None:
+            advice.best_switchable.set_stage(advice.new_stage)
+        self._last_action = action
+        return advice
+
+    def _get_advice(self, state, action):
+        advice = DynamicPdAdvice()
+        if action in (self._Action.P2D, self._Action.KEEP_P2D_BY_BAD_TPOT):
+            if not state.can_p2d:
+                raise RuntimeError("Cannot P2D")
+            advice.new_stage = Stage.DECODE
+            advice.switchables = state.switchable_prefills
+            advice.new_num_prefills = state.num_prefills - 1
+            advice.new_num_decodes = state.num_decodes + 1
+        elif action in (self._Action.D2P, self._Action.KEEP_D2P_BY_BAD_TTFT):
+            if not state.can_d2p:
+                raise RuntimeError("Cannot D2P")
+            advice.new_stage = Stage.PREFILL
+            advice.switchables = state.switchable_decodes
+            advice.new_num_prefills = state.num_prefills + 1
+            advice.new_num_decodes = state.num_decodes - 1
+        elif action == self._Action.NO_ACTION:
+            return advice
+        else:
+            raise ValueError(f"Unsupported action: {action}")
+        advice.best_switchable = self._find_best_switchable(advice.switchables)
+        return advice
 
     def _take_action(self, state, action):
         if action in (self._Action.P2D, self._Action.KEEP_P2D_BY_BAD_TPOT):
@@ -173,7 +216,7 @@ class DynamicPd:
             if state.ttft_quantile < ttft_mid \
                     and state.tpot_quantile > tpot_mid:
                 return self._decide_keep_p2d_by_bad_tpot(state)
-        return self._Action.NONE
+        return self._Action.NO_ACTION
 
     def _decide_queue_len_guided(self, state):
         num_prefill_ep = 0
@@ -195,7 +238,7 @@ class DynamicPd:
             queue_len_threshold = num_decode_ep * self._MAX_Q_LEN_THD_PRE_EP_REQ
 
         if max_queue_len <= queue_len_threshold:
-            return self._Action.NONE
+            return self._Action.NO_ACTION
         switch_threshold = max_queue_len / 2
         if prefill_queue_len < switch_threshold:
             if state.can_p2d:
@@ -203,17 +246,17 @@ class DynamicPd:
         elif decode_queue_len < switch_threshold:
             if state.can_d2p:
                 return self._Action.D2P
-        return self._Action.NONE
+        return self._Action.NO_ACTION
 
     def _decide_excel_ttft_bad_tpot(self, state):
         action = self._decide_keep_p2d_by_bad_tpot(state)
-        if action == self._Action.NONE:
+        if action == self._Action.NO_ACTION:
             return self._decide_queue_len_guided(state)
         return action
 
     def _decide_bad_ttft_excel_tpot(self, state):
         action = self._decide_keep_d2p_by_bad_ttft(state)
-        if action == self._Action.NONE:
+        if action == self._Action.NO_ACTION:
             return self._decide_queue_len_guided(state)
         return action
 
@@ -223,7 +266,7 @@ class DynamicPd:
                 # the last one to be switched in the prolonged action
                 return self._Action.D2P
             return self._Action.KEEP_D2P_BY_BAD_TTFT
-        return self._Action.NONE
+        return self._Action.NO_ACTION
 
     def _decide_keep_p2d_by_bad_tpot(self, state):
         if state.can_p2d:
@@ -231,7 +274,7 @@ class DynamicPd:
                 # the last one to be switched in the prolonged action
                 return self._Action.P2D
             return self._Action.KEEP_P2D_BY_BAD_TPOT
-        return self._Action.NONE
+        return self._Action.NO_ACTION
 
     @staticmethod
     def _slo_boundaries(target: float) -> Tuple[float, float, float]:
