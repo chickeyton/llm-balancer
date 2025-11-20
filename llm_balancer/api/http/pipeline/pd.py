@@ -15,7 +15,7 @@ class PD_Pipeline(Pipeline):
         # if need to re-balance P/D ratio by external mechanisms, then set advice_only = True
         # and obtain the suggested endpoint and stage by advice.best_switchable, advice.switchables
         # and advice.new_stage, if advice is None means there is not enough stats or time for
-        # advisory
+        # advisory yet
         handle = self._balancer.route(task).on_submit()
         print(f"Send prefill then decode -> {handle.endpoint.id}")
         async for resp in async_send_stream_p_then_d(request_json, handle, yield_headers=True):
