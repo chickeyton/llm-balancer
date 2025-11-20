@@ -36,7 +36,7 @@ class TaskHandle:
     def todo_workload(self) -> float:
         if self.is_ended:
             return 0
-        return self.route.worload
+        return self.route.workload
 
     def on_respond(self, chunk_len: int):
         self.responded_len += chunk_len
