@@ -5,12 +5,12 @@ import math
 from dataclasses import dataclass
 from typing import Tuple, List, Set
 
-from llm_balancer.balancer.common import Stage
-from llm_balancer.balancer.endpoint import Endpoint
-from llm_balancer.balancer.router.router import Router
-from llm_balancer.balancer.task import Task, PrefillThenDecodeTask, PrefillTask
-from llm_balancer.balancer.task_route import TaskRoute, PrefillThenDecodeRoute, PrefillRoute
-from llm_balancer.balancer.workload import prefill_atten_workload, decode_atten_workload
+from ..common import Stage
+from ..endpoint import Endpoint
+from ..router.router import Router
+from ..task import Task, PrefillThenDecodeTask, PrefillTask
+from ..task_route import TaskRoute, PrefillThenDecodeRoute, PrefillRoute
+from ..workload import prefill_atten_workload, decode_atten_workload
 
 
 class PrefillRouter(Router):

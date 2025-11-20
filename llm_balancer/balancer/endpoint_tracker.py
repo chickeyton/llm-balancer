@@ -3,8 +3,8 @@
 from threading import Lock
 from typing import List, Optional, Tuple, Set, Union
 
-from llm_balancer.balancer.common import Stage
-from llm_balancer.balancer.endpoint import Endpoint
+from .common import Stage
+from .endpoint import Endpoint
 
 
 class EndpointTrackerListener:

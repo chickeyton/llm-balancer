@@ -1,11 +1,11 @@
 from typing import Tuple, List
 
-from llm_balancer.balancer.common import Stage
-from llm_balancer.balancer.task import Task
-from llm_balancer.balancer.task_route import TaskRoute, DecodeRoute
-from llm_balancer.balancer.endpoint import Endpoint
-from llm_balancer.balancer.router import Router
-from llm_balancer.balancer.workload import decode_atten_workload
+from ..common import Stage
+from ..task import Task
+from ..task_route import TaskRoute, DecodeRoute
+from ..endpoint import Endpoint
+from ..router import Router
+from ..workload import decode_atten_workload
 
 
 class DecodeRouter(Router):

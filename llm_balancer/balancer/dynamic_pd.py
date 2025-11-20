@@ -4,9 +4,9 @@ from enum import Enum
 from typing import List, Tuple, Optional
 import numpy as np
 
-from llm_balancer.balancer.common import Stage
-from llm_balancer.balancer.endpoint import Endpoint
-from llm_balancer.balancer.task_handle import TaskHandle, PrefillHandle, DecodeHandle
+from .common import Stage
+from .endpoint import Endpoint
+from .task_handle import TaskHandle, PrefillHandle, DecodeHandle
 
 
 @dataclass

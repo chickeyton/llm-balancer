@@ -5,9 +5,9 @@ import time
 from dataclasses import dataclass
 from typing import List, Optional
 
-from llm_balancer.balancer.common import Stage
-from llm_balancer.balancer.task_handle import TaskHandle, TaskHandleFactory
-from llm_balancer.balancer.task_route import TaskRoute
+from .common import Stage
+from .task_handle import TaskHandle, TaskHandleFactory
+from .task_route import TaskRoute
 
 
 @dataclass

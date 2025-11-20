@@ -3,9 +3,9 @@
 
 import time
 
-from llm_balancer.balancer.common import Stage
-from llm_balancer.balancer.task_route import TaskRoute
-from llm_balancer.balancer.workload import estimate_decode_len, decode_atten_workload
+from .common import Stage
+from .task_route import TaskRoute
+from .workload import estimate_decode_len, decode_atten_workload
 
 
 class TaskHandle:

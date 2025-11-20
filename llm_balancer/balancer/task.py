@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from llm_balancer.balancer.common import Stage
+from .common import Stage
 
 
 @dataclass

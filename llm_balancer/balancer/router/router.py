@@ -3,10 +3,10 @@
 
 from typing import List, Tuple
 
-from llm_balancer.balancer.common import Stage
-from llm_balancer.balancer.endpoint import Endpoint
-from llm_balancer.balancer.task import Task, EncodeTask, PrefillTask, DecodeTask, PrefillThenDecodeTask
-from llm_balancer.balancer.task_route import TaskRoute, EncodeRoute, PrefillRoute, DecodeRoute, PrefillThenDecodeRoute
+from ..common import Stage
+from ..endpoint import Endpoint
+from ..task import Task, EncodeTask, PrefillTask, DecodeTask, PrefillThenDecodeTask
+from ..task_route import TaskRoute, EncodeRoute, PrefillRoute, DecodeRoute, PrefillThenDecodeRoute
 
 
 class Router:

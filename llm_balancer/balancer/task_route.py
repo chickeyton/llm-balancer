@@ -3,7 +3,7 @@
 
 from dataclasses import dataclass
 
-from llm_balancer.balancer.common import Stage
+from .common import Stage
 
 
 @dataclass

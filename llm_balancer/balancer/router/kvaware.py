@@ -3,11 +3,11 @@
 
 from typing import Tuple, List, Set
 
-from llm_balancer.balancer.common import Stage
-from llm_balancer.balancer.endpoint import Endpoint
-from llm_balancer.balancer.router.router import Router
-from llm_balancer.balancer.task import Task
-from llm_balancer.balancer.task_route import TaskRoute
+from ..common import Stage
+from ..endpoint import Endpoint
+from ..router.router import Router
+from ..task import Task
+from ..task_route import TaskRoute
 
 
 class KvawareRouter(Router):
