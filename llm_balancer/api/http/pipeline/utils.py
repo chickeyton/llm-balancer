@@ -27,7 +27,7 @@ def to_prefill_then_decode_task(tokenizer, request, request_json):
 
 def to_decode_task(prefill_route, predicted_decode_len):
     return DecodeTask(request_id=prefill_route.request_id,
-                      prefill_len=prefill_route.num_prompt_tokens + 1,
+                      num_prompt_tokens=prefill_route.num_prompt_tokens,
                       predicted_decode_len=predicted_decode_len)
 
 
