@@ -125,7 +125,7 @@ class PrefillThenDecodeHandle(TaskHandle):
             workload += self.route.prefill_workload
         decode_len = \
             estimate_decode_len(self.route.predicted_decode_len,
-                                self.responed_len, self.route.len_extend_rate)
+                                self.responded_len, self.route.len_extend_rate)
         workload += \
             decode_atten_workload(self.route.prefill_len,
                                   decode_len,
