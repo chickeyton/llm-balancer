@@ -11,7 +11,10 @@ class P_D_Pipeline(Pipeline):
     async def handle_chat_completions(self, request, _):
         request_json = await request.json()
         prefill_task = to_prefill_task(self._tokenizer, request, request_json)
-        self._balancer.dynamic_pd.update()
+        advice = self._balancer.dynamic_pd.update(advice_only=False)
+        # if need to re-balance P/D ratio by external mechanisms, then set advice_only = True
+        # and obtain the suggested endpoint and stage by advice.best_switchable, advice.switchables
+        # and advice.new_stage
         handle = self._balancer.route(prefill_task).on_submit()
         print(f"Send prefill -> {handle.endpoint.id}")
         await async_send_prefill(request_json, handle)
