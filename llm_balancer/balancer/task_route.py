@@ -39,6 +39,7 @@ class PrefillRoute(TaskRoute):
 
 @dataclass
 class DecodeRoute(TaskRoute):
+    num_prompt_tokens: int
     predicted_decode_len: int
     len_extend_rate: float
 

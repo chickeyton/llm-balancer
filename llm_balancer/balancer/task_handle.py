@@ -96,7 +96,7 @@ class DecodeHandle(TaskHandle):
                                     self.responded_len,
                                     self.route.len_extend_rate)
             workload = \
-                decode_atten_workload(self.route.prefill_len,
+                decode_atten_workload(self.route.num_prompt_tokens,
                                       decode_len,
                                       self.responded_len)
             return max(workload, 0)
@@ -127,7 +127,7 @@ class PrefillThenDecodeHandle(TaskHandle):
             estimate_decode_len(self.route.predicted_decode_len,
                                 self.responded_len, self.route.len_extend_rate)
         workload += \
-            decode_atten_workload(self.route.prefill_len,
+            decode_atten_workload(self.route.num_prompt_tokens,
                                   decode_len,
                                   self.responded_len)
         return max(workload, 0)

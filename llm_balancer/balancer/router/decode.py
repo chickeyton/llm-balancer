@@ -19,20 +19,21 @@ class DecodeRouter(Router):
         return Stage.DECODE,
 
     def route(self, task: Task, endpoints: List[Endpoint]) -> TaskRoute:
-        prefill_len = task.prefill_len
+        num_prompt_tokens = task.num_prompt_tokens
         predicted_decode_len = task.predicted_decode_len
-        if prefill_len <= 0:
-            raise ValueError("Invalid prefill_len")
+        if num_prompt_tokens <= 0:
+            raise ValueError("Invalid num_prompt_tokens")
         if predicted_decode_len <= 0:
             raise ValueError("Invalid predicted_decode_len")
-        workload = decode_atten_workload(prefill_len,
+        workload = decode_atten_workload(num_prompt_tokens,
                                          predicted_decode_len ,
-                                         prefill_len)
+                                         num_prompt_tokens)
         try:
             endpoint = self._find_best_endpoint(endpoints)
             return DecodeRoute(request_id=task.request_id,
                                endpoint=endpoint,
                                workload=workload,
+                               num_prompt_tokens=num_prompt_tokens,
                                predicted_decode_len=predicted_decode_len,
                                len_extend_rate=self._len_extend_rate)
         except ValueError:
@@ -41,6 +42,7 @@ class DecodeRouter(Router):
         return DecodeRoute(request_id=task.request_id,
                            endpoint=endpoints[idx],
                            workload=workload,
+                           num_prompt_tokens=num_prompt_tokens,
                            predicted_decode_len=predicted_decode_len,
                            len_extend_rate=self._len_extend_rate)
 
