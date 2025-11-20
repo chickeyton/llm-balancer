@@ -135,19 +135,6 @@ class DynamicPd:
         advice.best_switchable = self._find_best_switchable(advice.switchables)
         return advice
 
-    def _take_action(self, state, action):
-        if action in (self._Action.P2D, self._Action.KEEP_P2D_BY_BAD_TPOT):
-            if not state.can_p2d:
-                raise RuntimeError("Cannot P2D")
-            best = self._find_best_switchable(state.switchable_prefills)
-            best.set_state(Stage.DECODE)
-        elif action in (self._Action.D2P, self._Action.KEEP_D2P_BY_BAD_TTFT):
-            if not state.can_d2p:
-                raise RuntimeError("Cannot D2P")
-            best = self._find_best_switchable(state.switchable_decodes)
-            best.set_state(Stage.PREFILL)
-        self._last_action = action
-
     @staticmethod
     def _find_best_switchable(switchables):
         best = None
