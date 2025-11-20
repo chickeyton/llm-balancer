@@ -34,7 +34,7 @@ def http_request(prompt):
 
     json_obj = {}
     json_obj["model"] = model
-    json_obj["prompt"] = [{"role": "user", "content": prompt}]
+    json_obj["messages"] = [{"role": "user", "content": prompt}]
     json_obj["max_tokens"] = max_tokens
 
     url = base_url + api
