@@ -53,6 +53,7 @@ class DecodeRouter(Router):
         for endpoint in endpoints:
             # new task's workload are the same among endpoints, so don't care
             workload = endpoint.queue_workload()
+            print(f"dddddddddddd {endpoint.id} workload: {workload}")
             if best is None or workload < min_workload:
                 best = endpoint
                 min_workload = workload

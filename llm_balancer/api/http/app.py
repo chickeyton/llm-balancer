@@ -56,15 +56,15 @@ def main():
     with open(args.endpoints, 'r') as file:
         endpoint_configs = parse_endpoint_configs(json.load(file))
 
-    kv_connector = LMCacheKvConnector(app_config.lmcache.ctrl_mgr_port,
-                                      app_config.lmcache.is_p2p_enabled)
+    #kv_connector = LMCacheKvConnector(app_config.lmcache.ctrl_mgr_port,
+    #                                  app_config.lmcache.is_p2p_enabled)
     tracker = StaticEndpointTracker([VllmEndpoint(c) for c in endpoint_configs])
     routers = create_routers(app_config.routers)
     balancer = Balancer(config=app_config.balancer,
                         tracker=tracker,
-                        routers=routers,
-                        kv_connector=kv_connector)
-    kv_connector.start()
+                        routers=routers)
+    #                    kv_connector=kv_connector)
+    #kv_connector.start()
 
     tokenizer = AutoTokenizer.from_pretrained(app_config.tokenizer)
     app.state.pipeline = detect_pipeline(endpoint_configs)(tokenizer, balancer)
