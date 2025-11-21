@@ -107,13 +107,15 @@ class DynamicPd:
         state = self._gather_state()
         action = self._decision_makers[state.ttft_slot][state.tpot_slot](state)
         advice = self._get_advice(state, action)
-        if not advice_only and advice.best_switchable is not None:
+        if not advice_only and advice is not None:
             print(f"{advice.best_switchable.id} {advice.best_switchable.stage} => {advice.new_stage}")
             advice.best_switchable.set_stage(advice.new_stage)
         self._last_action = action
         return advice
 
     def _get_advice(self, state, action):
+        if action == self._Action.NO_ACTION:
+            return None
         advice = DynamicPdAdvice()
         if action in (self._Action.P2D, self._Action.KEEP_P2D_BY_BAD_TPOT):
             if not state.can_p2d:
@@ -129,8 +131,6 @@ class DynamicPd:
             advice.switchables = state.switchable_decodes
             advice.new_num_prefills = state.num_prefills + 1
             advice.new_num_decodes = state.num_decodes - 1
-        elif action == self._Action.NO_ACTION:
-            return advice
         else:
             raise ValueError(f"Unsupported action: {action}")
         advice.best_switchable = self._find_best_switchable(advice.switchables)
