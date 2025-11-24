@@ -42,6 +42,7 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
                 self._subscriptions[endpoint.id] = subscription
 
     def query_hit_len(self,
+                      num_tokens: int,
                       block_size: int,
                       prefix_block_hashes: List[BlockHash],
                       endpoint_ids: Optional[Set[str]] = None) -> Dict[str, int]:
@@ -52,16 +53,18 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
                     subscription = self._subscriptions.get(endpoint_id)
                     if subscription:
                         result[endpoint_id] = \
-                            self._find_num_hit_blocks(subscription.block_hashes,
-                                                      prefix_block_hashes) * block_size
+                            min(num_tokens,
+                                self._find_num_hit_blocks(subscription.block_hashes,
+                                                          prefix_block_hashes) * block_size)
                     else:
                         result[endpoint_id] = 0
         else:
             with self._lock:
                 for subscription in self._subscriptions.values():
                     result[subscription.endpoint_id] = \
-                        self._find_num_hit_blocks(subscription.block_hashes,
-                                                  prefix_block_hashes) * block_size
+                        min(num_tokens,
+                            self._find_num_hit_blocks(subscription.block_hashes,
+                                                      prefix_block_hashes) * block_size)
         return result
 
     def on_endpoints_changed(self, new_ups: List[Endpoint], new_downs: List[Endpoint]):

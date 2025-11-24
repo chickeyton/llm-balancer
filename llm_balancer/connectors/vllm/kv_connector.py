@@ -19,7 +19,7 @@ class VllmKvConnector(KvConnector):
 
     def query_hit_len(self, tokens: List[int], instance_ids: Optional[Set[str]] = None) -> Dict[str, int]:
         block_hashes = self._hash(tokens)
-        return self._cache_tracker.query_hit_len(self._block_size, block_hashes, instance_ids)
+        return self._cache_tracker.query_hit_len(len(tokens), self._block_size, block_hashes, instance_ids)
 
     def start(self):
         self._cache_tracker.start()
