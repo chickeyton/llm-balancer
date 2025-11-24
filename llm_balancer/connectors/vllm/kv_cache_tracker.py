@@ -6,7 +6,7 @@ from msgspec.msgpack import Decoder
 from vllm.v1.core.kv_cache_utils import BlockHash
 from vllm.distributed.kv_events import BlockStored, BlockRemoved, AllBlocksCleared
 
-from llm_balancer.balancer import EndpointTracker, EndpointTrackerListener, Endpoint
+from ...balancer import EndpointTracker, EndpointTrackerListener, Endpoint
 from .endpoint import VllmEndpointConfig
 from llm_balancer_vllm_plugin import KVEventBatch
 

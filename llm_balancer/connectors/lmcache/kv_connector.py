@@ -7,7 +7,7 @@ from typing import Set, List, Dict, Tuple, Optional
 
 from lmcache.v1.cache_controller import controller_manager
 
-from llm_balancer.balancer.connector import KvConnector
+from ...balancer.connector import KvConnector
 
 
 class LMCacheKvConnector(KvConnector):

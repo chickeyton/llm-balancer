@@ -2,8 +2,8 @@ from typing import Optional, Set, List, Dict
 
 from vllm.v1.core.kv_cache_utils import BlockHash
 
-from llm_balancer.balancer.connector import KvConnector
-from llm_balancer.balancer import EndpointTracker
+from ...balancer.connector import KvConnector
+from ...balancer import EndpointTracker
 from .kv_cache_tracker import VllmKvCacheTracker
 
 

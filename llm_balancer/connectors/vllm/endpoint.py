@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from llm_balancer.balancer import EndpointConfig, Endpoint
+from ...balancer import EndpointConfig, Endpoint
 from openai import AsyncOpenAI, OpenAI
 
 

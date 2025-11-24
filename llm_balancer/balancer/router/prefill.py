@@ -77,7 +77,6 @@ class PrefillRouter(Router):
                 continue
             workloads = \
                 self._estimate_workloads(task, endpoint, 0, max_hit_len)
-            print(f"pppppppppppp {endpoint.id} workloads: {workloads}")
             if picked_endpoint is None or workloads.total_workload <= min_total_workload:
                 picked_endpoint = endpoint
                 picked_workloads = workloads

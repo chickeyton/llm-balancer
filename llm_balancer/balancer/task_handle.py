@@ -76,11 +76,9 @@ class PrefillHandle(TaskHandle):
         self._update_ttft()
 
     def _update_ttft(self):
-        print(f"_update_ttft first_token_time:{self.first_token_time}")
         if self.first_token_time == -1:
             self.first_token_time = time.time()
             self.ttft = self.first_token_time - self.submit_time
-            print(f"_update_ttft success ttft:{self.ttft}")
 
 
 class DecodeHandle(TaskHandle):
