@@ -8,6 +8,7 @@ from .kv_cache_tracker import VllmKvCacheTracker
 
 
 class VllmKvConnector(KvConnector):
+
     def __init__(self, tracker: EndpointTracker, block_size: int, is_p2p_enabled: bool):
         self._cache_tracker = VllmKvCacheTracker(tracker)
         self._block_size = block_size

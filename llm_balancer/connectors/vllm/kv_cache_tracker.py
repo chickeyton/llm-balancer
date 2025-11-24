@@ -12,7 +12,7 @@ from llm_balancer_vllm_plugin import KVEventBatch
 
 
 class VllmKvCacheTracker(Thread, EndpointTrackerListener):
-
+    """KV cache tracker by KV-events"""
     class _Subscription:
         def __init__(self, endpoint_id, event_endpoint):
             self.endpoint_id = endpoint_id
