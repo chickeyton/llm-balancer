@@ -68,18 +68,18 @@ class DynamicPd:
         self._last_action = self._Action.NO_ACTION
         if self._balancer.config.service_level_obj is None:
             # SLO was not set, always optimize RPS
-            self._decision_makers = [[self._decide_queue_len_guided] * self._NUM_SLOTS] * self._NUM_SLOTS
+            self._decision_matrix = [[self._decide_queue_len_guided] * self._NUM_SLOTS] * self._NUM_SLOTS
         else:
-            self._decision_makers = [[None] * self._NUM_SLOTS] * self._NUM_SLOTS
-            self._decision_makers[self._EXCEL_SLOT][self._EXCEL_SLOT] = self._decide_excel_or_good_slo
-            self._decision_makers[self._EXCEL_SLOT][self._GOOD_SLOT] = self._decide_excel_or_good_slo
-            self._decision_makers[self._GOOD_SLOT][self._EXCEL_SLOT] = self._decide_excel_or_good_slo
-            self._decision_makers[self._GOOD_SLOT][self._GOOD_SLOT] = self._decide_excel_or_good_slo
-            self._decision_makers[self._GOOD_SLOT][self._BAD_SLOT] = self._decide_queue_len_guided
-            self._decision_makers[self._BAD_SLOT][self._GOOD_SLOT] = self._decide_queue_len_guided
-            self._decision_makers[self._BAD_SLOT][self._BAD_SLOT] = self._decide_queue_len_guided
-            self._decision_makers[self._EXCEL_SLOT][self._BAD_SLOT] = self._decide_excel_ttft_bad_tpot
-            self._decision_makers[self._BAD_SLOT][self._EXCEL_SLOT] = self._decide_bad_ttft_excel_tpot
+            self._decision_matrix = [[None] * self._NUM_SLOTS] * self._NUM_SLOTS
+            self._decision_matrix[self._EXCEL_SLOT][self._EXCEL_SLOT] = self._decide_excel_or_good_slo
+            self._decision_matrix[self._EXCEL_SLOT][self._GOOD_SLOT] = self._decide_excel_or_good_slo
+            self._decision_matrix[self._GOOD_SLOT][self._EXCEL_SLOT] = self._decide_excel_or_good_slo
+            self._decision_matrix[self._GOOD_SLOT][self._GOOD_SLOT] = self._decide_excel_or_good_slo
+            self._decision_matrix[self._GOOD_SLOT][self._BAD_SLOT] = self._decide_queue_len_guided
+            self._decision_matrix[self._BAD_SLOT][self._GOOD_SLOT] = self._decide_queue_len_guided
+            self._decision_matrix[self._BAD_SLOT][self._BAD_SLOT] = self._decide_queue_len_guided
+            self._decision_matrix[self._EXCEL_SLOT][self._BAD_SLOT] = self._decide_excel_ttft_bad_tpot
+            self._decision_matrix[self._BAD_SLOT][self._EXCEL_SLOT] = self._decide_bad_ttft_excel_tpot
 
     def on_task_ended(self, handle: TaskHandle):
         if isinstance(handle, PrefillHandle):
@@ -105,7 +105,7 @@ class DynamicPd:
 
     def _update(self, advice_only):
         state = self._gather_state()
-        action = self._decision_makers[state.ttft_slot][state.tpot_slot](state)
+        action = self._decision_matrix[state.ttft_slot][state.tpot_slot](state)
         advice = self._get_advice(state, action)
         if not advice_only and advice is not None:
             advice.best_switchable.set_stage(advice.new_stage)
