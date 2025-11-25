@@ -109,7 +109,7 @@ class DynamicPd:
 
     def _update(self, advice_only):
         state = self._gather_state()
-        print(f"SLO slots: [{state.ttft_slot}, {state.tpot_slot}]")
+        print(f"SLO slots: [{state.ttft_slot}, {state.tpot_slot}] call {self._decision_matrix[state.ttft_slot][state.tpot_slot]}")
         action = self._decision_matrix[state.ttft_slot][state.tpot_slot](state)
         advice = self._get_advice(state, action)
         if not advice_only and advice is not None:
