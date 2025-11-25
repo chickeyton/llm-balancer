@@ -66,7 +66,7 @@ class PrefillRouter(Router):
             endpoint = endpoint_d[cache_instance_id]
             workloads = \
                 self._estimate_workloads(task, endpoint, hit_len, max_hit_len)
-            if picked_endpoint is None or workloads.total_workload <= min_total_workload:
+            if picked_endpoint is None or workloads.total_workload < min_total_workload:
                 picked_endpoint = endpoint
                 picked_workloads = workloads
                 min_total_workload = workloads.total_workload
@@ -77,7 +77,7 @@ class PrefillRouter(Router):
                 continue
             workloads = \
                 self._estimate_workloads(task, endpoint, 0, max_hit_len)
-            if picked_endpoint is None or workloads.total_workload <= min_total_workload:
+            if picked_endpoint is None or workloads.total_workload < min_total_workload:
                 picked_endpoint = endpoint
                 picked_workloads = workloads
                 min_total_workload = workloads.total_workload
