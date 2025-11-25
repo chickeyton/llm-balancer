@@ -199,6 +199,7 @@ class DynamicPd:
         return self._GOOD_SLOT
 
     def _decide_excel_or_good_slo(self, state):
+        print(f"_decide_excel_or_good_slo 1")
         tpot_mid = self._slo_boundaries(self._balancer.config.service_level_obj.tpot)[1]
         ttft_mid = self._slo_boundaries(self._balancer.config.service_level_obj.ttft)[1]
         if self._last_action == self._Action.KEEP_D2P_BY_BAD_TTFT:
@@ -247,12 +248,14 @@ class DynamicPd:
         return self._Action.NO_ACTION
 
     def _decide_excel_ttft_bad_tpot(self, state):
+        print(f"_decide_excel_ttft_bad_tpot 1")
         action = self._decide_keep_p2d_by_bad_tpot(state)
         if action == self._Action.NO_ACTION:
             return self._decide_queue_len_guided(state)
         return action
 
     def _decide_bad_ttft_excel_tpot(self, state):
+        print(f"_decide_bad_ttft_excel_tpot 1")
         action = self._decide_keep_d2p_by_bad_ttft(state)
         if action == self._Action.NO_ACTION:
             return self._decide_queue_len_guided(state)
