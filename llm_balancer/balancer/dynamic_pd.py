@@ -212,6 +212,7 @@ class DynamicPd:
         return self._Action.NO_ACTION
 
     def _decide_queue_len_guided(self, state):
+        print(f"_decide_queue_len_guided 1")
         num_prefill_ep = 0
         num_decode_ep = 0
         prefill_queue_len = 0
@@ -229,10 +230,14 @@ class DynamicPd:
         else:
             max_queue_len = decode_queue_len
             queue_len_threshold = num_decode_ep * self._MAX_Q_LEN_THD_PRE_EP_REQ
-
+        print(f"_decide_queue_len_guided 2 max_queue_len:{max_queue_len} queue_len_threshold:{queue_len_threshold}")
         if max_queue_len <= queue_len_threshold:
             return self._Action.NO_ACTION
         switch_threshold = max_queue_len / 2
+
+        print(f"_decide_queue_len_guided 3 prefill_queue_len:{prefill_queue_len} switch_threshold:{switch_threshold}")
+
+        print(f"state.can_p2d:{state.can_p2d} state.can_d2p:{state.can_d2p}")
         if prefill_queue_len < switch_threshold:
             if state.can_p2d:
                 return self._Action.P2D
