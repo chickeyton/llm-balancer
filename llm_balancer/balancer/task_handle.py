@@ -80,7 +80,7 @@ class PrefillHandle(TaskHandle):
         self._update_ttft()
 
     def _update_ttft(self):
-        print(f"PrefillHandle._update_ttft ttft = {self.ttft}")
+        print(f"PrefillHandle._update_ttft")
         if self.first_token_time == -1:
             self.first_token_time = time.time()
             self.ttft = self.first_token_time - self.submit_time
@@ -111,9 +111,9 @@ class DecodeHandle(TaskHandle):
     def on_finished(self):
         print(f"DecodeHandle.on_finished")
         super().on_finished()
-        elapsed = self.end_time - self.submit_time
-        if elapsed > 0:
-            self.tpot = self.responded_len / elapsed
+        if self.responded_len > 0:
+            elapsed = self.end_time - self.submit_time
+            self.tpot = elapsed / self.responded_len
             print(f"DecodeHandle.on_finished tpot={self.tpot}")
 
 
@@ -148,9 +148,9 @@ class PrefillThenDecodeHandle(TaskHandle):
 
     def on_finished(self):
         super().on_finished()
-        elapsed = self.end_time - self.submit_time
-        if elapsed > 0:
-            self.tpot = self.responded_len / elapsed
+        if self.responded_len > 0:
+            elapsed = self.end_time - self.submit_time
+            self.tpot = elapsed / self.responded_len
 
 
 class TaskHandleFactory:
