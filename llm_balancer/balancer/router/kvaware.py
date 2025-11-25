@@ -15,13 +15,18 @@ class KvawareRouter(Router):
     def __init__(self):
         super().__init__()
 
+    def on_registered(self, balancer: "Balancer"):
+        super().on_registered(balancer)
+        if balancer.kv_connector is None:
+            raise RuntimeError("kv_connector is None")
+
     @property
     def for_stages(self) -> Tuple[Stage, ...]:
         return Stage.PREFILL, Stage.PREFILL_THEN_DECODE
 
     def route(self, task: Task, endpoints: List[Endpoint]) -> TaskRoute:
         if self._balancer.kv_connector is None:
-            raise RuntimeError("KvConnector is None")
+            raise RuntimeError("kv_connector is None")
         try:
             hit_lens = self._query_cache_hit(task.prompt_tokens,
                                              set([ep.config.cache_instance_id for ep in endpoints]))

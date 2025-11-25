@@ -44,11 +44,12 @@ class Balancer(EndpointTrackerListener, EndpointListener):
         self._tracker.add_listener(self)
         self._kv_connector = kv_connector
         self._routers = routers
+        self._dynamic_pd = DynamicPd(self)
+
         for stage, router in self._routers.items():
             if stage not in router.for_stages:
                 raise ValueError(f"{router.__class__.__name__} is not for stage:{stage}")
             router.on_registered(self)
-        self._dynamic_pd = DynamicPd(self)
 
         for endpoint in self._tracker.get_up_endpoints():
             endpoint.set_listener(self)
