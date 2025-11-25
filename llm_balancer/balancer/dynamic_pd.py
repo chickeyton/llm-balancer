@@ -84,7 +84,7 @@ class DynamicPd:
 
         for i in range(self._NUM_SLOTS):
             for j in range(self._NUM_SLOTS):
-                print(f"_decision_matrix[i][j] = {self._decision_matrix[i][j]}")
+                print(f"_decision_matrix[{i}][{j}] = {self._decision_matrix[i][j]}")
 
     def on_task_ended(self, handle: TaskHandle):
         # TODO: limit the max length of _ttft_history & _tpot_history
