@@ -83,11 +83,11 @@ class DynamicPd:
 
     def on_task_ended(self, handle: TaskHandle):
         if isinstance(handle, PrefillHandle):
-            print(f"on_task_ended: {handle.__class__} ttft:{handle.ttft}")
+            #print(f"on_task_ended: {handle.__class__} ttft:{handle.ttft}")
             if handle.ttft > 0:
                 self._ttft_history.append(handle.ttft)
         elif isinstance(handle, DecodeHandle):
-            print(f"on_task_ended: {handle.__class__} ttft:{handle.tpot}")
+            #print(f"on_task_ended: {handle.__class__} tpot:{handle.tpot}")
             if handle.tpot > 0:
                 self._tpot_history.append(handle.tpot)
 
@@ -107,9 +107,11 @@ class DynamicPd:
 
     def _update(self, advice_only):
         state = self._gather_state()
+        print(f"SLO slots: [{state.ttft_slot}, {state.tpot_slot}]")
         action = self._decision_matrix[state.ttft_slot][state.tpot_slot](state)
         advice = self._get_advice(state, action)
         if not advice_only and advice is not None:
+            print(f"{advice.best_switchable.id} {advice.best_switchable.stage} => {advice.new_stage}")
             advice.best_switchable.set_stage(advice.new_stage)
         self._last_action = action
         return advice

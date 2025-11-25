@@ -42,14 +42,14 @@ class TaskHandle:
         self.responded_len += chunk_len
 
     def on_finished(self):
-        print(f"TaskHandle.on_finished")
+        #print(f"TaskHandle.on_finished")
         if self.end_time != -1:
             raise RuntimeError("Task already finished")
         self.end_time = time.time()
         self.endpoint.on_task_ended(self)
 
     def on_error(self, error: Exception):
-        print(f"TaskHandle.on_error")
+        #print(f"TaskHandle.on_error")
         self.error = error
         if self.end_time == -1:
             self.end_time = time.time()
@@ -70,21 +70,21 @@ class PrefillHandle(TaskHandle):
         self.ttft: float = -1
 
     def on_respond(self, chunk_len: int):
-        print(f"PrefillHandle.on_respond")
+        #print(f"PrefillHandle.on_respond")
         self._update_ttft()
         super().on_respond(chunk_len)
 
     def on_finished(self):
-        print(f"PrefillHandle.on_finished")
+        #print(f"PrefillHandle.on_finished")
         self._update_ttft()
         super().on_finished()
 
     def _update_ttft(self):
-        print(f"PrefillHandle._update_ttft")
+        #print(f"PrefillHandle._update_ttft")
         if self.first_token_time == -1:
             self.first_token_time = time.time()
             self.ttft = self.first_token_time - self.submit_time
-            print(f"PrefillHandle._update_ttft ttft = {self.ttft}")
+            #print(f"PrefillHandle._update_ttft ttft = {self.ttft}")
 
 
 class DecodeHandle(TaskHandle):
@@ -109,14 +109,14 @@ class DecodeHandle(TaskHandle):
         return -1
 
     def on_finished(self):
-        print(f"DecodeHandle.on_finished")
+        #print(f"DecodeHandle.on_finished")
         if self.end_time != -1:
             raise RuntimeError("Task already finished")
         self.end_time = time.time()
         if self.responded_len > 0:
             elapsed = self.end_time - self.submit_time
             self.tpot = elapsed / self.responded_len
-            print(f"DecodeHandle.on_finished tpot={self.tpot}")
+            #print(f"DecodeHandle.on_finished tpot={self.tpot}")
         self.endpoint.on_task_ended(self)
 
 
@@ -156,7 +156,7 @@ class PrefillThenDecodeHandle(TaskHandle):
         if self.responded_len > 0:
             elapsed = self.end_time - self.submit_time
             self.tpot = elapsed / self.responded_len
-            print(f"DecodeHandle.on_finished tpot={self.tpot}")
+            #print(f"DecodeHandle.on_finished tpot={self.tpot}")
         self.endpoint.on_task_ended(self)
 
 
