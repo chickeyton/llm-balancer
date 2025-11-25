@@ -235,7 +235,7 @@ class DynamicPd:
             return self._Action.NO_ACTION
         switch_threshold = max_queue_len / 2
 
-        print(f"_decide_queue_len_guided 3 prefill_queue_len:{prefill_queue_len} switch_threshold:{switch_threshold}")
+        print(f"_decide_queue_len_guided 3 prefill_queue_len:{prefill_queue_len} decode_queue_len:{decode_queue_len} switch_threshold:{switch_threshold}")
 
         print(f"state.can_p2d:{state.can_p2d} state.can_d2p:{state.can_d2p}")
         if prefill_queue_len < switch_threshold:
