@@ -83,9 +83,11 @@ class DynamicPd:
 
     def on_task_ended(self, handle: TaskHandle):
         if isinstance(handle, PrefillHandle):
+            print(f"on_task_ended: {handle.__class__} ttft:{handle.ttft}")
             if handle.ttft > 0:
                 self._ttft_history.append(handle.ttft)
         elif isinstance(handle, DecodeHandle):
+            print(f"on_task_ended: {handle.__class__} ttft:{handle.tpot}")
             if handle.tpot > 0:
                 self._tpot_history.append(handle.tpot)
 
