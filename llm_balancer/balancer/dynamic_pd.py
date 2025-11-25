@@ -82,6 +82,10 @@ class DynamicPd:
             self._decision_matrix[self._EXCEL_SLOT][self._BAD_SLOT] = self._decide_excel_ttft_bad_tpot
             self._decision_matrix[self._BAD_SLOT][self._EXCEL_SLOT] = self._decide_bad_ttft_excel_tpot
 
+        for i in range(self._NUM_SLOTS):
+            for j in range(self._NUM_SLOTS):
+                print(f"_decision_matrix[i][j] = {self._decision_matrix[i][j]}")
+
     def on_task_ended(self, handle: TaskHandle):
         # TODO: limit the max length of _ttft_history & _tpot_history
         if isinstance(handle, PrefillHandle):
