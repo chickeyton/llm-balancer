@@ -24,8 +24,7 @@ class DynamicPd:
     _GOOD_SLOT: int = 1
     _BAD_SLOT: int = 2
     _NUM_SLOTS: int = 3
-    # _MAX_Q_LEN_THD_PRE_EP_REQ: int = 5
-    _MAX_Q_LEN_THD_PRE_EP_REQ: int = 0
+    _MAX_Q_LEN_THD_PRE_EP_REQ: int = 5
 
     class _Action(Enum):
         NO_ACTION = 0
