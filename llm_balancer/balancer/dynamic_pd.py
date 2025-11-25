@@ -69,9 +69,11 @@ class DynamicPd:
         self._last_action = self._Action.NO_ACTION
         if self._balancer.config.service_level_obj is None:
             # SLO was not set, always optimize RPS
-            self._decision_matrix = [[self._decide_queue_len_guided] * self._NUM_SLOTS] * self._NUM_SLOTS
+            self._decision_matrix = \
+                [[self._decide_queue_len_guided for _ in range(self._NUM_SLOTS)] for _ in range(self._NUM_SLOTS)]
         else:
-            self._decision_matrix = [[None] * self._NUM_SLOTS] * self._NUM_SLOTS
+            self._decision_matrix = \
+                [[None for _ in range(self._NUM_SLOTS)] for _ in range(self._NUM_SLOTS)]
             self._decision_matrix[self._EXCEL_SLOT][self._EXCEL_SLOT] = self._decide_excel_or_good_slo
             self._decision_matrix[self._EXCEL_SLOT][self._GOOD_SLOT] = self._decide_excel_or_good_slo
             self._decision_matrix[self._GOOD_SLOT][self._EXCEL_SLOT] = self._decide_excel_or_good_slo
