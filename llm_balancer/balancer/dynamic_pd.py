@@ -111,7 +111,7 @@ class DynamicPd:
         action = self._decision_matrix[state.ttft_slot][state.tpot_slot](state)
         advice = self._get_advice(state, action)
         if not advice_only and advice is not None:
-            print(f"{advice.best_switchable.id} {advice.best_switchable.stage} => {advice.new_stage}")
+            print(f"{advice.best_switchable.id} {advice.best_switchable.stage} ====================> {advice.new_stage}")
             advice.best_switchable.set_stage(advice.new_stage)
         self._last_action = action
         return advice
