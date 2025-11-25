@@ -10,10 +10,10 @@ model = "Qwen/Qwen2-7B"
 
 num_requests = 100
 num_workers = 10
-num_max_active_requests = 5
+num_max_active_requests = 50
 fixed_prefix_len = 0
-subfix_len = 100
-max_tokens = 100
+subfix_len = 30
+max_tokens = 9999
 
 
 word_pool = ["hi", "hello", "yes", "no", "cat", "dog", "pig", "game", "coffee", "cake", "noodles", "burger", "football", "tennis", "ship", "car", "ship", "boat"]

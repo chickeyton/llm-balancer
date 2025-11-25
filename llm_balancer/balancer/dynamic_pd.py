@@ -24,7 +24,8 @@ class DynamicPd:
     _GOOD_SLOT: int = 1
     _BAD_SLOT: int = 2
     _NUM_SLOTS: int = 3
-    _MAX_Q_LEN_THD_PRE_EP_REQ: int = 5
+    # _MAX_Q_LEN_THD_PRE_EP_REQ: int = 5
+    _MAX_Q_LEN_THD_PRE_EP_REQ: int = 0
 
     class _Action(Enum):
         NO_ACTION = 0
@@ -82,6 +83,7 @@ class DynamicPd:
             self._decision_matrix[self._BAD_SLOT][self._EXCEL_SLOT] = self._decide_bad_ttft_excel_tpot
 
     def on_task_ended(self, handle: TaskHandle):
+        # TODO: limit the max length of _ttft_history & _tpot_history
         if isinstance(handle, PrefillHandle):
             #print(f"on_task_ended: {handle.__class__} ttft:{handle.ttft}")
             if handle.ttft > 0:
