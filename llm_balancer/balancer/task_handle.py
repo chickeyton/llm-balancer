@@ -71,13 +71,13 @@ class PrefillHandle(TaskHandle):
 
     def on_respond(self, chunk_len: int):
         print(f"PrefillHandle.on_respond")
-        super().on_respond(chunk_len)
         self._update_ttft()
+        super().on_respond(chunk_len)
 
     def on_finished(self):
         print(f"PrefillHandle.on_finished")
-        super().on_finished()
         self._update_ttft()
+        super().on_finished()
 
     def _update_ttft(self):
         print(f"PrefillHandle._update_ttft")
@@ -110,11 +110,14 @@ class DecodeHandle(TaskHandle):
 
     def on_finished(self):
         print(f"DecodeHandle.on_finished")
-        super().on_finished()
+        if self.end_time != -1:
+            raise RuntimeError("Task already finished")
+        self.end_time = time.time()
         if self.responded_len > 0:
             elapsed = self.end_time - self.submit_time
             self.tpot = elapsed / self.responded_len
             print(f"DecodeHandle.on_finished tpot={self.tpot}")
+        self.endpoint.on_task_ended(self)
 
 
 class PrefillThenDecodeHandle(TaskHandle):
@@ -141,16 +144,20 @@ class PrefillThenDecodeHandle(TaskHandle):
         return max(workload, 0)
 
     def on_respond(self, chunk_len: int):
-        super().on_respond(chunk_len)
         if self.first_token_time == -1:
             self.first_token_time = time.time()
             self.ttft = self.first_token_time - self.submit_time
+        super().on_respond(chunk_len)
 
     def on_finished(self):
-        super().on_finished()
+        if self.end_time != -1:
+            raise RuntimeError("Task already finished")
+        self.end_time = time.time()
         if self.responded_len > 0:
             elapsed = self.end_time - self.submit_time
             self.tpot = elapsed / self.responded_len
+            print(f"DecodeHandle.on_finished tpot={self.tpot}")
+        self.endpoint.on_task_ended(self)
 
 
 class TaskHandleFactory:
