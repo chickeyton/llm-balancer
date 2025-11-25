@@ -3,7 +3,7 @@
   "tokenizer": "Qwen/Qwen2-7B",
   "service_level_obj": {
     "ttft": 0.000001,
-    "tpot": 0.000001,
+    "tpot": 20.0,
     "p_quantile": 0.99
   },
   "dynamic_pd": {
