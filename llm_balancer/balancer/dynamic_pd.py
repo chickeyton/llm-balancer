@@ -84,18 +84,12 @@ class DynamicPd:
             self._decision_matrix[self._EXCEL_SLOT][self._BAD_SLOT] = self._decide_excel_ttft_bad_tpot
             self._decision_matrix[self._BAD_SLOT][self._EXCEL_SLOT] = self._decide_bad_ttft_excel_tpot
 
-        for i in range(self._NUM_SLOTS):
-            for j in range(self._NUM_SLOTS):
-                print(f"_decision_matrix[{i}][{j}] = {self._decision_matrix[i][j]}")
-
     def on_task_ended(self, handle: TaskHandle):
         # TODO: limit the max length of _ttft_history & _tpot_history
         if isinstance(handle, PrefillHandle):
-            #print(f"on_task_ended: {handle.__class__} ttft:{handle.ttft}")
             if handle.ttft > 0:
                 self._ttft_history.append(handle.ttft)
         elif isinstance(handle, DecodeHandle):
-            #print(f"on_task_ended: {handle.__class__} tpot:{handle.tpot}")
             if handle.tpot > 0:
                 self._tpot_history.append(handle.tpot)
 
@@ -115,7 +109,6 @@ class DynamicPd:
 
     def _update(self, advice_only):
         state = self._gather_state()
-        print(f"SLO slots: [{state.ttft_slot}, {state.tpot_slot}] call {self._decision_matrix[state.ttft_slot][state.tpot_slot]}")
         action = self._decision_matrix[state.ttft_slot][state.tpot_slot](state)
         advice = self._get_advice(state, action)
         if not advice_only and advice is not None:
@@ -205,7 +198,6 @@ class DynamicPd:
         return self._GOOD_SLOT
 
     def _decide_excel_or_good_slo(self, state):
-        print(f"_decide_excel_or_good_slo 1")
         tpot_mid = self._slo_boundaries(self._balancer.config.service_level_obj.tpot)[1]
         ttft_mid = self._slo_boundaries(self._balancer.config.service_level_obj.ttft)[1]
         if self._last_action == self._Action.KEEP_D2P_BY_BAD_TTFT:
@@ -219,7 +211,6 @@ class DynamicPd:
         return self._Action.NO_ACTION
 
     def _decide_queue_len_guided(self, state):
-        print(f"_decide_queue_len_guided 1")
         num_prefill_ep = 0
         num_decode_ep = 0
         prefill_queue_len = 0
@@ -237,14 +228,10 @@ class DynamicPd:
         else:
             max_queue_len = decode_queue_len
             queue_len_threshold = num_decode_ep * self._MAX_Q_LEN_THD_PRE_EP_REQ
-        print(f"_decide_queue_len_guided 2 max_queue_len:{max_queue_len} queue_len_threshold:{queue_len_threshold}")
         if max_queue_len <= queue_len_threshold:
             return self._Action.NO_ACTION
         switch_threshold = max_queue_len / 2
 
-        print(f"_decide_queue_len_guided 3 prefill_queue_len:{prefill_queue_len} decode_queue_len:{decode_queue_len} switch_threshold:{switch_threshold}")
-
-        print(f"state.can_p2d:{state.can_p2d} state.can_d2p:{state.can_d2p}")
         if prefill_queue_len < switch_threshold:
             if state.can_p2d:
                 return self._Action.P2D
@@ -254,14 +241,12 @@ class DynamicPd:
         return self._Action.NO_ACTION
 
     def _decide_excel_ttft_bad_tpot(self, state):
-        print(f"_decide_excel_ttft_bad_tpot 1")
         action = self._decide_keep_p2d_by_bad_tpot(state)
         if action == self._Action.NO_ACTION:
             return self._decide_queue_len_guided(state)
         return action
 
     def _decide_bad_ttft_excel_tpot(self, state):
-        print(f"_decide_bad_ttft_excel_tpot 1")
         action = self._decide_keep_d2p_by_bad_ttft(state)
         if action == self._Action.NO_ACTION:
             return self._decide_queue_len_guided(state)
