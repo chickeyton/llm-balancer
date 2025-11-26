@@ -83,7 +83,7 @@ class Balancer(EndpointTrackerListener, EndpointListener):
         if not candidates:
             candidates = self.get_candidates(task)
         if not candidates:
-            raise RuntimeError("No candidate")
+            raise RuntimeError(f"No candidate for {task.stage} task")
         return router.route(task, candidates)
 
     def batch_route(self, tasks: List[Task], candidates: List[Endpoint] = None) -> List[TaskRoute]:
@@ -96,7 +96,7 @@ class Balancer(EndpointTrackerListener, EndpointListener):
         if not candidates:
             candidates = self.get_candidates(tasks[0])
         if not candidates:
-            raise RuntimeError("No candidate")
+            raise RuntimeError(f"No candidate for {tasks[0].stage} task")
         return router.batch_route(tasks, candidates)
 
     def on_endpoints_changed(self, new_ups: List[Endpoint], new_downs: List[Endpoint]):
