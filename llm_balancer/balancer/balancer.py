@@ -87,6 +87,8 @@ class Balancer(EndpointTrackerListener, EndpointListener):
         return router.route(task, candidates)
 
     def batch_route(self, tasks: List[Task], candidates: List[Endpoint] = None) -> List[TaskRoute]:
+        if len(tasks) == 1:
+            return [self.route(tasks[0], candidates)]
         for task in tasks:
             if task.stage != tasks[0].stage:
                 raise ValueError(f"Not all tasks of the same stage")
