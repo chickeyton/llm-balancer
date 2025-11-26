@@ -48,7 +48,7 @@ class DecodeRouter(Router):
                            len_extend_rate=self._len_extend_rate)
 
     def batch_route(self, tasks: List[Task], endpoints: List[Endpoint]) -> List[TaskRoute]:
-        task_workloads = np.empty((len(endpoints), len(tasks)), dtype=np.float32)
+        task_workloads = np.empty((len(endpoints), len(tasks)), dtype=np.float64)
         for task_i, task in enumerate(tasks):
             num_prompt_tokens = task.num_prompt_tokens
             predicted_decode_len = task.predicted_decode_len

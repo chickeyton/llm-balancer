@@ -70,7 +70,7 @@ class Router:
         return min_queue_ep_i
 
     def _optimize_batch_route(self, task_workloads, endpoints: List[Endpoint]):
-        queue_workloads = np.empty(len(endpoints), dtype=np.float32)
+        queue_workloads = np.empty(len(endpoints), dtype=np.float64)
         for endpoint_i, endpoint in enumerate(endpoints):
             queue_workloads[endpoint_i] = endpoint.queue_workload()
         assign, _ = self._balancer.batch_route_optimizer.optimize(task_workloads, queue_workloads)

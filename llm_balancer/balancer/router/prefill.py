@@ -47,7 +47,7 @@ class PrefillRouter(Router):
     def batch_route(self, tasks: List[Task], endpoints: List[Endpoint]) -> List[TaskRoute]:
         cache_ids = set([ep.config.cache_instance_id for ep in endpoints])
         workloads_cache = [[None for _ in range(len(tasks))] for _ in range(len(endpoints))]
-        task_workloads = np.empty((len(endpoints), len(tasks)), dtype=np.float32)
+        task_workloads = np.empty((len(endpoints), len(tasks)), dtype=np.float64)
         for task_i, task in enumerate(tasks):
             hit_lens = self._query_cache_hit(task.prompt_tokens, cache_ids)
             max_hit_len = max(hit_lens.values())

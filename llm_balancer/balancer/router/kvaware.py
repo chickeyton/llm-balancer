@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: Copyright contributors to the llm-service project
 
 from typing import Tuple, List, Set
-import numpy as np
 
 from ..common import Stage
 from ..endpoint import Endpoint

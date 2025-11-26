@@ -32,7 +32,7 @@ class EncodeRouter(Router):
                            workload=workload)
 
     def batch_route(self, tasks: List[Task], endpoints: List[Endpoint]) -> List[TaskRoute]:
-        task_workloads = np.empty((len(endpoints), len(tasks)), dtype=np.float32)
+        task_workloads = np.empty((len(endpoints), len(tasks)), dtype=np.float64)
         for task_i, task in enumerate(tasks):
             task_workloads[:, task_i] = task.estimate_workload()
 
