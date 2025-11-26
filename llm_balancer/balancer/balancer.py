@@ -79,7 +79,7 @@ class Balancer(EndpointTrackerListener, EndpointListener):
     def route(self, task: Task, candidates: List[Endpoint] = None) -> TaskRoute:
         router = self._routers.get(task.stage)
         if router is None:
-            raise ValueError(f"Stage {task.stage} task is not supported by routers")
+            raise ValueError(f"{task.stage} task is not supported by routers")
         if not candidates:
             candidates = self.get_candidates(task)
         if not candidates:
@@ -92,7 +92,7 @@ class Balancer(EndpointTrackerListener, EndpointListener):
                 raise ValueError(f"Not all tasks of the same stage")
         router = self._routers.get(tasks[0].stage)
         if router is None:
-            raise ValueError(f"Stage {tasks[0].stage} task is not supported by routers")
+            raise ValueError(f"{tasks[0].stage} task is not supported by routers")
         if not candidates:
             candidates = self.get_candidates(tasks[0])
         if not candidates:
