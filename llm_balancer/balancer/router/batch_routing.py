@@ -18,7 +18,7 @@ class GreedyBatchRouteOptimizer(BatchRouteOptimizer):
             self.rng = rng
 
     def optimize(self, task_workloads, queue_workloads):
-        assign, worker_workloads = self._find_ini_assign(task_workloads, queue_workloads)
+        assign, worker_workloads = self._ini_assign(task_workloads, queue_workloads)
         num_workers = task_workloads.shape[0]
         num_tasks = task_workloads.shape[1]
 
@@ -52,7 +52,7 @@ class GreedyBatchRouteOptimizer(BatchRouteOptimizer):
         return assign, worker_workloads
 
     @staticmethod
-    def _find_ini_assign(task_workloads, queue_workloads):
+    def _ini_assign(task_workloads, queue_workloads):
         num_workers = task_workloads.shape[0]
         num_tasks = task_workloads.shape[1]
         task_order = [(task, np.min(task_workloads[:, task])) for task in range(num_tasks)]
