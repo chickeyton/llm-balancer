@@ -16,6 +16,6 @@
   },
   "lmcache": {
     "ctrl_mgr_port": 9188,
-    "is_p2p_enabled": true
+    "is_cache_shared": true
   }
 }

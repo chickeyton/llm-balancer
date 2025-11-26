@@ -113,7 +113,7 @@ class PrefillRouter(Router):
         return picked_endpoint, picked_workloads
 
     def _estimate_workloads(self, task, endpoint, hit_len, max_hit_len):
-        if self._balancer.kv_connector is None or not self._balancer.kv_connector.is_p2p_enabled:
+        if self._balancer.kv_connector is None or not self._balancer.kv_connector.is_cache_shared:
             num_cached_tokens = hit_len
         else:
             num_cached_tokens = max(max_hit_len, 0)

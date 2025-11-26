@@ -9,7 +9,7 @@ from .pipeline import PD_Pipeline, P_D_Pipeline
 @dataclass
 class LMCacheConfig:
     ctrl_mgr_port: int = -1
-    is_p2p_enabled: bool = False
+    is_cache_shared: bool = False
 
 
 @dataclass
@@ -68,7 +68,7 @@ def parse_app_config(json_dict) -> AppConfig:
     if lmcache_obj:
         config.lmcache = LMCacheConfig()
         config.lmcache.ctrl_mgr_port = int(lmcache_obj.get("ctrl_mgr_port"))
-        config.lmcache.is_p2p_enabled = bool(lmcache_obj.get("is_p2p_enabled"))
+        config.lmcache.is_cache_shared = bool(lmcache_obj.get("is_cache_shared"))
 
     return config
 

@@ -57,7 +57,7 @@ def main():
         endpoint_configs = parse_endpoint_configs(json.load(file))
 
     #kv_connector = LMCacheKvConnector(app_config.lmcache.ctrl_mgr_port,
-    #                                  app_config.lmcache.is_p2p_enabled)
+    #                                  app_config.lmcache.is_cache_shared)
     tracker = StaticEndpointTracker([VllmEndpoint(c) for c in endpoint_configs])
     routers = create_routers(app_config.routers)
     balancer = Balancer(config=app_config.balancer,

@@ -12,17 +12,17 @@ from ...balancer.connector import KvConnector
 
 class LMCacheKvConnector(KvConnector):
 
-    def __init__(self, ctrl_mgr_port: int, is_p2p_enabled: bool):
+    def __init__(self, ctrl_mgr_port: int, is_cache_shared: bool):
         self._kv_manager = controller_manager.LMCacheControllerManager(
             {"pull": f"0.0.0.0:{ctrl_mgr_port}", "reply": None}
         )
-        self._is_p2p_enabled = is_p2p_enabled
+        self._is_cache_shared = is_cache_shared
         self._thread = None
         self._loop = None
 
     @property
-    def is_p2p_enabled(self) -> bool:
-        return self._is_p2p_enabled
+    def is_cache_shared(self) -> bool:
+        return self._is_cache_shared
 
     def query_hit_len(self, tokens: List[int], instance_ids: Optional[Set[str]] = None) -> Dict[str, int]:
         if not self._thread:

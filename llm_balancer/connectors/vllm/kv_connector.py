@@ -9,14 +9,14 @@ from .kv_cache_tracker import VllmKvCacheTracker
 
 class VllmKvConnector(KvConnector):
 
-    def __init__(self, tracker: EndpointTracker, block_size: int, is_p2p_enabled: bool):
+    def __init__(self, tracker: EndpointTracker, block_size: int, is_cache_shared: bool):
         self._cache_tracker = VllmKvCacheTracker(tracker)
         self._block_size = block_size
-        self._is_p2p_enabled = is_p2p_enabled
+        self._is_cache_shared = is_cache_shared
 
     @property
-    def is_p2p_enabled(self) -> bool:
-        return self._is_p2p_enabled
+    def is_cache_shared(self) -> bool:
+        return self._is_cache_shared
 
     def query_hit_len(self, tokens: List[int], instance_ids: Optional[Set[str]] = None) -> Dict[str, int]:
         block_hashes = self._hash(tokens)
