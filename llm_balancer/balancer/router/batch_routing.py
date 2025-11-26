@@ -30,10 +30,11 @@ class GreedyBatchRouteOptimizer(BatchRouteOptimizer):
             itr += 1
             improved = False
             task_order = self.rng.permutation(num_tasks)
+            worker_order = self.rng.permutation(num_workers)
             for task in task_order:
                 cur_worker = assign[task]
                 cur_cost = task_costs[cur_worker, task]
-                for worker in range(num_workers):
+                for worker in worker_order:
                     if worker == cur_worker:
                         continue
                     new_cost = task_costs[worker, task]
