@@ -1,7 +1,5 @@
-from dataclasses import dataclass
-
 from ...balancer import EndpointConfig, Endpoint
-from openai import AsyncOpenAI, OpenAI
+from openai import AsyncOpenAI
 
 
 class VllmEndpointConfig(EndpointConfig):

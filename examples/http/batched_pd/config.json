@@ -1,0 +1,20 @@
+{
+  "http_port": 9088,
+  "tokenizer": "Qwen/Qwen2-7B",
+  "service_level_obj": {
+    "ttft": 2.0,
+    "tpot": 0.1,
+    "p_quantile": 0.99
+  },
+  "routers": {
+    "PREFILL_THEN_DECODE": "prefill"
+  },
+  "lmcache": {
+    "ctrl_mgr_port": 9188,
+    "is_cache_shared": true
+  },
+  "batch_routing": {
+    "max_batch_size": 64,
+    "max_batch_time": 0.1
+  }
+}

@@ -22,7 +22,7 @@ class VllmKvCacheTracker(Thread, EndpointTrackerListener):
             self.is_endpoint_up = True
 
     def __init__(self, tracker: EndpointTracker, preserve_down_records: bool = False):
-        super(Thread, self).__init__()
+        super().__init__()
         self._preserve_down_records = preserve_down_records
         self._lock = Lock()
         self._zmq_ctx = zmq.Context()
