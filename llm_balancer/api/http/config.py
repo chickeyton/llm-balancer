@@ -4,6 +4,8 @@ from typing import List, Dict, Type
 from llm_balancer.balancer import BalancerConfig, Stage
 from llm_balancer.connectors.vllm.endpoint import VllmEndpointConfig
 from .pipeline import PD_Pipeline, P_D_Pipeline
+from .pipeline.p_d import P_D_BatchedPipeline
+from .pipeline.pd import PD_BatchedPipeline
 
 
 @dataclass
@@ -17,6 +19,10 @@ class RouterConfig:
     name: str = ""
     len_extend_rate: float = 0.2
 
+@dataclass
+class BatchRoutingConfig:
+    max_batch_size: int = 8
+    max_batch_time: float = 0.1
 
 @dataclass
 class AppConfig:
@@ -25,6 +31,7 @@ class AppConfig:
     balancer: BalancerConfig = BalancerConfig()
     routers: Dict[Stage, RouterConfig] = None
     lmcache: LMCacheConfig = None
+    batch_routing: BatchRoutingConfig = None
 
 
 def parse_app_config(json_dict) -> AppConfig:
@@ -70,6 +77,12 @@ def parse_app_config(json_dict) -> AppConfig:
         config.lmcache.ctrl_mgr_port = int(lmcache_obj.get("ctrl_mgr_port"))
         config.lmcache.is_cache_shared = bool(lmcache_obj.get("is_cache_shared"))
 
+    batch_routing_obj = json_dict.get("batch_routing")
+    if batch_routing_obj:
+        config.batch_routing = BatchRoutingConfig()
+        config.batch_routing.max_batch_size = int(batch_routing_obj.get("max_batch_size"))
+        config.batch_routing.max_batch_time = float(batch_routing_obj.get("max_batch_time"))
+
     return config
 
 
@@ -98,17 +111,17 @@ def parse_endpoint_configs(json_list) -> List[VllmEndpointConfig]:
     return config_list
 
 
-def detect_pipeline(endpoints: List[VllmEndpointConfig]) -> Type:
+def detect_pipeline(endpoints: List[VllmEndpointConfig], is_batched: bool) -> Type:
     if not endpoints:
         raise ValueError("No Endpoint")
-    stage_counts = {}
+    stage_counts:Dict[Stage, int] = {}
     for endpoint in endpoints:
         stage_counts[endpoint.stage] = stage_counts.get(endpoint.stage, 0) + 1
 
     if stage_counts.get(Stage.PREFILL_THEN_DECODE):
         if stage_counts[Stage.PREFILL_THEN_DECODE] != len(endpoints):
             raise ValueError("Not all Endpoints' are PREFILL_THEN_DECODE")
-        return PD_Pipeline
+        return PD_BatchedPipeline if is_batched else PD_Pipeline
 
     if not stage_counts.get(Stage.PREFILL):
         raise ValueError("No PREFILLE Endpoint")
@@ -116,4 +129,4 @@ def detect_pipeline(endpoints: List[VllmEndpointConfig]) -> Type:
     if not stage_counts.get(Stage.DECODE):
         raise ValueError("No DECODE Endpoint")
 
-    return P_D_Pipeline
+    return P_D_BatchedPipeline if is_batched else P_D_Pipeline

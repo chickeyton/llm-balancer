@@ -1,4 +1,4 @@
-from .pipeline import Pipeline
+from .pipeline import Pipeline, BatchedPipeline
 from .utils import to_prefill_task, to_decode_task, async_send_prefill, async_send_stream_decode, STREAM_DONE
 from llm_balancer.balancer import Balancer
 
@@ -21,6 +21,27 @@ class P_D_Pipeline(Pipeline):
         await async_send_prefill(request_json, handle)
         decode_task = to_decode_task(handle.route, 100)  # TODO: decode length prediction
         handle = self._balancer.route(decode_task).on_submit()
+        print(f"Send decode -> {handle.endpoint.id}")
+        async for resp in async_send_stream_decode(request_json, handle, yield_headers=True):
+            yield resp
+        yield STREAM_DONE
+
+
+class P_D_BatchedPipeline(BatchedPipeline):
+
+    def __init__(self, tokenizer, balancer: Balancer, max_batch_size, max_batch_time):
+        super().__init__(tokenizer, balancer, max_batch_size, max_batch_time, is_dynamic_pd=True)
+
+    async def handle_chat_completions(self, request, _):
+        request_json = await request.json()
+        prefill_task = to_prefill_task(self._tokenizer, request, request_json)
+        route = await self._batched_route(prefill_task)
+        handle = route.on_submit()
+        print(f"Send prefill -> {handle.endpoint.id}")
+        await async_send_prefill(request_json, handle)
+        decode_task = to_decode_task(handle.route, 100)  # TODO: decode length prediction
+        route = await self._batched_route(decode_task)
+        handle = route.on_submit()
         print(f"Send decode -> {handle.endpoint.id}")
         async for resp in async_send_stream_decode(request_json, handle, yield_headers=True):
             yield resp

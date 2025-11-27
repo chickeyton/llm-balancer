@@ -67,7 +67,16 @@ def main():
     #kv_connector.start()
 
     tokenizer = AutoTokenizer.from_pretrained(app_config.tokenizer)
-    app.state.pipeline = detect_pipeline(endpoint_configs)(tokenizer, balancer)
+    if app_config.batch_routing is None:
+        app.state.pipeline = \
+            detect_pipeline(endpoint_configs, is_batched=False)(tokenizer,
+                                                                balancer)
+    else:
+        app.state.pipeline = \
+            detect_pipeline(endpoint_configs, is_batched=False)(tokenizer,
+                                                                balancer,
+                                                                app_config.batch_routing.max_batch_size,
+                                                                app_config.batch_routing.max_batch_time)
     uvicorn.run(app, host=args.host, port=int(args.port))
 
 
