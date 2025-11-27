@@ -7,7 +7,7 @@ class BatchRouteOptimizer:
         raise NotImplementedError
 
 
-class GreedyBatchRouteOptimizer(BatchRouteOptimizer):
+class BatchRouteLocalSearch(BatchRouteOptimizer):
 
     def __init__(self, max_itr=20, eps=1e-9, rng=None):
         self.max_itr = max_itr

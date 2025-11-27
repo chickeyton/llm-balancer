@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: Copyright contributors to the llm-service project
-from .batch_routing import BatchRouteOptimizer, GreedyBatchRouteOptimizer
+from .batch_routing import BatchRouteOptimizer, BatchRouteLocalSearch
 from .router import Router
 from .kvaware import KvawareRouter
 from .random import RandomRouter
@@ -20,5 +20,5 @@ __all__ = [
     "PrefillRouter",
     "DecodeRouter",
     "BatchRouteOptimizer",
-    "GreedyBatchRouteOptimizer"
+    "BatchRouteLocalSearch"
 ]

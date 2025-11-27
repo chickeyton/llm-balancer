@@ -6,10 +6,6 @@
     "tpot": 0.1,
     "p_quantile": 0.99
   },
-  "dynamic_pd": {
-    "update_on_requests": 100,
-    "min_update_time": 0.1
-  },
   "routers": {
     "PREFILL": "prefill",
     "DECODE": "decode"
@@ -19,7 +15,7 @@
     "is_cache_shared": true
   },
   "batch_routing": {
-    "max_batch_size": 8,
-    "max_batch_time": 0.2
+    "max_batch_size": 64,
+    "max_batch_time": 0.1
   }
 }
