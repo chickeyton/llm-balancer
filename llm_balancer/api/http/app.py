@@ -73,10 +73,10 @@ def main():
                                                                 balancer)
     else:
         app.state.pipeline = \
-            detect_pipeline(endpoint_configs, is_batched=False)(tokenizer,
-                                                                balancer,
-                                                                app_config.batch_routing.max_batch_size,
-                                                                app_config.batch_routing.max_batch_time)
+            detect_pipeline(endpoint_configs, is_batched=True)(tokenizer,
+                                                               balancer,
+                                                               app_config.batch_routing.max_batch_size,
+                                                               app_config.batch_routing.max_batch_time)
     uvicorn.run(app, host=args.host, port=int(args.port))
 
 

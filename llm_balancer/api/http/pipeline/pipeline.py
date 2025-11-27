@@ -73,6 +73,7 @@ class BatchedPipeline(Pipeline):
                 await asyncio.sleep(0)
             else:
                 break
+        assert ret_route.request_id == task.request_id
         return ret_route
 
     def _fetch_route(self, batch, pop_idx):
