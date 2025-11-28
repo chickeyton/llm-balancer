@@ -49,7 +49,7 @@ fixed_prefix = gen_prompt(fixed_prefix_len)
 
 
 def request_proc(worker_id, num_requests, active_requests, finish_times, lock):
-    np.random.seed(worker_id)
+    #np.random.seed(worker_id)
     for i in range(num_requests):
         while True:
             time.sleep(0.01)
