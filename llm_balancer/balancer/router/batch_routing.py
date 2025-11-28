@@ -49,8 +49,6 @@ class BatchRouteLocalSearch(BatchRouteOptimizer):
                         objective += delta
                         improved = True
                         break
-        if itr < self.max_itr:
-            print(f"early stop at itr:{itr}")
         return assign, worker_workloads
 
     @staticmethod
