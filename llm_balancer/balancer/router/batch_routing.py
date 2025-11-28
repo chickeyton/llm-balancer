@@ -58,7 +58,7 @@ class BatchRouteLocalSearch(BatchRouteOptimizer):
         num_workers = task_workloads.shape[0]
         num_tasks = task_workloads.shape[1]
         task_order = [(task, np.min(task_workloads[:, task])) for task in range(num_tasks)]
-        task_order = sorted(task_order, key=lambda x: x[1], reverse=True)
+        task_order = sorted(task_order, key=lambda x: x[1], reverse=False)
         worker_workloads = queue_workloads.copy()
         assign = np.empty(num_tasks, dtype=np.int32)
         for task, _ in task_order:
