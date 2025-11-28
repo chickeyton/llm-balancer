@@ -76,6 +76,7 @@ class BatchedPipeline(Pipeline):
                 await asyncio.sleep(0)
             else:
                 break
+        print(f"ret_route.request_id:{ret_route.request_id} task.request_id:{task.request_id}")
         assert ret_route.request_id == task.request_id
         return ret_route
 
