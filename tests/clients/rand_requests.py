@@ -9,7 +9,7 @@ api = "/chat/completions"
 model = "Qwen/Qwen2-7B"
 
 num_requests = 3000
-num_workers = 50
+num_workers = 200
 num_max_active_requests = 5000
 fixed_prefix_len = 0
 subfix_min_len = 1000
