@@ -28,10 +28,6 @@ class BatchedPipeline(Pipeline):
         def size(self):
             return len(self.tasks)
 
-        @property
-        def is_empty(self):
-            return bool(self.tasks)
-
         def add(self, task):
             self.tasks.append(task)
             if len(self.tasks) == 1:

@@ -10,7 +10,7 @@ model = "Qwen/Qwen2-7B"
 
 num_requests = 100
 num_workers = 10
-num_max_active_requests = 50
+num_max_active_requests = 5000
 fixed_prefix_len = 0
 subfix_len = 30
 max_tokens = 500
