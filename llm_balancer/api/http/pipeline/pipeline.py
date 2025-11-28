@@ -80,6 +80,7 @@ class BatchedPipeline(Pipeline):
         if batch.size >= self._max_batch_size:
             if self._is_dynamic_pd:
                 self._balancer.dynamic_pd.update()
+            print(f"case 1 batch.tasks size:{len(batch.tasks)}")
             routes = self._balancer.batch_route(batch.tasks)
             batch.on_routed(routes)
         else:
@@ -87,6 +88,7 @@ class BatchedPipeline(Pipeline):
             if elapsed >= self._max_batch_time:
                 if self._is_dynamic_pd:
                     self._balancer.dynamic_pd.update()
+                print(f"case 2 batch.tasks size:{len(batch.tasks)}")
                 routes = self._balancer.batch_route(batch.tasks)
                 batch.on_routed(routes)
         return batch.pop_route(pop_idx)
