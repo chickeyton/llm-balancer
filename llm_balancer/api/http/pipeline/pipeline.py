@@ -21,8 +21,8 @@ class BatchedPipeline(Pipeline):
     class _Batch:
         def __init__(self):
             self.tasks = []
-            self.routes = []
-            self.num_unpop_routes = 0
+            self.routes = {}
+            #self.num_unpop_routes = 0
             self.first_task_time = -1
 
         @property
@@ -33,24 +33,27 @@ class BatchedPipeline(Pipeline):
             self.tasks.append(task)
             if len(self.tasks) == 1:
                 self.first_task_time = time.time()
-            return len(self.routes) + len(self.tasks)
+            #return len(self.routes) + len(self.tasks)
 
         def on_routed(self, routes):
-            self.routes.extend(routes)
-            self.num_unpop_routes += len(routes)
+            for route in routes:
+                self.routes[route.request_id] = route
+            #self.num_unpop_routes += len(routes)
             self.tasks.clear()
             self.first_task_time = -1
 
-        def pop_route(self, pop_idx):
-            if pop_idx >= len(self.routes):
-                return None
-            route = self.routes[pop_idx]
-            if route is not None:
-                self.routes[pop_idx] = None
-                self.num_unpop_routes -= 1
-                if self.num_unpop_routes == 0:
-                    self.routes.clear()
-            return route
+        def pop_route(self, request_id):
+            return self.routes.pop(request_id, None)
+
+            #if pop_idx >= len(self.routes):
+            #    return None
+            #route = self.routes[pop_idx]
+            #if route is not None:
+            #    self.routes[pop_idx] = None
+            #    self.num_unpop_routes -= 1
+            #    if self.num_unpop_routes == 0:
+            #        self.routes.clear()
+            #return route
 
     def __init__(self, tokenizer, balancer: Balancer, max_batch_size, max_batch_time, is_dynamic_pd):
         super().__init__(tokenizer, balancer)
@@ -64,14 +67,16 @@ class BatchedPipeline(Pipeline):
         batch = self._batches.get(task.stage)
         if batch is None:
             batch = self._Batch()
-            pop_idx = batch.add(task)
+            #pop_idx = batch.add(task)
+            batch.add(task)
             print(f"=========== _batched_route 2: {len(batch.tasks)}")
             self._batches[task.stage] = batch
         else:
-            pop_idx = batch.add(task)
+            #pop_idx = batch.add(task)
+            batch.add(task)
             print(f"=========== _batched_route 3: {len(batch.tasks)}")
         while True:
-            ret_route = self._fetch_route(batch, pop_idx)
+            ret_route = self._fetch_route(batch, task.request_id)
             if ret_route is None:
                 await asyncio.sleep(0)
             else:
@@ -80,7 +85,7 @@ class BatchedPipeline(Pipeline):
         assert ret_route.request_id == task.request_id
         return ret_route
 
-    def _fetch_route(self, batch, pop_idx):
+    def _fetch_route(self, batch, request_id):
         print(f"_fetch_route batch.size:{batch.size}  self._max_batch_size:{self._max_batch_size}")
         if batch.size >= self._max_batch_size:
             if self._is_dynamic_pd:
@@ -97,4 +102,4 @@ class BatchedPipeline(Pipeline):
                 print(f"_fetch_route case 2 batch.tasks size:{len(batch.tasks)}")
                 routes = self._balancer.batch_route(batch.tasks)
                 batch.on_routed(routes)
-        return batch.pop_route(pop_idx)
+        return batch.pop_route(request_id)
