@@ -93,7 +93,7 @@ class BatchedPipeline(Pipeline):
             print(f"_fetch_route case 1 batch.tasks size:{len(batch.tasks)}")
             routes = self._balancer.batch_route(batch.tasks)
             batch.on_routed(routes)
-        else:
+        elif batch.size > 0:
             elapsed = time.time() - batch.first_task_time
             print(f"_fetch_route elapsed:{elapsed}")
             if elapsed >= self._max_batch_time:
