@@ -12,8 +12,8 @@ num_requests = 100
 num_workers = 50
 num_max_active_requests = 5000
 fixed_prefix_len = 0
-subfix_min_len = 30
-subfix_max_len = 1900
+subfix_min_len = 1000
+subfix_max_len = 3900
 max_tokens = 1
 
 
