@@ -12,8 +12,9 @@ num_requests = 100
 num_workers = 50
 num_max_active_requests = 5000
 fixed_prefix_len = 0
-subfix_len = 30
-max_tokens = 130
+subfix_min_len = 30
+subfix_max_len = 1000
+max_tokens = 1230
 
 
 word_pool = ["hi", "hello", "yes", "no", "cat", "dog", "pig", "game", "coffee", "cake", "noodles", "burger", "football", "tennis", "ship", "car", "ship", "boat"]
@@ -58,6 +59,7 @@ def request_proc(worker_id, num_requests, active_requests, finish_times, lock):
                 active_requests.value = active_requests.value + 1
                 break
 
+        subfix_len = np.random.randint(subfix_min_len, subfix_max_len)
         prompt2 = gen_prompt(subfix_len)
         start_time = time.time()
         http_request(fixed_prefix + ' ' + prompt2)
