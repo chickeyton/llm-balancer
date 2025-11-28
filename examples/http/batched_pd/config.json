@@ -15,6 +15,6 @@
   },
   "batch_routing": {
     "max_batch_size": 64,
-    "max_batch_time": 0.3
+    "max_batch_time": 0.1
   }
 }
