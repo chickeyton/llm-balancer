@@ -76,7 +76,7 @@ class BatchedPipeline(Pipeline):
                 self._balancer.dynamic_pd.update()
             routes = self._balancer.batch_route(batch.tasks)
             batch.on_routed(routes)
-        elif not batch.is_empty:
+        elif batch.size > 0:
             elapsed = time.time() - batch.first_task_time
             if elapsed >= self._max_batch_time:
                 if self._is_dynamic_pd:
