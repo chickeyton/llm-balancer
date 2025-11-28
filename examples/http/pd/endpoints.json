@@ -10,5 +10,17 @@
     "base_url": "http://localhost:8200/v1",
     "kv_event_endpoint": "tcp://localhost:8201",
     "stage": "PREFILL_THEN_DECODE"
+  },
+  {
+    "endpoint_id": "instance2",
+    "base_url": "http://localhost:8300/v1",
+    "kv_event_endpoint": "tcp://localhost:8301",
+    "stage": "PREFILL_THEN_DECODE"
+  },
+  {
+    "endpoint_id": "instance3",
+    "base_url": "http://localhost:8400/v1",
+    "kv_event_endpoint": "tcp://localhost:8401",
+    "stage": "PREFILL_THEN_DECODE"
   }
 ]
