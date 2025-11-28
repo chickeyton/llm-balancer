@@ -3,8 +3,8 @@ import time
 import numpy as np
 from llm_balancer.balancer.router import BatchRouteLocalSearch
 
-num_workers = 10
-num_tasks = 500
+num_workers = 100
+num_tasks = 50
 task_workloads = np.random.uniform(1, 1000, size=(num_workers, num_tasks)).astype(np.float64)
 queue_workloads = np.random.uniform(0, 10000, size=(num_workers, )).astype(np.float64)
 
