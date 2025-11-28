@@ -77,6 +77,7 @@ def main():
                                                                balancer,
                                                                app_config.batch_routing.max_batch_size,
                                                                app_config.batch_routing.max_batch_time)
+    print(f"pipeline: {app.state.pipeline.__class__}")
     uvicorn.run(app, host=args.host, port=int(args.port))
 
 
