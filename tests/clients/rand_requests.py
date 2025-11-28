@@ -13,8 +13,8 @@ num_workers = 50
 num_max_active_requests = 5000
 fixed_prefix_len = 0
 subfix_min_len = 30
-subfix_max_len = 3000
-max_tokens = 3230
+subfix_max_len = 1900
+max_tokens = 2000
 
 
 word_pool = ["hi", "hello", "yes", "no", "cat", "dog", "pig", "game", "coffee", "cake", "noodles", "burger", "football", "tennis", "ship", "car", "ship", "boat"]
