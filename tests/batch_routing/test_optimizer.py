@@ -14,3 +14,4 @@ new_var = np.var(worker_workloads)
 
 print(f"original variance:{original_var}")
 print(f"new variance:{new_var}")
+print(f"diff:{new_var - original_var}")
