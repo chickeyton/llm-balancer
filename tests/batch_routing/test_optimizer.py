@@ -7,6 +7,7 @@ num_workers = 10
 num_tasks = 500
 task_workloads = np.random.uniform(1, 1000, size=(1, num_tasks)).astype(np.float64)
 task_workloads = np.tile(task_workloads, (num_workers, 1))
+print(f"task_workloads: {task_workloads.shape}")
 queue_workloads = np.random.uniform(0, 10000, size=(num_workers, )).astype(np.float64)
 #queue_workloads = np.zeros(num_workers, dtype=np.float64)
 
