@@ -6,8 +6,8 @@ from llm_balancer.balancer.router import BatchRouteLocalSearch
 num_workers = 10
 num_tasks = 500
 task_workloads = np.random.uniform(1, 1000, size=(num_workers, num_tasks)).astype(np.float64)
-#queue_workloads = np.random.uniform(0, 10000, size=(num_workers, )).astype(np.float64)
-queue_workloads = np.zeros(num_workers, dtype=np.float64)
+queue_workloads = np.random.uniform(0, 10000, size=(num_workers, )).astype(np.float64)
+#queue_workloads = np.zeros(num_workers, dtype=np.float64)
 
 start = time.time()
 optimizer = BatchRouteLocalSearch()
