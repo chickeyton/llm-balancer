@@ -31,7 +31,7 @@ class PD_BatchedPipeline(BatchedPipeline):
         task = to_prefill_then_decode_task(self._tokenizer,
                                            request,
                                            request_json,
-                                           100)  # TODO: decode length prediction
+                                           1)  # TODO: decode length prediction
         route = await self._batched_route(task)
         handle = route.on_submit()
         print(f"Send prefill then decode -> {handle.endpoint.id}")
