@@ -8,7 +8,7 @@ base_url = "http://localhost:8888/v1"
 api = "/chat/completions"
 model = "Qwen/Qwen2-7B"
 
-num_requests = 100
+num_requests = 3000
 num_workers = 50
 num_max_active_requests = 5000
 fixed_prefix_len = 0
