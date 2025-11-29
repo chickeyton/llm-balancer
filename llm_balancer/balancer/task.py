@@ -4,12 +4,17 @@
 from dataclasses import dataclass
 from typing import List
 
-from .common import Stage
+from .common import Stage, RequestMeta
 
 
 @dataclass
 class Task:
-    request_id: str
+
+    request_meta: RequestMeta
+
+    @property
+    def request_id(self) -> str:
+        return self.request_meta.id
 
     @property
     def stage(self) -> Stage:

@@ -1,7 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: Copyright contributors to the llm-service project
-
+from dataclasses import dataclass
 from enum import Enum
+
+
+DEFAULT_P_QUANTILE = 0.99
 
 
 class Stage(Enum):
@@ -9,3 +12,18 @@ class Stage(Enum):
     PREFILL = "PREFILL"
     DECODE = "DECODE"
     PREFILL_THEN_DECODE = "PREFILL_THEN_DECODE"
+
+
+@dataclass
+class RequestMeta:
+    id: str
+    submit_time: float
+    ttft: float = -1
+    tpot: float = -1
+
+
+@dataclass
+class ServiceLevelObj:
+    p_quantile: float = 0.99
+    ttft: float = 1
+    tpot: float = 0.25

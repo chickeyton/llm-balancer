@@ -3,14 +3,18 @@
 
 from dataclasses import dataclass
 
-from .common import Stage
+from .common import Stage, RequestMeta
 
 
 @dataclass
 class TaskRoute:
-    request_id: str
+    request_meta: RequestMeta
     endpoint: "Endpoint"
     workload: float
+
+    @property
+    def request_id(self) -> str:
+        return self.request_meta.id
 
     @property
     def stage(self) -> Stage:

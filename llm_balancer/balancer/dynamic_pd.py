@@ -7,6 +7,7 @@ import numpy as np
 from .common import Stage
 from .endpoint import Endpoint
 from .task_handle import TaskHandle, PrefillHandle, DecodeHandle
+from .utils import CircularList
 
 
 @dataclass
@@ -63,8 +64,8 @@ class DynamicPd:
     def __init__(self, balancer: "Balancer"):
         self._balancer = balancer
         self._last_update_time = -1
-        self._ttft_history = []
-        self._tpot_history = []
+        self._ttft_hist = CircularList(1000)
+        self._tpot_hist = CircularList(1000)
         self._last_action = self._Action.NO_ACTION
         if self._balancer.config.service_level_obj is None:
             # SLO was not set, always optimize RPS
@@ -86,23 +87,23 @@ class DynamicPd:
     def on_task_ended(self, handle: TaskHandle):
         # TODO: limit the max length of _ttft_history & _tpot_history
         if isinstance(handle, PrefillHandle):
-            if handle.ttft > 0:
-                self._ttft_history.append(handle.ttft)
+            if handle.request_meta.ttft > 0:
+                self._ttft_hist.append(handle.request_meta.ttft)
         elif isinstance(handle, DecodeHandle):
-            if handle.tpot > 0:
-                self._tpot_history.append(handle.tpot)
+            if handle.request_meta.tpot > 0:
+                self._tpot_hist.append(handle.request_meta.tpot)
 
     def update(self, advice_only: bool = False) -> Optional[DynamicPdAdvice]:
-        if len(self._ttft_history) < self._balancer.config.dynamic_pd.update_on_requests \
-                or len(self._tpot_history) < self._balancer.config.dynamic_pd.update_on_requests:
+        if self._ttft_hist.length() < self._balancer.config.dynamic_pd.update_on_requests \
+                or self._tpot_hist.length() < self._balancer.config.dynamic_pd.update_on_requests:
             return None
         if self._last_update_time > 0:
             elapsed = time.time() - self._last_update_time
             if elapsed < self._balancer.config.dynamic_pd.min_update_time:
                 return None
         advice = self._update(advice_only)
-        self._ttft_history.clear()
-        self._tpot_history.clear()
+        self._ttft_hist.clear()
+        self._tpot_hist.clear()
         self._last_update_time = time.time()
         return advice
 
@@ -155,8 +156,8 @@ class DynamicPd:
     def _gather_state(self):
         switchable_prefills, switchable_decodes, num_prefill_only, num_decode_only = \
             self._gather_endpoints()
-        ttft_quantile = np.quantile(self._ttft_history, self._balancer.config.service_level_obj.p_quantile)
-        tpot_quantile = np.quantile(self._tpot_history, self._balancer.config.service_level_obj.p_quantile)
+        ttft_quantile = np.quantile(self._ttft_hist.list, self._balancer.config.service_level_obj.p_quantile)
+        tpot_quantile = np.quantile(self._tpot_hist.list, self._balancer.config.service_level_obj.p_quantile)
         ttft_slot = self._quantize_slo(ttft_quantile, self._balancer.config.service_level_obj.ttft)
         tpot_slot = self._quantize_slo(tpot_quantile, self._balancer.config.service_level_obj.tpot)
         return self._State(

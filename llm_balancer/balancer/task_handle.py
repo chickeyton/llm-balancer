@@ -3,7 +3,7 @@
 
 import time
 
-from .common import Stage
+from .common import Stage, RequestMeta
 from .task_route import TaskRoute
 from .workload import estimate_decode_len, decode_atten_workload
 
@@ -16,6 +16,10 @@ class TaskHandle:
         self.end_time: float = -1
         self.responded_len: int = 0
         self.error: Exception = None
+
+    @property
+    def request_meta(self) -> RequestMeta:
+        return self.route.request_meta
 
     @property
     def request_id(self) -> str:
@@ -67,7 +71,6 @@ class PrefillHandle(TaskHandle):
     def __init__(self, route: "PrefillRoute", submit_time: float):
         super().__init__(route, submit_time)
         self.first_token_time: float = -1
-        self.ttft: float = -1
 
     def on_respond(self, chunk_len: int):
         #print(f"PrefillHandle.on_respond")
@@ -83,7 +86,7 @@ class PrefillHandle(TaskHandle):
         #print(f"PrefillHandle._update_ttft")
         if self.first_token_time == -1:
             self.first_token_time = time.time()
-            self.ttft = self.first_token_time - self.submit_time
+            self.request_meta.ttft = self.first_token_time - self.submit_time
             #print(f"PrefillHandle._update_ttft ttft = {self.ttft}")
 
 
@@ -91,7 +94,6 @@ class DecodeHandle(TaskHandle):
 
     def __init__(self, route: "DecodeRoute", submit_time: float):
         super().__init__(route, submit_time)
-        self.tpot: float = -1
 
     def todo_workload(self) -> float:
         if self.is_ended:
@@ -115,7 +117,7 @@ class DecodeHandle(TaskHandle):
         self.end_time = time.time()
         if self.responded_len > 0:
             elapsed = self.end_time - self.submit_time
-            self.tpot = elapsed / self.responded_len
+            self.request_meta.tpot = elapsed / self.responded_len
             #print(f"DecodeHandle.on_finished tpot={self.tpot}")
         self.endpoint.on_task_ended(self)
 
@@ -146,7 +148,7 @@ class PrefillThenDecodeHandle(TaskHandle):
     def on_respond(self, chunk_len: int):
         if self.first_token_time == -1:
             self.first_token_time = time.time()
-            self.ttft = self.first_token_time - self.submit_time
+            self.request_meta.ttft = self.first_token_time - self.submit_time
         super().on_respond(chunk_len)
 
     def on_finished(self):
@@ -155,7 +157,7 @@ class PrefillThenDecodeHandle(TaskHandle):
         self.end_time = time.time()
         if self.responded_len > 0:
             elapsed = self.end_time - self.submit_time
-            self.tpot = elapsed / self.responded_len
+            self.request_meta.tpot = elapsed / self.responded_len
             #print(f"DecodeHandle.on_finished tpot={self.tpot}")
         self.endpoint.on_task_ended(self)
 

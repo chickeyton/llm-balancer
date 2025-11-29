@@ -6,6 +6,7 @@ from llm_balancer.connectors.vllm.endpoint import VllmEndpointConfig
 from .pipeline import PD_Pipeline, P_D_Pipeline
 from .pipeline.p_d import P_D_BatchedPipeline
 from .pipeline.pd import PD_BatchedPipeline
+from ...balancer.common import ServiceLevelObj
 
 
 @dataclass
@@ -43,7 +44,7 @@ def parse_app_config(json_dict) -> AppConfig:
     obj = json_dict.get("service_level_obj")
     if obj:
         if config.balancer.service_level_obj is None:
-            config.balancer.service_level_obj = BalancerConfig.ServiceLevelObj()
+            config.balancer.service_level_obj = ServiceLevelObj()
         config.balancer.service_level_obj.ttft = \
             float(obj.get("ttft", config.balancer.service_level_obj.ttft))
         config.balancer.service_level_obj.tpot = \

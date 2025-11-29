@@ -1,8 +1,9 @@
+import time
 import uuid
 from fastapi import HTTPException, status
 
 from llm_balancer.balancer import PrefillTask, DecodeTask, PrefillThenDecodeTask, Stage
-
+from llm_balancer.balancer.common import RequestMeta
 
 STREAM_DONE = "data: [DONE]\n\n"
 X_REQUEST_ID = "X-Request-ID"
@@ -11,21 +12,22 @@ X_REQUEST_ID = "X-Request-ID"
 def to_prefill_task(tokenizer, request, request_json):
     request_id = request.headers.get(X_REQUEST_ID) or str(uuid.uuid4())
     prompt_tokens = tokenizer.apply_chat_template(request_json["messages"])
-    task = PrefillTask(request_id=request_id, prompt_tokens=prompt_tokens)
+    task = PrefillTask(request_meta=RequestMeta(id=request_id, submit_time=time.time()),
+                       prompt_tokens=prompt_tokens)
     return task
 
 
 def to_prefill_then_decode_task(tokenizer, request, request_json, predicted_decode_len):
     request_id = request.headers.get(X_REQUEST_ID) or str(uuid.uuid4())
     prompt_tokens = tokenizer.apply_chat_template(request_json["messages"])
-    task = PrefillThenDecodeTask(request_id=request_id,
+    task = PrefillThenDecodeTask(request_meta=RequestMeta(id=request_id, submit_time=time.time()),
                                  prompt_tokens=prompt_tokens,
                                  predicted_decode_len=predicted_decode_len)
     return task
 
 
 def to_decode_task(prefill_route, predicted_decode_len):
-    return DecodeTask(request_id=prefill_route.request_id,
+    return DecodeTask(request_meta=prefill_route.request_meta,
                       num_prompt_tokens=prefill_route.num_prompt_tokens,
                       predicted_decode_len=predicted_decode_len)
 

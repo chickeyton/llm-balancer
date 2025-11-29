@@ -3,9 +3,10 @@
 from dataclasses import dataclass
 from typing import List, Dict, Optional
 
+from .logger import Logger, NullLogger
 from .router.batch_routing import BatchRouteOptimizer, BatchRouteLocalSearch
 from .task_handle import TaskHandle
-from .common import Stage
+from .common import Stage, ServiceLevelObj
 from .connector.kv_connector import KvConnector
 from .dynamic_pd import DynamicPd
 from .endpoint import Endpoint, EndpointListener
@@ -18,18 +19,12 @@ from .task_route import TaskRoute
 class BalancerConfig:
 
     @dataclass
-    class ServiceLevelObj:
-        p_quantile: float = 0.99
-        ttft: float = 1
-        tpot: float = 0.25
-
-    @dataclass
     class DynamicPd:
         update_on_requests: int = 100
         min_update_time: float = 10
 
     def __init__(self):
-        self.service_level_obj: BalancerConfig.ServiceLevelObj = None
+        self.service_level_obj: ServiceLevelObj = None
         self.dynamic_pd: DynamicPd = BalancerConfig.DynamicPd()
 
 
@@ -40,7 +35,8 @@ class Balancer(EndpointTrackerListener, EndpointListener):
                  tracker: EndpointTracker,
                  routers: Dict[Stage, Router],
                  kv_connector: Optional[KvConnector] = None,
-                 batch_route_optimizer: Optional[BatchRouteOptimizer] = None):
+                 batch_route_optimizer: Optional[BatchRouteOptimizer] = None,
+                 logger: Logger = None):
         self.config = config
         self._tracker = tracker
         self._tracker.add_listener(self)
@@ -49,6 +45,7 @@ class Balancer(EndpointTrackerListener, EndpointListener):
             BatchRouteLocalSearch() if batch_route_optimizer is None else batch_route_optimizer
         self._routers = routers
         self._dynamic_pd = DynamicPd(self)
+        self._logger = NullLogger() if logger is None else logger
 
         for stage, router in self._routers.items():
             if stage not in router.for_stages:
@@ -57,6 +54,10 @@ class Balancer(EndpointTrackerListener, EndpointListener):
 
         for endpoint in self._tracker.get_up_endpoints():
             endpoint.set_listener(self)
+
+    @property
+    def logger(self) -> Logger:
+        return self._logger
 
     @property
     def kv_connector(self) -> Optional[KvConnector]:
@@ -109,3 +110,4 @@ class Balancer(EndpointTrackerListener, EndpointListener):
 
     def on_task_ended(self, handle: TaskHandle):
         self._dynamic_pd.on_task_ended(handle)
+        self._logger.task_ended(handle)
