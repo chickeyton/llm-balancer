@@ -1,7 +1,7 @@
 import numpy as np
 import time
 from multiprocessing import Process, Manager, Value
-from openai import AsyncOpenAI
+from openai import OpenAI
 
 base_url = "http://localhost:8888/v1"
 api = "/chat/completions"
@@ -38,7 +38,7 @@ def http_request(prompt):
     json_obj["extra_body"] = {"return_token_ids": True}
     json_obj["stream"] = True
 
-    client = AsyncOpenAI(api_key="", base_url=base_url)
+    client = OpenAI(api_key="", base_url=base_url)
     submit_time = time.time()
     first_token_time = -1
     stream = client.chat.completions.create(**json_obj)
