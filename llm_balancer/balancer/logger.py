@@ -51,30 +51,47 @@ class Stats:
     e2e_mean: float = -1
     e2e_quantile: float = -1
     slo_attainment: float = -1
+    num_requests: int = -1
+
+
+class CompositeLogger(Logger):
+    def __init__(self, loggers):
+        self.loggers = loggers
+
+    def info(self, msg):
+        for logger in self.loggers:
+            logger.info(msg)
+
+    def error(self, msg):
+        for logger in self.loggers:
+            logger.error(msg)
+
+    def task_ended(self, handle):
+        for logger in self.loggers:
+            logger.task_ended(handle)
 
 
 class StatsLogger(Logger):
 
-    def __init__(self, max_hist_len: int = 1000, slo: ServiceLevelObj = None, base: Logger = None):
+    def __init__(self, max_hist_len: int = 1000, slo: ServiceLevelObj = None):
         self._slo = slo
-        self._base = base
         self._ttft_hist = CircularList(max_hist_len)
         self._tpot_hist = CircularList(max_hist_len)
         self._e2e_hist = CircularList(max_hist_len)
         self._num_requests = 0
         self._num_slo_attained = 0
 
+    @property
+    def slo(self):
+        return self._slo
+
     def info(self, msg):
-        if self._base:
-            self._base.info(msg)
+        pass
 
     def error(self, msg):
-        if self._base:
-            self._base.error(msg)
+        pass
 
     def task_ended(self, handle):
-        if self._base:
-            self._base.task_ended(handle)
         if isinstance(handle, (DecodeHandle, PrefillThenDecodeHandle)):
             if handle.request_meta.ttft > 0:
                 self._ttft_hist.append(handle.request_meta.ttft)
@@ -114,5 +131,5 @@ class StatsLogger(Logger):
 
         if self._slo and self._num_requests > 0:
             stats.slo_attainment = self._num_slo_attained / self._num_requests
-
+        stats.num_requests = self.num_requests
         return stats
