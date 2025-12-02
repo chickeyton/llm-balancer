@@ -2,7 +2,7 @@ import time
 from dataclasses import dataclass
 import numpy as np
 
-from llm_balancer.balancer import PrefillThenDecodeHandle, DecodeHandle
+from llm_balancer.balancer.task_handle import PrefillThenDecodeHandle, DecodeHandle
 from llm_balancer.balancer.common import ServiceLevelObj, DEFAULT_P_QUANTILE
 from llm_balancer.balancer.utils import CircularList
 
