@@ -73,8 +73,8 @@ class CompositeLogger(Logger):
 
 class StatsLogger(Logger):
 
-    def __init__(self, max_hist_len: int = 1000, slo: ServiceLevelObj = None):
-        self._slo = slo
+    def __init__(self, max_hist_len: int = 1000, service_level_obj: ServiceLevelObj = None):
+        self._service_level_obj = service_level_obj
         self._ttft_hist = CircularList(max_hist_len)
         self._tpot_hist = CircularList(max_hist_len)
         self._e2e_hist = CircularList(max_hist_len)
@@ -82,8 +82,8 @@ class StatsLogger(Logger):
         self._num_slo_attained = 0
 
     @property
-    def slo(self):
-        return self._slo
+    def service_level_obj(self):
+        return self._service_level_obj
 
     def info(self, msg):
         pass
@@ -100,9 +100,9 @@ class StatsLogger(Logger):
             if 0 < handle.request_meta.submit_time < handle.end_time:
                 self._e2e_hist.append(handle.end_time - handle.request_meta.submit_time)
             self._num_requests += 1
-            if self._slo:
-                if 0 < handle.request_meta.ttft <= self._slo.ttft and \
-                        0 < handle.request_meta.tpot <= self._slo.tpot:
+            if self._service_level_obj:
+                if 0 < handle.request_meta.ttft <= self._service_level_obj.ttft and \
+                        0 < handle.request_meta.tpot <= self._service_level_obj.tpot:
                     self._num_slo_attained += 1
 
     def reset(self):
@@ -114,8 +114,8 @@ class StatsLogger(Logger):
 
     def compute_stats(self) -> Stats:
         stats = Stats(time=time.time())
-        if self._slo:
-            stats.p_quantile = self._slo.p_quantile
+        if self._service_level_obj:
+            stats.p_quantile = self._service_level_obj.p_quantile
         else:
             stats.p_quantile = DEFAULT_P_QUANTILE
 
@@ -129,7 +129,7 @@ class StatsLogger(Logger):
             stats.e2e_mean = np.mean(self._e2e_hist.list)
             stats.e2e_quantile = np.quantile(self._e2e_hist.list, stats.p_quantile)
 
-        if self._slo and self._num_requests > 0:
+        if self._service_level_obj and self._num_requests > 0:
             stats.slo_attainment = self._num_slo_attained / self._num_requests
         stats.num_requests = self._num_requests
         return stats

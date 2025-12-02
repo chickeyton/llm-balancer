@@ -8,6 +8,7 @@ from transformers import AutoTokenizer
 from llm_balancer.api.http.api import api_router
 from llm_balancer.api.http.config import parse_app_config, parse_endpoint_configs, detect_pipeline
 from llm_balancer.balancer import Balancer, StaticEndpointTracker
+from llm_balancer.balancer.logger import StatsLogger
 from llm_balancer.balancer.router import DecodeRouter, PrefillRouter, KvawareRouter, RoundRobinRouter, RandomRouter, \
     QueueLenRouter
 from llm_balancer.balancer.router.encode import EncodeRouter
@@ -58,11 +59,13 @@ def main():
 
     #kv_connector = LMCacheKvConnector(app_config.lmcache.ctrl_mgr_port,
     #                                  app_config.lmcache.is_cache_shared)
+    logger = StatsLogger(service_level_obj=app_config.balancer.service_level_obj)
     tracker = StaticEndpointTracker([VllmEndpoint(c) for c in endpoint_configs])
     routers = create_routers(app_config.routers)
     balancer = Balancer(config=app_config.balancer,
                         tracker=tracker,
-                        routers=routers)
+                        routers=routers,
+                        logger=logger)
     #                    kv_connector=kv_connector)
     #kv_connector.start()
 
@@ -79,6 +82,9 @@ def main():
                                                                app_config.batch_routing.max_batch_time)
     print(f"pipeline: {app.state.pipeline.__class__}")
     uvicorn.run(app, host=args.host, port=int(args.port))
+
+    stats = logger.compute_stats()
+    print(f"slo_attainment: {stats.slo_attainment}")
 
 
 if __name__ == "__main__":
