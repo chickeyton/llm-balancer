@@ -41,7 +41,7 @@ def http_request(prompt):
     url = base_url + api
 
     response = requests.post(url, json=json_obj)
-    if(response.status_code != 200):
+    if response.status_code != 200:
         raise ValueError(f"status_code:{response.status_code} is not 200")
 
 
@@ -65,7 +65,7 @@ def request_proc(worker_id, num_requests, active_requests, finish_times, lock):
         http_request(fixed_prefix + ' ' + prompt2)
         elapsed_time = time.time() - start_time
         with lock:
-            finish_times[worker_id + i]=elapsed_time
+            finish_times[worker_id + i] = elapsed_time
             active_requests.value = active_requests.value - 1
 
 
