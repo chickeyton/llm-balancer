@@ -37,7 +37,7 @@ def http_request(prompt):
     json_obj["max_tokens"] = max_tokens
     json_obj["extra_body"] = {"return_token_ids": True}
 
-    client = AsyncOpenAI(base_url=base_url)
+    client = AsyncOpenAI(api_key="", base_url=base_url)
     submit_time = time.time()
     first_token_time = -1
     stream = client.chat.completions.create(**json_obj)
@@ -67,7 +67,7 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
         with io_remain_requests.get_lock():
             if io_remain_requests.value <= 0:
                 return
-            remain_requests.value = remain_requests.value - 1
+            io_remain_requests.value = io_remain_requests.value - 1
         subfix_len = np.random.randint(subfix_min_len, subfix_max_len)
         prompt2 = gen_prompt(subfix_len)
         ttft, tpot = http_request(fixed_prefix + ' ' + prompt2)
