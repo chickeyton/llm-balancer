@@ -36,6 +36,7 @@ def http_request(prompt):
     json_obj["messages"] = [{"role": "user", "content": prompt}]
     json_obj["max_tokens"] = max_tokens
     json_obj["extra_body"] = {"return_token_ids": True}
+    json_obj["stream"] = True
 
     client = AsyncOpenAI(api_key="", base_url=base_url)
     submit_time = time.time()
