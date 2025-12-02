@@ -84,7 +84,14 @@ def main():
     uvicorn.run(app, host=args.host, port=int(args.port))
 
     stats = logger.compute_stats()
+    print(f"ttft_mean: {stats.ttft_mean}")
+    print(f"ttft_quantile: {stats.ttft_quantile}")
+    print(f"tpot_mean: {stats.tpot_mean}")
+    print(f"tpot_quantile: {stats.tpot_quantile}")
+    print(f"e2e_mean: {stats.e2e_mean}")
+    print(f"e2e_quantile: {stats.e2e_quantile}")
     print(f"slo_attainment: {stats.slo_attainment}")
+    print(f"num_requests: {stats.num_requests}")
 
 
 if __name__ == "__main__":
