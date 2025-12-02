@@ -56,7 +56,7 @@ def http_request(prompt):
         response_len += chunk_len
     complete_time = time.time()
     ttft = first_token_time - submit_time
-    tpot = response_len / (complete_time - first_token_time)
+    tpot = (complete_time - first_token_time) / response_len
     return ttft, tpot
 
 
