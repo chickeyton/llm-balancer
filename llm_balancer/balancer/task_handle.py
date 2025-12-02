@@ -4,7 +4,6 @@
 import time
 
 from .common import Stage, RequestMeta
-from .task_route import TaskRoute
 from .workload import estimate_decode_len, decode_atten_workload
 
 
