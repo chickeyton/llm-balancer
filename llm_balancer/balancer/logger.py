@@ -131,5 +131,5 @@ class StatsLogger(Logger):
 
         if self._slo and self._num_requests > 0:
             stats.slo_attainment = self._num_slo_attained / self._num_requests
-        stats.num_requests = self.num_requests
+        stats.num_requests = self._num_requests
         return stats
