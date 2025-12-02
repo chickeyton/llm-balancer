@@ -31,7 +31,7 @@ class DecodeRouter(Router):
                                          num_prompt_tokens)
         try:
             endpoint = self._find_best_endpoint(endpoints)
-            return DecodeRoute(request_id=task.request_id,
+            return DecodeRoute(request_meta=task.request_meta,
                                endpoint=endpoint,
                                workload=workload,
                                num_prompt_tokens=num_prompt_tokens,
@@ -40,7 +40,7 @@ class DecodeRouter(Router):
         except ValueError:
             pass
         idx = self._route_by_queue_len(endpoints)
-        return DecodeRoute(request_id=task.request_id,
+        return DecodeRoute(request_meta=task.request_meta,
                            endpoint=endpoints[idx],
                            workload=workload,
                            num_prompt_tokens=num_prompt_tokens,
@@ -67,7 +67,7 @@ class DecodeRouter(Router):
         for task_i, task in enumerate(tasks):
             endpoint_i = assign[task_i]
             routes.append(
-                DecodeRoute(request_id=task.request_id,
+                DecodeRoute(request_meta=task.request_meta,
                             endpoint=endpoints[endpoint_i],
                             workload=task_workloads[endpoint_i, task_i],
                             num_prompt_tokens=task.num_prompt_tokens,

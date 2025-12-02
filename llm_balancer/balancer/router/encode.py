@@ -21,13 +21,13 @@ class EncodeRouter(Router):
         workload = task.estimate_workload()
         try:
             endpoint = self._find_best_endpoint(endpoints)
-            return EncodeRoute(request_id=task.request_id,
+            return EncodeRoute(request_meta=task.request_meta,
                                endpoint=endpoint,
                                workload=workload)
         except ValueError:
             pass
         idx = self._route_by_queue_len(endpoints)
-        return EncodeRoute(request_id=task.request_id,
+        return EncodeRoute(request_meta=task.request_meta,
                            endpoint=endpoints[idx],
                            workload=workload)
 
@@ -42,7 +42,7 @@ class EncodeRouter(Router):
         for task_i, task in enumerate(tasks):
             endpoint_i = assign[task_i]
             routes.append(
-                EncodeRoute(request_id=task.request_id,
+                EncodeRoute(request_meta=task.request_meta,
                             endpoint=endpoints[endpoint_i],
                             workload=task_workloads[endpoint_i, task_i]))
         return routes

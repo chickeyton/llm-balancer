@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Tuple, List, Set
 import numpy as np
 
-from ..common import Stage
+from ..common import Stage, RequestMeta
 from ..endpoint import Endpoint
 from ..router.router import Router
 from ..task import Task, PrefillThenDecodeTask, PrefillTask
@@ -134,7 +134,7 @@ class PrefillRouter(Router):
         if task.stage != endpoint.stage:
             raise RuntimeError(f"Task and endpoint stage not match")
         if isinstance(task, PrefillThenDecodeTask):
-            return PrefillThenDecodeRoute(request_id=task.request_id,
+            return PrefillThenDecodeRoute(request_meta=task.request_meta,
                                           endpoint=endpoint,
                                           workload=workloads.task_workload,
                                           num_prompt_tokens=len(task.prompt_tokens),
@@ -143,7 +143,7 @@ class PrefillRouter(Router):
                                           predicted_decode_len=task.predicted_decode_len,
                                           len_extend_rate=self._len_extend_rate)
         elif isinstance(task, PrefillTask):
-            return PrefillRoute(request_id=task.request_id,
+            return PrefillRoute(request_meta=task.request_meta,
                                 endpoint=endpoint,
                                 workload=workloads.task_workload,
                                 num_prompt_tokens=len(task.prompt_tokens),
