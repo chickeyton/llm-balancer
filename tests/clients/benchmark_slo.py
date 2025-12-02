@@ -87,7 +87,7 @@ ttfts = manager.list([])
 tpots = manager.list([])
 slo_passes = manager.list([])
 
-
+start_time = time.time()
 processes = []
 for w in range(num_workers):
     p = Process(target=request_proc, args=(w, remain_requests, ttfts, tpots, slo_passes))
@@ -96,14 +96,17 @@ for w in range(num_workers):
 
 for p in processes:
     p.join()
-
+end_time = time.time()
 
 ttfts = list(ttfts)
 tpots = list(tpots)
 slo_passes = list(slo_passes)
+
+rps = num_requests / (end_time - start_time)
 
 print(f"mean ttfts: {np.mean(ttfts)}")
 print(f"p99 ttfts: {np.quantile(ttfts, 0.99)}")
 print(f"mean tpots: {np.mean(tpots)}")
 print(f"p99 tpots: {np.quantile(tpots, 0.99)}")
 print(f"SLO attainment rate: {np.mean(slo_passes)}")
+print(f"RPS: {rps}")
