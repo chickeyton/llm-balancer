@@ -67,7 +67,7 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
     while True:
         with io_remain_requests.get_lock():
             if io_remain_requests.value <= 0:
-                return
+                break
             io_remain_requests.value = io_remain_requests.value - 1
         subfix_len = np.random.randint(subfix_min_len, subfix_max_len)
         prompt2 = gen_prompt(subfix_len)

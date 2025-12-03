@@ -72,7 +72,9 @@ class PrefillRouter(Router):
     def _query_cache_hit(self, prompt_tokens: List[int], cache_instance_ids: Set[str]):
         if self._balancer.kv_connector is None:
             return dict([(cache_id, 0) for cache_id in cache_instance_ids])
-        return self._balancer.kv_connector.query_hit_len(prompt_tokens, cache_instance_ids)
+        hit_lens = self._balancer.kv_connector.query_hit_len(prompt_tokens, cache_instance_ids)
+        if len(hit_lens) != len(cache_instance_ids):
+            raise RuntimeError("no. of elements in query_hit_len is different from no. of instances")
 
     def _find_best_endpoint(self, task, endpoints, hit_lens):
         if hit_lens:
@@ -92,17 +94,6 @@ class PrefillRouter(Router):
             endpoint = endpoint_d[cache_instance_id]
             workloads = \
                 self._estimate_workloads(task, endpoint, hit_len, max_hit_len)
-            if picked_endpoint is None or workloads.total_workload < min_total_workload:
-                picked_endpoint = endpoint
-                picked_workloads = workloads
-                min_total_workload = workloads.total_workload
-
-        for endpoint in endpoints:
-            # for the endpoint IDs not in the hit_lens dict
-            if endpoint.config.cache_instance_id in hit_lens:
-                continue
-            workloads = \
-                self._estimate_workloads(task, endpoint, 0, max_hit_len)
             if picked_endpoint is None or workloads.total_workload < min_total_workload:
                 picked_endpoint = endpoint
                 picked_workloads = workloads

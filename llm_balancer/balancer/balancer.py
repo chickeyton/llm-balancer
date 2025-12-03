@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import List, Dict, Optional
 
 from .logger import Logger, NullLogger
-from .router.batch_routing import BatchRouteOptimizer, BatchRouteLocalSearch
+from .router.batch_routing import BatchRouteOptimizer, GreedyBatchRoute
 from .task_handle import TaskHandle
 from .common import Stage, ServiceLevelObj
 from .connector.kv_connector import KvConnector
@@ -42,7 +42,7 @@ class Balancer(EndpointTrackerListener, EndpointListener):
         self._tracker.add_listener(self)
         self._kv_connector = kv_connector
         self._batch_route_optimizer = \
-            BatchRouteLocalSearch() if batch_route_optimizer is None else batch_route_optimizer
+            GreedyBatchRoute() if batch_route_optimizer is None else batch_route_optimizer
         self._routers = routers
         self._dynamic_pd = DynamicPd(self)
         self._logger = NullLogger() if logger is None else logger

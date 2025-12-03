@@ -1,7 +1,7 @@
 import time
 
 import numpy as np
-from llm_balancer.balancer.router import BatchRouteLocalSearch
+from llm_balancer.balancer.router import GreedyBatchRoute
 
 num_workers = 10
 num_tasks = 500
@@ -12,7 +12,7 @@ queue_workloads = np.random.uniform(0, 10000, size=(num_workers, )).astype(np.fl
 #queue_workloads = np.zeros(num_workers, dtype=np.float64)
 
 start = time.time()
-optimizer = BatchRouteLocalSearch()
+optimizer = GreedyBatchRoute()
 assign, worker_workloads = optimizer.optimize(task_workloads, queue_workloads)
 elpased = time.time() - start
 
