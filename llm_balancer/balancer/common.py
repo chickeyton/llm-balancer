@@ -27,3 +27,17 @@ class ServiceLevelObj:
     p_quantile: float = 0.99
     ttft: float = 1
     tpot: float = 0.25
+
+
+@dataclass
+class Stats:
+    time: float = -1
+    p_quantile: float = -1
+    ttft_mean: float = -1
+    ttft_quantile: float = -1
+    tpot_mean: float = -1
+    tpot_quantile: float = -1
+    e2e_mean: float = -1
+    e2e_quantile: float = -1
+    slo_attainment: float = -1
+    num_requests: int = -1

@@ -1,9 +1,8 @@
 import time
-from dataclasses import dataclass
 import numpy as np
 
 from llm_balancer.balancer.task_handle import PrefillThenDecodeHandle, DecodeHandle
-from llm_balancer.balancer.common import ServiceLevelObj, DEFAULT_P_QUANTILE
+from llm_balancer.balancer.common import ServiceLevelObj, DEFAULT_P_QUANTILE, Stats
 from llm_balancer.balancer.utils import CircularList
 
 
@@ -38,20 +37,6 @@ class PrintLogger(Logger):
 
     def task_ended(self, handle):
         print(f"Task ended, request:{handle.request_id} stage:{handle.stage}")
-
-
-@dataclass
-class Stats:
-    time: float = -1
-    p_quantile: float = -1
-    ttft_mean: float = -1
-    ttft_quantile: float = -1
-    tpot_mean: float = -1
-    tpot_quantile: float = -1
-    e2e_mean: float = -1
-    e2e_quantile: float = -1
-    slo_attainment: float = -1
-    num_requests: int = -1
 
 
 class CompositeLogger(Logger):

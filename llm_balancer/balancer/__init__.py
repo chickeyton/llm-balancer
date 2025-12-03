@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: Copyright contributors to the llm-service project
 
 from .balancer import BalancerConfig, Balancer
-from .common import Stage
+from .common import Stage, ServiceLevelObj, RequestMeta, Stats
 from .dynamic_pd import DynamicPdAdvice, DynamicPd
 from .endpoint import EndpointConfig, EndpointListener, Endpoint
 from .endpoint_tracker import EndpointTrackerListener, EndpointTracker, StaticEndpointTracker
@@ -37,5 +37,8 @@ __all__ = [
     "DecodeRoute",
     "PrefillThenDecodeRoute",
     "DynamicPdAdvice",
-    "DynamicPd"
+    "DynamicPd",
+    "RequestMeta",
+    "ServiceLevelObj",
+    "Stats",
 ]
