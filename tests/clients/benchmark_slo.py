@@ -12,7 +12,7 @@ num_workers = 20
 fixed_prefix_len = 0
 subfix_min_len = 20
 subfix_max_len = 3900
-max_tokens = 3000
+max_tokens = 300
 
 slo_ttft = 1
 slo_tpot = 0.25
