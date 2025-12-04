@@ -7,7 +7,7 @@
     "p_quantile": 0.99
   },
   "routers": {
-    "PREFILL": "prefill",
+    "PREFILL": "round_robin",
     "DECODE": "round_robin"
   },
   "lmcache": {
