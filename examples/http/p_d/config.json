@@ -7,8 +7,8 @@
     "p_quantile": 0.99
   },
   "routers": {
-    "PREFILL": "prefill",
-    "DECODE": "decode"
+    "PREFILL": "round_robin",
+    "DECODE": "round_robin"
   },
   "lmcache": {
     "ctrl_mgr_port": 9188,
