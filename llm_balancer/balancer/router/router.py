@@ -44,6 +44,7 @@ class Router:
             return DecodeRoute(request_meta=task.request_meta,
                                endpoint=endpoint,
                                workload=-1,
+                               num_prompt_tokens=task.num_prompt_tokens,
                                predicted_decode_len=task.predicted_decode_len,
                                len_extend_rate=0)
         if isinstance(task, PrefillThenDecodeTask):
