@@ -64,6 +64,7 @@ fixed_prefix = gen_prompt(fixed_prefix_len)
 
 
 def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
+    np.random.seed(worker_id)
     while True:
         with io_remain_requests.get_lock():
             if io_remain_requests.value <= 0:
@@ -80,7 +81,7 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
             o_slo_passes.append(0)
 
 
-
+np.random.seed(123)
 remain_requests = Value('i', num_requests)
 manager = Manager()
 ttfts = manager.list([])
