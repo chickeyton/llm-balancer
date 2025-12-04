@@ -11,7 +11,7 @@ num_requests = 200
 num_workers = 20
 fixed_prefix_len = 0
 subfix_min_len = 20
-subfix_max_len = 3900
+subfix_max_len = 20000
 max_tokens = 1
 
 slo_ttft = 1
