@@ -7,7 +7,7 @@ base_url = "http://localhost:8888/v1"
 api = "/chat/completions"
 model = "Qwen/Qwen2-7B"
 
-num_requests = 200
+num_requests = 300
 num_workers = 20
 fixed_prefix_len = 0
 subfix_min_len = 20
@@ -72,7 +72,7 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
 
         cut = np.random.uniform()
         if cut < 0.05:
-            subfix_len = np.random.randint(1000, 20000)
+            subfix_len = np.random.randint(10000, 20000)
         elif cut < 0.3:
             subfix_len = np.random.randint(100, 1000)
         else:
