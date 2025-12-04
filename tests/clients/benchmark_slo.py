@@ -22,7 +22,6 @@ word_pool = ["hi", "hello", "yes", "no", "cat", "dog", "pig", "game", "coffee", 
 
 
 
-
 def gen_prompt(num_words):
     if num_words == 0:
         return ""
@@ -70,7 +69,15 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
             if io_remain_requests.value <= 0:
                 break
             io_remain_requests.value = io_remain_requests.value - 1
-        subfix_len = np.random.randint(subfix_min_len, subfix_max_len)
+
+        cut = np.random.uniform()
+        if cut < 0.05:
+            subfix_len = np.random.randint(1000, 20000)
+        elif cut < 0.3:
+            subfix_len = np.random.randint(100, 1000)
+        else:
+            subfix_len = np.random.randint(10, 100)
+
         prompt2 = gen_prompt(subfix_len)
         ttft, tpot = http_request(fixed_prefix + ' ' + prompt2)
         o_ttfts.append(ttft)
