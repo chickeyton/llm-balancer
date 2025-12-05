@@ -72,7 +72,7 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
 
         cut = np.random.uniform()
         if cut < 0.05:
-            subfix_len = 15000 # np.random.randint(10000, 20000)
+            subfix_len = 20000 # np.random.randint(10000, 20000)
         elif cut < 0.3:
             subfix_len = 1000 # np.random.randint(100, 1000)
         else:
