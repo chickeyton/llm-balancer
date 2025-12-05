@@ -23,7 +23,6 @@ word_pool = ["hi", "hello", "yes", "no", "cat", "dog", "pig", "game", "coffee", 
 
 
 
-
 def gen_prompt(num_words):
     if num_words == 0:
         return ""
