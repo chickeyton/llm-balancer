@@ -70,17 +70,23 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
                 break
             io_remain_requests.value = io_remain_requests.value - 1
 
-        """
         cut = np.random.uniform()
-        if cut < 0.1:
-            subfix_len = np.random.randint(1000, 20000)
+        if cut < 0.05:
+            subfix_len = 22345
+        elif cut < 0.1:
+            subfix_len = 12345
+        elif cut < 0.15:
+            subfix_len = 8765
         elif cut < 0.3:
-            subfix_len = np.random.randint(100, 1000)
+            subfix_len = 2345
+        elif cut < 0.5:
+            subfix_len = 1234
+        elif cut < 0.7:
+            subfix_len = 321
         else:
-            subfix_len = np.random.randint(20, 100)
-        """
+            subfix_len = 20
 
-        subfix_len = np.random.randint(1000, 20000)
+        # subfix_len = np.random.randint(1000, 20000)
         prompt2 = gen_prompt(subfix_len)
         ttft, tpot = http_request(fixed_prefix + ' ' + prompt2)
         o_ttfts.append(ttft)
