@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Tuple, List, Set
 import numpy as np
 
-from ..common import Stage, RequestMeta
+from ..common import Stage
 from ..endpoint import Endpoint
 from ..router.router import Router
 from ..task import Task, PrefillThenDecodeTask, PrefillTask
@@ -113,8 +113,8 @@ class PrefillRouter(Router):
             num_cached_tokens = max(max_hit_len, 0)
         prompt_len = len(task.prompt_tokens)
         prefill_workload = prefill_atten_workload(prompt_len, num_cached_tokens)
-        print(
-            f"prefill _estimate_workloads prompt_len:{prompt_len} num_cached_tokens:{num_cached_tokens} workload:{prefill_workload}")
+        #print(
+            #f"prefill _estimate_workloads prompt_len:{prompt_len} num_cached_tokens:{num_cached_tokens} workload:{prefill_workload}")
 
         if isinstance(task, PrefillThenDecodeTask):
             decode_workload = decode_atten_workload(prompt_len, task.predicted_decode_len, 0)
@@ -124,7 +124,7 @@ class PrefillRouter(Router):
         queue_workload = endpoint.queue_workload()
         total_workload = endpoint.queue_workload() + task_workload
 
-        print(f"total_workload:{total_workload} queue_workload:{queue_workload} task_workload:{task_workload}")
+        #print(f"total_workload:{total_workload} queue_workload:{queue_workload} task_workload:{task_workload}")
 
         return self._Workloads(total_workload=total_workload,
                                task_workload=task_workload,

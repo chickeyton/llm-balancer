@@ -85,7 +85,6 @@ class DynamicPd:
             self._decision_matrix[self._BAD_SLOT][self._EXCEL_SLOT] = self._decide_bad_ttft_excel_tpot
 
     def on_task_ended(self, handle: TaskHandle):
-        # TODO: limit the max length of _ttft_history & _tpot_history
         if isinstance(handle, PrefillHandle):
             if handle.request_meta.ttft > 0:
                 self._ttft_hist.append(handle.request_meta.ttft)

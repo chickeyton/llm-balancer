@@ -11,7 +11,7 @@ class CircularList:
         return len(self.list)
 
     def append(self, element):
-        if len(self.list) == self.max_len:
+        if len(self.list) >= self.max_len:
             self.position = (self.position + 1) % self.max_len
             self.list[self.position] = element
             return self.position
