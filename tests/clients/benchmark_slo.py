@@ -74,9 +74,9 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
         if cut < 0.1:
             subfix_len = np.random.randint(10000, 20000)
         elif cut < 0.3:
-            subfix_len = np.random.randint(100, 1000)
+            subfix_len = np.random.randint(5000, 10000)
         else:
-            subfix_len = np.random.randint(10, 100)
+            subfix_len = np.random.randint(2000, 5000)
 
         prompt2 = gen_prompt(subfix_len)
         ttft, tpot = http_request(fixed_prefix + ' ' + prompt2)
