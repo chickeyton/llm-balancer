@@ -20,10 +20,12 @@ class RouterConfig:
     name: str = ""
     len_extend_rate: float = 0.2
 
+
 @dataclass
 class BatchRoutingConfig:
     max_batch_size: int = 8
     max_batch_time: float = 0.1
+
 
 @dataclass
 class AppConfig:
