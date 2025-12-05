@@ -73,6 +73,9 @@ class PrefillRouter(Router):
         if self._balancer.kv_connector is None:
             return dict([(cache_id, 0) for cache_id in cache_instance_ids])
         hit_lens = self._balancer.kv_connector.query_hit_len(prompt_tokens, cache_instance_ids)
+        print(f"=============== PREFILL _query_cache_hit prompt length : {len(prompt_tokens)}")
+        for ins_id, length in hit_lens.items():
+            print(f" {ins_id} : {length}")
         if len(hit_lens) != len(cache_instance_ids):
             raise RuntimeError("no. of elements in query_hit_len is different from no. of instances")
 
