@@ -70,6 +70,7 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
                 break
             io_remain_requests.value = io_remain_requests.value - 1
 
+        """
         cut = np.random.uniform()
         if cut < 0.1:
             subfix_len = np.random.randint(1000, 20000)
@@ -77,7 +78,9 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
             subfix_len = np.random.randint(100, 1000)
         else:
             subfix_len = np.random.randint(20, 100)
+        """
 
+        subfix_len = np.random.randint(1000, 20000)
         prompt2 = gen_prompt(subfix_len)
         ttft, tpot = http_request(fixed_prefix + ' ' + prompt2)
         o_ttfts.append(ttft)
