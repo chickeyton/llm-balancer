@@ -9,7 +9,8 @@ model = "Qwen/Qwen2-7B"
 
 num_requests = 300
 num_workers = 20
-fixed_prefix_len = 0
+fixed_prefix_len = 1300
+num_fixed_prefixs = 20
 subfix_min_len = 20
 subfix_max_len = 20000
 max_tokens = 1
@@ -19,6 +20,7 @@ slo_tpot = 0.25
 
 
 word_pool = ["hi", "hello", "yes", "no", "cat", "dog", "pig", "game", "coffee", "cake", "noodles", "burger", "football", "tennis", "ship", "car", "ship", "boat"]
+
 
 
 
@@ -59,17 +61,18 @@ def http_request(prompt):
     return ttft, tpot
 
 
-fixed_prefix = gen_prompt(fixed_prefix_len)
+fixed_prefixs = [gen_prompt(fixed_prefix_len) for _ in range(num_fixed_prefixs)]
 
 
 def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
-    #np.random.seed(worker_id)
+    np.random.seed(worker_id)
     while True:
         with io_remain_requests.get_lock():
             if io_remain_requests.value <= 0:
                 break
             io_remain_requests.value = io_remain_requests.value - 1
 
+        """
         cut = np.random.uniform()
         if cut < 0.05:
             subfix_len = 22345
@@ -85,10 +88,13 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
             subfix_len = 321
         else:
             subfix_len = 20
+        """
 
-        # subfix_len = np.random.randint(1000, 20000)
+        prefix = fixed_prefixs[np.random.randint(len(fixed_prefixs))]
+
+        subfix_len = np.random.randint(subfix_min_len, subfix_max_len)
         prompt2 = gen_prompt(subfix_len)
-        ttft, tpot = http_request(fixed_prefix + ' ' + prompt2)
+        ttft, tpot = http_request(prefix + ' ' + prompt2)
         o_ttfts.append(ttft)
         o_tpots.append(tpot)
         if ttft <= slo_ttft and tpot <= slo_tpot:
