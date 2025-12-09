@@ -38,6 +38,7 @@ class LMCacheKvConnector(KvConnector):
             raise RuntimeError("LMCacheKvConnector.start() is not yet called")
         print(f"LMCacheKvConnector query_hit_len 2")
         kv = self._kv_manager.kv_controller
+        print(f"------------------------ len(kv.kv_pool) : {len(kv.kv_pool)}")
         layout_info: Dict[str, Tuple[str, int]] = {}
         last_end = -1
         for start, end, key in kv.token_database.process_tokens(
