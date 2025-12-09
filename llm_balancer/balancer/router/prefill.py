@@ -78,6 +78,7 @@ class PrefillRouter(Router):
             print(f" {ins_id} : {length}")
         if len(hit_lens) != len(cache_instance_ids):
             raise RuntimeError("no. of elements in query_hit_len is different from no. of instances")
+        return hit_lens
 
     def _find_best_endpoint(self, task, endpoints, hit_lens):
         if hit_lens:
