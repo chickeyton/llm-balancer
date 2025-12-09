@@ -11,9 +11,9 @@ from ...balancer.common import ServiceLevelObj
 
 @dataclass
 class LMCacheConfig:
-    contorller_pull_port: int = -1
-    contorller_reply_port: int = -1
-    is_cache_shared: bool = False
+    contorller_pull_port: int
+    contorller_reply_port: int
+    is_cache_shared: bool
 
 
 @dataclass
