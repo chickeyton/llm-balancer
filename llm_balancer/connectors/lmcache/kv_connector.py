@@ -12,9 +12,15 @@ from ...balancer.connector import KvConnector
 
 class LMCacheKvConnector(KvConnector):
 
-    def __init__(self, ctrl_mgr_port: int, is_cache_shared: bool):
+    def __init__(self,
+                 controller_pull_port: int,
+                 controller_reply_port: int,
+                 is_cache_shared: bool):
+        pull_adr = f"0.0.0.0:{controller_pull_port}" if controller_pull_port > 0 else None
+        reply_adr = f"0.0.0.0:{controller_reply_port}" if controller_reply_port > 0 else None
         self._kv_manager = controller_manager.LMCacheControllerManager(
-            {"pull": f"0.0.0.0:{ctrl_mgr_port}", "reply": None}
+            {"pull": pull_adr,
+             "reply": reply_adr}
         )
         self._is_cache_shared = is_cache_shared
         self._thread = None
