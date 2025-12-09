@@ -57,6 +57,8 @@ def main():
     with open(args.endpoints, 'r') as file:
         endpoint_configs = parse_endpoint_configs(json.load(file))
 
+
+    print(f"dddddddfffff {app_config.lmcache.contorller_pull_port}, {app_config.lmcache.contorller_reply_port}")
     kv_connector = LMCacheKvConnector(app_config.lmcache.contorller_pull_port,
                                       app_config.lmcache.contorller_reply_port,
                                       app_config.lmcache.is_cache_shared)
