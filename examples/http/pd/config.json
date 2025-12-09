@@ -12,6 +12,6 @@
   "lmcache": {
     "controller_pull_port": 8801,
     "controller_reply_port": 8802,
-    "is_cache_shared": true
+    "is_cache_shared": false
   }
 }
