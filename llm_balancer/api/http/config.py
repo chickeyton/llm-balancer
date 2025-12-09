@@ -76,6 +76,7 @@ def parse_app_config(json_dict) -> AppConfig:
                                  float(obj.get("len_extend_rate", 0.2)))
 
     lmcache_obj = json_dict.get("lmcache")
+    print(f"lmcache_obj: {lmcache_obj}")
     if lmcache_obj:
         config.lmcache = LMCacheConfig()
         config.lmcache.controller_pull_port = int(lmcache_obj.get("controller_pull_port"))
