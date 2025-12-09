@@ -22,7 +22,7 @@ app.include_router(api_router)
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--host", default="0.0.0.0")
-    parser.add_argument("-p", "--port")
+    parser.add_argument("-p", "--port", default="8888")
     parser.add_argument("-c", "--config", default="config.json")
     parser.add_argument("-e", "--endpoints", default="endpoints.json")
     return parser.parse_args()
@@ -82,6 +82,7 @@ def main():
                                                                app_config.batch_routing.max_batch_size,
                                                                app_config.batch_routing.max_batch_time)
     print(f"pipeline: {app.state.pipeline.__class__}")
+
     uvicorn.run(app, host=args.host, port=int(args.port))
 
     stats = logger.compute_stats()
