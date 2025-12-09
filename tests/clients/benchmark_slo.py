@@ -9,9 +9,9 @@ model = "Qwen/Qwen2-7B"
 
 num_requests = 300
 num_workers = 20
-fixed_prefix_len = 10000
+fixed_prefix_len = 1000
 num_fixed_prefixs = 20
-subfix_min_len = 10000
+subfix_min_len = 1000
 subfix_max_len = subfix_min_len + 1
 max_tokens = 1
 
