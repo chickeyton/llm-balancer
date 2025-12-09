@@ -11,8 +11,8 @@ num_requests = 300
 num_workers = 20
 fixed_prefix_len = 1300
 num_fixed_prefixs = 2
-subfix_min_len = 20
-subfix_max_len = 20000
+subfix_min_len = 0
+subfix_max_len = 0
 max_tokens = 1
 
 slo_ttft = 1
@@ -89,11 +89,13 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
             subfix_len = 20
         """
 
-        prefix = fixed_prefixs[np.random.randint(len(fixed_prefixs))]
+        msg = fixed_prefixs[np.random.randint(len(fixed_prefixs))]
 
-        subfix_len = np.random.randint(subfix_min_len, subfix_max_len)
-        prompt2 = gen_prompt(subfix_len)
-        ttft, tpot = http_request(prefix + ' ' + prompt2)
+        if subfix_min_len > 0:
+            subfix_len = np.random.randint(subfix_min_len, subfix_max_len)
+            msg += " " + gen_prompt(subfix_len)
+
+        ttft, tpot = http_request(msg)
         o_ttfts.append(ttft)
         o_tpots.append(tpot)
         if ttft <= slo_ttft and tpot <= slo_tpot:
