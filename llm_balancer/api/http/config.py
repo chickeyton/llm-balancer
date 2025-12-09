@@ -78,7 +78,8 @@ def parse_app_config(json_dict) -> AppConfig:
     lmcache_obj = json_dict.get("lmcache")
     if lmcache_obj:
         config.lmcache = LMCacheConfig()
-        config.lmcache.ctrl_mgr_port = int(lmcache_obj.get("ctrl_mgr_port"))
+        config.lmcache.controller_pull_port = int(lmcache_obj.get("controller_pull_port"))
+        config.lmcache.controller_reply_port = int(lmcache_obj.get("controller_reply_port"))
         config.lmcache.is_cache_shared = bool(lmcache_obj.get("is_cache_shared"))
 
     batch_routing_obj = json_dict.get("batch_routing")
