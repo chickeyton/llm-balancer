@@ -12,7 +12,7 @@ num_workers = 20
 fixed_prefix_len = 2000
 num_fixed_prefixs = 20
 subfix_min_len = 2000
-subfix_max_len = 2000
+subfix_max_len = subfix_min_len + 1
 max_tokens = 1
 
 slo_ttft = 1
