@@ -18,7 +18,6 @@ class LMCacheKvConnector(KvConnector):
                  is_cache_shared: bool):
         pull_adr = f"0.0.0.0:{controller_pull_port}"
         reply_adr = f"0.0.0.0:{controller_reply_port}"
-        print(f"-------{pull_adr} {reply_adr}")
         self._kv_manager = controller_manager.LMCacheControllerManager(
             controller_urls={"pull": pull_adr,
                              "reply": reply_adr},

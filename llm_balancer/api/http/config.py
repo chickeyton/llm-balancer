@@ -11,8 +11,8 @@ from ...balancer.common import ServiceLevelObj
 
 @dataclass
 class LMCacheConfig:
-    contorller_pull_port: int
-    contorller_reply_port: int
+    controller_pull_port: int
+    controller_reply_port: int
     is_cache_shared: bool
 
 
@@ -76,13 +76,15 @@ def parse_app_config(json_dict) -> AppConfig:
                                  float(obj.get("len_extend_rate", 0.2)))
 
     lmcache_obj = json_dict.get("lmcache")
-    print(f"lmcache_obj: {lmcache_obj}")
+    # print(f"lmcache_obj: {lmcache_obj}")
     if lmcache_obj:
-        config.lmcache = LMCacheConfig()
-        config.lmcache.controller_pull_port = int(lmcache_obj.get("controller_pull_port"))
-        config.lmcache.controller_reply_port = int(lmcache_obj.get("controller_reply_port"))
-        config.lmcache.is_cache_shared = bool(lmcache_obj.get("is_cache_shared"))
-        print(f"lmcache_obj {int(lmcache_obj.get('controller_pull_port'))}, {int(lmcache_obj.get('controller_reply_port'))}")
+        config.lmcache = LMCacheConfig(controller_pull_port=int(lmcache_obj.get("controller_pull_port")),
+                                       controller_reply_port=int(lmcache_obj.get("controller_reply_port")),
+                                       is_cache_shared=bool(lmcache_obj.get("is_cache_shared")))
+        #config.lmcache.controller_pull_port = int(lmcache_obj.get("controller_pull_port"))
+        #config.lmcache.controller_reply_port = int(lmcache_obj.get("controller_reply_port"))
+        #config.lmcache.is_cache_shared = bool(lmcache_obj.get("is_cache_shared"))
+        # print(f"lmcache_obj {int(lmcache_obj.get('controller_pull_port'))}, {int(lmcache_obj.get('controller_reply_port'))}")
 
     print(f"lLLLLLLLLLLLLLLL {config.lmcache.contorller_pull_port}, {config.lmcache.contorller_reply_port}")
 
