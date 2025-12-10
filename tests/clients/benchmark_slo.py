@@ -90,7 +90,7 @@ async def gather_requests():
         gathered_requests += len(requests)
 
 
-loop = asyncio.new_event_loop()
+loop = asyncio.get_event_loop()
 #thread = Thread(target=loop.run_forever)
 #thread.start()
 #asyncio.run_coroutine_threadsafe(gather_requests(), loop)
