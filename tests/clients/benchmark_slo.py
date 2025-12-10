@@ -64,7 +64,7 @@ fixed_prefixs = [gen_prompt(fixed_prefix_len) for _ in range(num_fixed_prefixs)]
 
 
 def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
-    np.random.seed(worker_id)
+    #np.random.seed(worker_id)
     while True:
         with io_remain_requests.get_lock():
             if io_remain_requests.value <= 0:
