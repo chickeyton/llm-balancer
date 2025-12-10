@@ -4,7 +4,7 @@ from threading import Thread
 import numpy as np
 import time
 from multiprocessing import Process, Manager, Value
-from openai import OpenAI
+from openai import AsyncOpenAI
 
 base_url = "http://localhost:8888/v1"
 api = "/chat/completions"
@@ -34,10 +34,6 @@ def gen_prompt(num_words):
 
 np.random.seed(996)
 fixed_prefixs = [gen_prompt(fixed_prefix_len) for _ in range(num_fixed_prefixs)]
-
-
-class AsyncOpenAI(object):
-    pass
 
 
 def create_request(prompt):
