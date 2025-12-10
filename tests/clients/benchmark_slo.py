@@ -86,7 +86,7 @@ async def gather_requests():
         if len(requests) == 0:
             await asyncio.sleep(0.1)
             continue
-        await asyncio.gather(requests)
+        await asyncio.gather(*requests)
         gathered_requests += len(requests)
 
 
