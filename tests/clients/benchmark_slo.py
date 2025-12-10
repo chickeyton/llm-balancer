@@ -10,9 +10,9 @@ base_url = "http://localhost:8888/v1"
 api = "/chat/completions"
 model = "Qwen/Qwen2-7B"
 
-num_requests = 30
-num_workers = 20
-fixed_prefix_len = 100
+num_requests = 300
+#num_workers = 20
+fixed_prefix_len = 3000
 num_fixed_prefixs = 10
 subfix_min_len = 20
 subfix_max_len = subfix_min_len + fixed_prefix_len
@@ -53,6 +53,11 @@ def create_request(prompt):
 sent_requests = 0
 gathered_requests = 0
 open_requests = []
+open_request_starts = []
+
+ttfts = []
+tpots = []
+slo_passes = []
 
 
 async def send_requests():
@@ -67,7 +72,9 @@ async def send_requests():
             if subfix_min_len > 0:
                 subfix_len = np.random.randint(subfix_min_len, subfix_max_len)
                 prompt += " " + gen_prompt(subfix_len)
+            submit_time = time.time()
             open_requests.append(create_request(prompt))
+            open_request_starts.append(submit_time)
             num_update_requests += 1
             sent_requests += 1
         elapsed = time.time() - update_start
@@ -82,7 +89,9 @@ async def gather_requests():
     global open_requests
     while gathered_requests < num_requests:
         requests = open_requests
+        starts = open_request_starts
         open_requests = []
+        open_request_starts = []
         if len(requests) == 0:
             await asyncio.sleep(0.1)
             continue
