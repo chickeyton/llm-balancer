@@ -47,6 +47,7 @@ def create_request(prompt):
 
     client = AsyncOpenAI(api_key="", base_url=base_url)
     request = client.chat.completions.create(**json_obj)
+    print(f"request class : {request.__class__}")
     return request
 
 
