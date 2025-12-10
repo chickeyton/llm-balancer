@@ -87,6 +87,7 @@ async def gather_requests():
     global num_requests
     global gathered_requests
     global open_requests
+    global open_request_starts
     while gathered_requests < num_requests:
         requests = open_requests
         starts = open_request_starts
