@@ -36,6 +36,10 @@ np.random.seed(996)
 fixed_prefixs = [gen_prompt(fixed_prefix_len) for _ in range(num_fixed_prefixs)]
 
 
+class AsyncOpenAI(object):
+    pass
+
+
 def create_request(prompt):
     json_obj = {}
     json_obj["model"] = model
@@ -45,7 +49,7 @@ def create_request(prompt):
     # json_obj["extra_body"] = {"return_token_ids": True}
     json_obj["stream"] = True
 
-    client = OpenAI(api_key="", base_url=base_url)
+    client = AsyncOpenAI(api_key="", base_url=base_url)
     request = client.chat.completions.create(**json_obj)
     return request
 
