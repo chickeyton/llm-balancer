@@ -12,8 +12,9 @@ from ..task_route import TaskRoute
 
 class KvawareRouter(Router):
 
-    def __init__(self):
+    def __init__(self, hit_threshold: int = 2000):
         super().__init__()
+        self._hit_threshold = hit_threshold
 
     def on_registered(self, balancer: "Balancer"):
         super().on_registered(balancer)
@@ -33,6 +34,7 @@ class KvawareRouter(Router):
             endpoint = self._find_best_endpoint(endpoints, hit_lens)
             return self._create_nonworkload_route(task, endpoint)
         except ValueError:
+            print("KvawareRouter use fallback routing")
             pass
         idx = self._route_by_queue_len(endpoints)
         return self._create_nonworkload_route(task, endpoints[idx])
@@ -46,8 +48,7 @@ class KvawareRouter(Router):
             raise ValueError
         return hit_lens
 
-    @staticmethod
-    def _find_best_endpoint(endpoints, hit_lens) -> Endpoint:
+    def _find_best_endpoint(self, endpoints, hit_lens) -> Endpoint:
         max_hit_len = -1
         max_hit_instance = None
         for instance_id, hit_len in hit_lens.items():
@@ -56,6 +57,8 @@ class KvawareRouter(Router):
                 max_hit_len = hit_len
         if max_hit_instance is None:
             raise ValueError
+        if max_hit_len < self._hit_threshold:
+            return endpoints[self._route_by_queue_len(endpoints)]
         for endpoint in endpoints:
             if endpoint.config.cache_instance_id == max_hit_instance:
                 return endpoint

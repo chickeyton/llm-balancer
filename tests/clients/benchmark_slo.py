@@ -8,7 +8,7 @@ api = "/chat/completions"
 model = "Qwen/Qwen2-7B"
 
 num_requests = 300
-num_workers = 20
+num_workers = 1
 fixed_prefix_len = 3000
 num_fixed_prefixs = 500
 subfix_min_len = 20
