@@ -150,7 +150,7 @@ async def async_send_stream_p_then_d(request_json, task_handle, yield_headers=Fa
         request_json["stream"] = True
         request_json["extra_body"] = {"return_token_ids": True}
 
-        stream = await client.chat.completions.create(**request_json)
+        stream = await client.completions.create(**request_json)
         if yield_headers:
             # print(f"========================= yield header")
             stream.response.headers[X_REQUEST_ID] = task_handle.request_id
