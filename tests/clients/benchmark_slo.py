@@ -97,7 +97,7 @@ loop = asyncio.get_event_loop()
 #asyncio.run_coroutine_threadsafe(send_requests(), loop)
 loop.run_until_complete(asyncio.gather(gather_requests(), send_requests()))
 #thread.join()
-
+loop.close()
 """
 
 
