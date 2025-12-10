@@ -19,8 +19,10 @@ def to_prefill_task(tokenizer, request, request_json):
 
 def to_prefill_then_decode_task(tokenizer, request, request_json, predicted_decode_len):
     request_id = request.headers.get(X_REQUEST_ID) or str(uuid.uuid4())
-    # prompt_tokens = tokenizer.apply_chat_template(request_json["messages"])
-    prompt_tokens = tokenizer.encode(request_json["prompt"])
+    prompt_tokens = tokenizer.apply_chat_template(request_json["messages"],
+                                                  add_generation_prompt=True,
+                                                  continue_final_message=False)
+    # prompt_tokens = tokenizer.encode(request_json["prompt"])
     task = PrefillThenDecodeTask(request_meta=RequestMeta(id=request_id, submit_time=time.time()),
                                  prompt_tokens=prompt_tokens,
                                  predicted_decode_len=predicted_decode_len)
@@ -150,7 +152,7 @@ async def async_send_stream_p_then_d(request_json, task_handle, yield_headers=Fa
         request_json["stream"] = True
         request_json["extra_body"] = {"return_token_ids": True}
 
-        stream = await client.completions.create(**request_json)
+        stream = await client.chat.completions.create(**request_json)
         if yield_headers:
             # print(f"========================= yield header")
             stream.response.headers[X_REQUEST_ID] = task_handle.request_id

@@ -33,8 +33,8 @@ def gen_prompt(num_words):
 def http_request(prompt):
     json_obj = {}
     json_obj["model"] = model
-    #json_obj["messages"] = [{"role": "user", "content": prompt}]
-    json_obj["prompt"] = prompt
+    json_obj["messages"] = [{"role": "user", "content": prompt}]
+    #json_obj["prompt"] = prompt
     json_obj["max_tokens"] = max_tokens
     # json_obj["extra_body"] = {"return_token_ids": True}
     json_obj["stream"] = True
