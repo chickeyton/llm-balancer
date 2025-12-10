@@ -84,14 +84,14 @@ async def gather_requests():
         requests = open_requests
         open_requests = []
         if len(requests) == 0:
-            yield asyncio.sleep(0.1)
+            await asyncio.sleep(0.1)
             continue
         await asyncio.gather(requests)
         gathered_requests += len(requests)
 
 
 loop = asyncio.new_event_loop()
-thread = Thread(target=loop.run_until_complete)
+thread = Thread(target=loop.run_forever)
 thread.start()
 asyncio.run_coroutine_threadsafe(gather_requests(), loop)
 asyncio.run_coroutine_threadsafe(send_requests(), loop)
