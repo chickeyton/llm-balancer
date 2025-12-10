@@ -42,7 +42,7 @@ def http_request(prompt):
     client = OpenAI(api_key="", base_url=base_url)
     submit_time = time.time()
     first_token_time = -1
-    stream = client.completions.create(**json_obj)
+    stream = client.chat.completions.create(**json_obj)
     response_len = 0
     for chunk in stream:
         choice = chunk.choices[0]
