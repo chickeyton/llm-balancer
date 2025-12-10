@@ -26,17 +26,22 @@ class KvawareRouter(Router):
         return Stage.PREFILL, Stage.PREFILL_THEN_DECODE
 
     def route(self, task: Task, endpoints: List[Endpoint]) -> TaskRoute:
+        print(f"kvaware route 1")
         if self._balancer.kv_connector is None:
             raise RuntimeError("kv_connector is None")
         try:
+            print(f"kvaware route 2")
             hit_lens = self._query_cache_hit(task.prompt_tokens,
                                              set([ep.config.cache_instance_id for ep in endpoints]))
+            print(f"kvaware route 3: {hit_lens}")
             endpoint = self._find_best_endpoint(endpoints, hit_lens)
+            print(f"kvaware route 4 endpoint: {endpoint.id}")
             return self._create_nonworkload_route(task, endpoint)
         except ValueError:
             print("KvawareRouter use fallback routing")
             pass
         idx = self._route_by_queue_len(endpoints)
+        print(f"kvaware route 5 endpoint: {endpoints[idx].id}")
         return self._create_nonworkload_route(task, endpoints[idx])
 
     def batch_route(self, tasks: List[Task], endpoints: List[Endpoint]) -> List[TaskRoute]:
@@ -49,17 +54,22 @@ class KvawareRouter(Router):
         return hit_lens
 
     def _find_best_endpoint(self, endpoints, hit_lens) -> Endpoint:
+        print(f"kvaware _find_best_endpoint 1")
         max_hit_len = -1
         max_hit_instance = None
         for instance_id, hit_len in hit_lens.items():
             if max_hit_instance is None or hit_len > max_hit_len:
                 max_hit_instance = instance_id
                 max_hit_len = hit_len
+        print(f"kvaware _find_best_endpoint 2")
         if max_hit_instance is None:
             raise ValueError
+        print(f"kvaware _find_best_endpoint 3")
         if max_hit_len < self._hit_threshold:
+            print(f"kvaware _find_best_endpoint 4 max_hit_len: {max_hit_len}")
             return endpoints[self._route_by_queue_len(endpoints)]
         for endpoint in endpoints:
             if endpoint.config.cache_instance_id == max_hit_instance:
+                print(f"kvaware _find_best_endpoint 5")
                 return endpoint
         raise ValueError
