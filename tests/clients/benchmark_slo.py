@@ -73,7 +73,7 @@ async def send_requests():
         elapsed = time.time() - update_start
         if elapsed < 1.0:
             sleep_time = 1.0 - elapsed
-            yield asyncio.sleep(sleep_time)
+            await asyncio.sleep(sleep_time)
 
 
 async def gather_requests():
