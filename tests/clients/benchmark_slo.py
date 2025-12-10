@@ -96,7 +96,7 @@ thread = Thread(target=loop.run_forever)
 thread.start()
 asyncio.run_coroutine_threadsafe(gather_requests(loop), loop)
 asyncio.run_coroutine_threadsafe(send_requests(), loop)
-
+thread.join()
 
 """
 
