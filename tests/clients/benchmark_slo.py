@@ -76,7 +76,7 @@ async def send_requests():
             await asyncio.sleep(sleep_time)
 
 
-async def gather_requests():
+async def gather_requests(loop):
     global num_requests
     global gathered_requests
     global open_requests
@@ -88,14 +88,15 @@ async def gather_requests():
             continue
         await asyncio.gather(requests)
         gathered_requests += len(requests)
+    loop.stop()
 
 
 loop = asyncio.new_event_loop()
-thread = Thread(target=loop.run_until_complete)
+thread = Thread(target=loop.run_forever)
 thread.start()
-asyncio.run_coroutine_threadsafe(gather_requests(), loop)
+asyncio.run_coroutine_threadsafe(gather_requests(loop), loop)
 asyncio.run_coroutine_threadsafe(send_requests(), loop)
-thread.join()
+
 
 """
 
