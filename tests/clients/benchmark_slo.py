@@ -8,7 +8,7 @@ api = "/chat/completions"
 model = "Qwen/Qwen2-7B"
 
 num_requests = 300
-num_workers = 20
+num_workers = 1
 fixed_prefix_len = 10000
 num_fixed_prefixs = 10
 subfix_min_len = 20
@@ -67,6 +67,7 @@ fixed_prefixs = [gen_prompt(fixed_prefix_len) for _ in range(num_fixed_prefixs)]
 def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
     np.random.seed(worker_id)
     while True:
+        time.sleep(0.5)
         with io_remain_requests.get_lock():
             if io_remain_requests.value <= 0:
                 break
