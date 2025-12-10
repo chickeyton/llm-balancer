@@ -106,7 +106,7 @@ def request_proc(worker_id, io_remain_requests, o_ttfts, o_tpots, o_slo_passes):
             o_slo_passes.append(0)
 
 
-#np.random.seed(123)
+np.random.seed(996)
 remain_requests = Value('i', num_requests)
 manager = Manager()
 ttfts = manager.list([])
