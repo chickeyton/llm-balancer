@@ -33,12 +33,12 @@ class LMCacheKvConnector(KvConnector):
         return self._is_cache_shared
 
     def query_hit_len(self, tokens: List[int], instance_ids: Optional[Set[str]] = None) -> Dict[str, int]:
-        print(f"LMCacheKvConnector query_hit_len 1")
+        #print(f"LMCacheKvConnector query_hit_len 1")
         if not self._thread:
             raise RuntimeError("LMCacheKvConnector.start() is not yet called")
-        print(f"LMCacheKvConnector query_hit_len 2")
+        #print(f"LMCacheKvConnector query_hit_len 2")
         kv = self._kv_manager.kv_controller
-        print(f"------------------------ len(kv.kv_pool) : {len(kv.kv_pool)}")
+        #print(f"------------------------ len(kv.kv_pool) : {len(kv.kv_pool)}")
         layout_info: Dict[str, Tuple[str, int]] = {}
         last_end = -1
         for start, end, key in kv.token_database.process_tokens(
@@ -47,7 +47,6 @@ class LMCacheKvConnector(KvConnector):
             matched_pool = kv.kv_pool.get(key, None)
             if matched_pool is None:
                 break
-            print(f"HhhhhHHHhhHHHHHHHHHHHH HAS MAATCHED HHHHHHHHHHHHHHHHHHHHH")
             for instance in matched_pool:
                 if instance_ids and instance.instance_id not in instance_ids:
                     continue
@@ -67,14 +66,14 @@ class LMCacheKvConnector(KvConnector):
                         ):
                             layout_info[matched_instance] = (matched_location, end)
             last_end = end
-        print(f"LMCacheKvConnector query_hit_len 2")
+        #print(f"LMCacheKvConnector query_hit_len 2")
         result = dict(zip(layout_info.keys(), [v[1] for v in layout_info.values()]))
         if instance_ids:
-            print(f"LMCacheKvConnector query_hit_len 3")
+            #print(f"LMCacheKvConnector query_hit_len 3")
             for instance_id in instance_ids:
                 if instance_id not in result:
                     result[instance_id] = 0
-        print(f"LMCacheKvConnector query_hit_len 4")
+        #print(f"LMCacheKvConnector query_hit_len 4")
         return result
 
     def start(self):

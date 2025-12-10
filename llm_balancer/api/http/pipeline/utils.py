@@ -19,7 +19,8 @@ def to_prefill_task(tokenizer, request, request_json):
 
 def to_prefill_then_decode_task(tokenizer, request, request_json, predicted_decode_len):
     request_id = request.headers.get(X_REQUEST_ID) or str(uuid.uuid4())
-    prompt_tokens = tokenizer.apply_chat_template(request_json["messages"])
+    # prompt_tokens = tokenizer.apply_chat_template(request_json["messages"])
+    prompt_tokens = tokenizer.encode(request_json["prompt"])
     task = PrefillThenDecodeTask(request_meta=RequestMeta(id=request_id, submit_time=time.time()),
                                  prompt_tokens=prompt_tokens,
                                  predicted_decode_len=predicted_decode_len)
