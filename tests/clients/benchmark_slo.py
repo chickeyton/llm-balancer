@@ -98,6 +98,10 @@ async def gather_requests():
             if not request.ended:
                 tasks_to_wait.append(request.task)
                 requests_to_wait.append(request)
+        if not requests_to_wait:
+            await asyncio.sleep(0)
+            continue
+
         print(f"gather_requests  2 {len(tasks_to_wait)}")
         dones, _ = await asyncio.wait(tasks_to_wait, return_when=asyncio.FIRST_COMPLETED)
         now = time.time()
