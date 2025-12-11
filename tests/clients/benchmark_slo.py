@@ -87,7 +87,6 @@ async def send_requests():
         request = Request(task=asyncio.create_task(create_request(prompt)),
                           submit_time=submit_time)
         all_requests.append(request)
-        batch_size += 1
         if len(all_requests) == num_requests:
             break
 
