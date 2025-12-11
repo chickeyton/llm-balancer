@@ -13,7 +13,7 @@ model = "Qwen/Qwen2-7B"
 
 num_requests = 300
 #num_workers = 20
-fixed_prefix_len = 2000
+fixed_prefix_len = 5000
 num_fixed_prefixs = 20
 subfix_min_len = 5
 subfix_max_len = 20
@@ -85,7 +85,7 @@ async def send_requests():
         subfix_len = np.random.randint(subfix_min_len, subfix_max_len)
         segments = [fixed_prefixs[i] for i in np.random.randint(0, len(fixed_prefixs), subfix_len)]
         prompt = " ".join(segments)
-        print(f"prompt length: {len(prompt)}")
+        #print(f"prompt length: {len(prompt)}")
         submit_time = time.time()
         request = Request(task=asyncio.create_task(create_request(prompt)),
                           submit_time=submit_time)
