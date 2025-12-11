@@ -18,7 +18,7 @@ num_fixed_prefixs = 10
 subfix_min_len = 20
 subfix_max_len = subfix_min_len + fixed_prefix_len
 max_tokens = 1
-target_rps = 20
+target_rps = 10
 
 slo_ttft = 1
 slo_tpot = 0.25
@@ -88,7 +88,7 @@ async def send_requests():
                           submit_time=submit_time)
         all_requests.append(request)
         await asyncio.sleep(0)
-        print(f"all_requests : {len(all_requests)}")
+        #print(f"all_requests : {len(all_requests)}")
         while check_rps() >= target_rps:
             await asyncio.sleep(0.05)
     end_time = time.time()
