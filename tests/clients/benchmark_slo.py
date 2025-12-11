@@ -92,7 +92,7 @@ async def send_requests():
         await asyncio.sleep(0)
         #print(f"all_requests : {len(all_requests)}")
         while check_rps() >= target_rps:
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(0)
     end_time = time.time()
 
 
