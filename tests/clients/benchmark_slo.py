@@ -87,6 +87,7 @@ async def send_requests():
         request = Request(task=asyncio.create_task(create_request(prompt)),
                           submit_time=submit_time)
         all_requests.append(request)
+        await asyncio.sleep(0)
         print(f"all_requests : {len(all_requests)}")
         while check_rps() >= target_rps:
             await asyncio.sleep(0.05)
