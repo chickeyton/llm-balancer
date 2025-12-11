@@ -90,7 +90,7 @@ async def gather_requests():
     global all_requests
     global ttfts
     ended_requests = 0
-
+    print(f"gather_requests  1")
     while ended_requests < num_requests:
         tasks_to_wait = []
         requests_to_wait = []
@@ -98,8 +98,10 @@ async def gather_requests():
             if not request.ended:
                 tasks_to_wait.append(request.task)
                 requests_to_wait.append(request)
+        print(f"gather_requests  2 {len(tasks_to_wait)}")
         dones, _ = await asyncio.wait(tasks_to_wait, return_when=asyncio.FIRST_COMPLETED)
         now = time.time()
+        print(f"gather_requests  3")
         for task in dones:
             request = requests_to_wait[tasks_to_wait.index(task)]
             request.ended = True
