@@ -23,6 +23,9 @@ target_rps = 10
 slo_ttft = 1
 slo_tpot = 0.25
 
+start_time = -1
+end_time = -1
+
 
 word_pool = ["hi", "hello", "yes", "no", "cat", "dog", "pig", "game", "coffee", "cake", "noodles", "burger", "football", "tennis", "ship", "car", "ship", "boat"]
 
@@ -72,6 +75,9 @@ def check_rps():
 
 async def send_requests():
     global all_requests
+    global start_time
+    global end_time
+    start_time = time.time()
     while len(all_requests) < num_requests:
         prompt = fixed_prefixs[np.random.randint(len(fixed_prefixs))]
         if subfix_min_len > 0:
@@ -84,6 +90,7 @@ async def send_requests():
         print(f"all_requests : {len(all_requests)}")
         while check_rps() >= target_rps:
             await asyncio.sleep(0.05)
+    end_time = time.time()
 
 
 async def gather_requests():
@@ -113,9 +120,7 @@ async def gather_requests():
         ended_requests += len(dones)
 
 loop = asyncio.get_event_loop()
-start_time = time.time()
 loop.run_until_complete(asyncio.gather(gather_requests(), send_requests()))
-end_time = time.time()
 loop.close()
 
 actual_rps = num_requests / (end_time - start_time)
