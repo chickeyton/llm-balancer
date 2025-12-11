@@ -65,8 +65,8 @@ def check_rps():
     global all_requests
     cutoff = time.time() - 1.0
     for i in range(len(all_requests) - 1, -1, -1):
-        if cutoff < all_requests[i].submit_time:
-            return len(all_requests) - i
+        if all_requests[i].submit_time < cutoff:
+            return len(all_requests) - 1 - i
     return len(all_requests)
 
 
@@ -81,6 +81,7 @@ async def send_requests():
         request = Request(task=asyncio.create_task(create_request(prompt)),
                           submit_time=submit_time)
         all_requests.append(request)
+        print(f"all_requests : {len(all_requests)}")
         while check_rps() >= target_rps:
             await asyncio.sleep(0.05)
 
