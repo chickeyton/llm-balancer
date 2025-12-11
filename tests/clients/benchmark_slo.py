@@ -18,7 +18,7 @@ num_fixed_prefixs = 10
 subfix_min_len = 20
 subfix_max_len = subfix_min_len + fixed_prefix_len
 max_tokens = 1
-target_rps = 20
+target_rps = 10
 
 slo_ttft = 1
 slo_tpot = 0.25
