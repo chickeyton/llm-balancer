@@ -13,7 +13,7 @@ model = "Qwen/Qwen2-7B"
 
 num_requests = 300
 #num_workers = 20
-fixed_prefix_len = 10000
+fixed_prefix_len = 20000
 num_fixed_prefixs = 10
 subfix_min_len = 20
 subfix_max_len = subfix_min_len + fixed_prefix_len
