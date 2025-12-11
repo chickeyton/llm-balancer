@@ -78,6 +78,7 @@ async def send_requests():
     global start_time
     global end_time
     start_time = time.time()
+    batch_size = 0
     while True:
         prompt = fixed_prefixs[np.random.randint(len(fixed_prefixs))]
         if subfix_min_len > 0:
@@ -87,14 +88,17 @@ async def send_requests():
         request = Request(task=asyncio.create_task(create_request(prompt)),
                           submit_time=submit_time)
         all_requests.append(request)
+        batch_size += 1
         if len(all_requests) == num_requests:
             break
 
-        #print(f"all_requests : {len(all_requests)}")
-        while True:
+        if batch_size == 5:
+            batch_size = 0
             await asyncio.sleep(0)
-            if check_rps() < target_rps:
-                break
+
+        #print(f"all_requests : {len(all_requests)}")
+        while check_rps() > target_rps:
+            await asyncio.sleep(0)
 
     end_time = time.time()
 
