@@ -13,7 +13,7 @@ model = "Qwen/Qwen2-7B"
 
 num_requests = 300
 #num_workers = 20
-fixed_prefix_len = 3000
+fixed_prefix_len = 10000
 num_fixed_prefixs = 10
 subfix_min_len = 20
 subfix_max_len = subfix_min_len + fixed_prefix_len
@@ -78,7 +78,7 @@ async def send_requests():
     global start_time
     global end_time
     start_time = time.time()
-    while len(all_requests) < num_requests:
+    while True:
         prompt = fixed_prefixs[np.random.randint(len(fixed_prefixs))]
         if subfix_min_len > 0:
             subfix_len = np.random.randint(subfix_min_len, subfix_max_len)
@@ -87,6 +87,8 @@ async def send_requests():
         request = Request(task=asyncio.create_task(create_request(prompt)),
                           submit_time=submit_time)
         all_requests.append(request)
+        if len(all_requests) == num_requests:
+            break
         await asyncio.sleep(0)
         #print(f"all_requests : {len(all_requests)}")
         while check_rps() >= target_rps:
@@ -98,7 +100,7 @@ async def gather_requests():
     global all_requests
     global ttfts
     ended_requests = 0
-    print(f"gather_requests  1")
+    #print(f"gather_requests  1")
     while ended_requests < num_requests:
         tasks_to_wait = []
         requests_to_wait = []
@@ -110,10 +112,10 @@ async def gather_requests():
             await asyncio.sleep(0)
             continue
 
-        print(f"gather_requests  2 {len(tasks_to_wait)}")
+        #print(f"gather_requests  2 {len(tasks_to_wait)}")
         dones, _ = await asyncio.wait(tasks_to_wait, return_when=asyncio.FIRST_COMPLETED)
         now = time.time()
-        print(f"gather_requests  3 {len(dones)}")
+        #print(f"gather_requests  3 {len(dones)}")
         for task in dones:
             request = requests_to_wait[tasks_to_wait.index(task)]
             request.ended = True
