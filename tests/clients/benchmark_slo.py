@@ -48,7 +48,6 @@ def create_request(prompt):
 
     client = AsyncOpenAI(api_key="", base_url=base_url)
     request = client.chat.completions.create(**json_obj)
-    print(f"request class : {request.__class__}")
     return request
 
 
@@ -93,16 +92,15 @@ async def gather_requests():
 
     while ended_requests < num_requests:
         tasks_to_wait = []
-        task_request_idxs = []
+        requests_to_wait = []
         for i, request in enumerate(all_requests):
             if not request.ended:
                 tasks_to_wait.append(request.task)
-                task_request_idxs.append(i)
+                requests_to_wait.append(request)
         dones, _ = await asyncio.wait(tasks_to_wait, return_when=asyncio.FIRST_COMPLETED)
         now = time.time()
         for task in dones:
-            request_idx = task_request_idxs[tasks_to_wait.index(task)]
-            request = all_requests[request_idx]
+            request = requests_to_wait[tasks_to_wait.index(task)]
             request.ended = True
             ttfts.append(now - request.submit_time)
         ended_requests += len(dones)
