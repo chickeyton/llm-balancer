@@ -36,9 +36,9 @@ def gen_prompt(num_words):
     rand_nums = np.random.randint(0, len(word_pool), num_words)
     return " ".join([word_pool[n] for n in rand_nums])
 
-np.random.seed(996)
+#np.random.seed(996)
 fixed_prefixs = [gen_prompt(fixed_prefix_len) for _ in range(num_fixed_prefixs)]
-
+np.random.seed(996)
 
 def create_request(prompt):
     json_obj = {}
