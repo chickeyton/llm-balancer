@@ -16,7 +16,7 @@ num_requests = 300
 fixed_prefix_len = 2000
 num_fixed_prefixs = 100
 subfix_min_len = 5
-subfix_max_len = 200
+subfix_max_len = 15
 max_tokens = 1
 target_rps = 15
 
