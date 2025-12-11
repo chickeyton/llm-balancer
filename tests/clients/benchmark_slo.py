@@ -1,4 +1,5 @@
 import asyncio
+from dataclasses import dataclass
 from threading import Thread
 
 import numpy as np
@@ -17,7 +18,7 @@ num_fixed_prefixs = 10
 subfix_min_len = 20
 subfix_max_len = subfix_min_len + fixed_prefix_len
 max_tokens = 1
-rps = 10
+target_rps = 10
 
 slo_ttft = 1
 slo_tpot = 0.25
@@ -51,64 +52,72 @@ def create_request(prompt):
     return request
 
 
-sent_requests = 0
-gathered_requests = 0
-open_requests = []
-open_request_starts = []
+@dataclass
+class Request:
+    task: asyncio.Task
+    submit_time: float
+    ended: bool = False
 
+all_requests = []
 ttfts = []
-tpots = []
-slo_passes = []
+
+
+def check_rps():
+    global all_requests
+    cutoff = time.time() - 1.0
+    for i in range(len(all_requests) - 1, -1, -1):
+        if cutoff < all_requests[i].submit_time:
+            return len(all_requests) - i
+    return len(all_requests)
 
 
 async def send_requests():
-    global num_requests
-    global sent_requests
-    global open_requests
-    while sent_requests < num_requests:
-        update_start = time.time()
-        num_update_requests = 0
-        while num_update_requests < rps:
-            prompt = fixed_prefixs[np.random.randint(len(fixed_prefixs))]
-            if subfix_min_len > 0:
-                subfix_len = np.random.randint(subfix_min_len, subfix_max_len)
-                prompt += " " + gen_prompt(subfix_len)
-            submit_time = time.time()
-            open_requests.append(create_request(prompt))
-            open_request_starts.append(submit_time)
-            num_update_requests += 1
-            sent_requests += 1
-        elapsed = time.time() - update_start
-        if elapsed < 1.0:
-            sleep_time = 1.0 - elapsed
-            await asyncio.sleep(sleep_time)
+    global all_requests
+    while len(all_requests) < num_requests:
+        prompt = fixed_prefixs[np.random.randint(len(fixed_prefixs))]
+        if subfix_min_len > 0:
+            subfix_len = np.random.randint(subfix_min_len, subfix_max_len)
+            prompt += " " + gen_prompt(subfix_len)
+        submit_time = time.time()
+        request = Request(task=asyncio.create_task(create_request(prompt)),
+                          submit_time=submit_time)
+        all_requests.append(request)
+        while check_rps() >= target_rps:
+            await asyncio.sleep(0.05)
 
 
 async def gather_requests():
-    global num_requests
-    global gathered_requests
-    global open_requests
-    global open_request_starts
-    while gathered_requests < num_requests:
-        requests = open_requests
-        starts = open_request_starts
-        open_requests = []
-        open_request_starts = []
-        if len(requests) == 0:
-            await asyncio.sleep(0.1)
-            continue
-        await asyncio.gather(*requests)
-        gathered_requests += len(requests)
+    global all_requests
+    global ttfts
+    ended_requests = 0
 
+    while ended_requests < num_requests:
+        tasks_to_wait = []
+        task_request_idxs = []
+        for i, request in enumerate(all_requests):
+            if not request.ended:
+                tasks_to_wait.append(request.task)
+                task_request_idxs.append(i)
+        dones, _ = await asyncio.wait(tasks_to_wait, return_when=asyncio.FIRST_COMPLETED)
+        now = time.time()
+        for task in dones:
+            request_idx = task_request_idxs[tasks_to_wait.index(task)]
+            request = all_requests[request_idx]
+            request.ended = True
+            ttfts.append(now - request.submit_time)
+        ended_requests += len(dones)
 
 loop = asyncio.get_event_loop()
-#thread = Thread(target=loop.run_forever)
-#thread.start()
-#asyncio.run_coroutine_threadsafe(gather_requests(), loop)
-#asyncio.run_coroutine_threadsafe(send_requests(), loop)
+start_time = time.time()
 loop.run_until_complete(asyncio.gather(gather_requests(), send_requests()))
-#thread.join()
+end_time = time.time()
 loop.close()
+
+actual_rps = num_requests / (end_time - start_time)
+print(f"actual RPS: {actual_rps}")
+print(f"mean ttfts: {np.mean(ttfts)}")
+print(f"p99 ttfts: {np.quantile(ttfts, 0.99)}")
+
 """
 
 
