@@ -123,7 +123,7 @@ class PrefillRouter(Router):
         else:
             task_workload = prefill_workload
         queue_workload = endpoint.queue_workload()
-        total_workload = endpoint.queue_workload() + task_workload
+        total_workload = queue_workload + task_workload
 
         #print(f"total_workload:{total_workload} queue_workload:{queue_workload} task_workload:{task_workload}")
 
