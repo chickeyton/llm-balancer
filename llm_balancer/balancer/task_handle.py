@@ -135,7 +135,6 @@ class PrefillThenDecodeHandle(TaskHandle):
         workload = 0
         if self.first_token_time == -1:
             workload += self.route.prefill_workload
-        """
         decode_len = \
             estimate_decode_len(self.route.predicted_decode_len,
                                 self.responded_len, self.route.len_extend_rate)
@@ -143,7 +142,6 @@ class PrefillThenDecodeHandle(TaskHandle):
             decode_atten_workload(self.route.num_prompt_tokens,
                                   decode_len,
                                   self.responded_len)
-        """
         return max(workload, 0)
 
     def on_respond(self, chunk_len: int):

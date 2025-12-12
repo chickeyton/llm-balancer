@@ -57,9 +57,9 @@ def main():
     with open(args.endpoints, 'r') as file:
         endpoint_configs = parse_endpoint_configs(json.load(file))
 
-    kv_connector = LMCacheKvConnector(app_config.lmcache.controller_pull_port,
-                                      app_config.lmcache.controller_reply_port,
-                                      app_config.lmcache.is_cache_shared)
+    #kv_connector = LMCacheKvConnector(app_config.lmcache.controller_pull_port,
+    #                                  app_config.lmcache.controller_reply_port,
+    #                                  app_config.lmcache.is_cache_shared)
     logger = StatsLogger(service_level_obj=app_config.balancer.service_level_obj)
     tracker = StaticEndpointTracker([VllmEndpoint(c) for c in endpoint_configs])
     routers = create_routers(app_config.routers)
@@ -67,8 +67,8 @@ def main():
                         tracker=tracker,
                         routers=routers,
                         logger=logger,
-                        kv_connector=kv_connector)
-    kv_connector.start()
+                        kv_connector=None)
+    #kv_connector.start()
 
     tokenizer = AutoTokenizer.from_pretrained(app_config.tokenizer)
     if app_config.batch_routing is None:
