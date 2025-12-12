@@ -12,7 +12,7 @@ from llm_balancer.balancer.logger import StatsLogger
 from llm_balancer.balancer.router import DecodeRouter, PrefillRouter, KvawareRouter, RoundRobinRouter, RandomRouter, \
     QueueLenRouter
 from llm_balancer.balancer.router.encode import EncodeRouter
-from llm_balancer.connectors.lmcache import LMCacheKvConnector
+# from llm_balancer.connectors.lmcache import LMCacheKvConnector
 from llm_balancer.connectors.vllm import VllmEndpoint
 
 app = FastAPI()
