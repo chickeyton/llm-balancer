@@ -5,8 +5,8 @@ import numpy as np
 dynamic_pd = DynamicPd(slo_config=SloConfig(), stats_config=StatsConfig())
 
 new_reqs = 3000
-ttfts = np.random.rand(0.5, 1.2, new_reqs)
-tpots = np.random.rand(0.1, 0.7, new_reqs)
+ttfts = np.random.uniform(0.5, 1.2, new_reqs)
+tpots = np.random.uniform(0.1, 0.7, new_reqs)
 for ttft, tpot in zip(ttfts, tpots):
     dynamic_pd.on_request_finished(ttft, tpot)
 
