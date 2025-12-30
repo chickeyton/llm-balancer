@@ -247,6 +247,7 @@ class _ElasticAdviser:
     @staticmethod
     def advise(state: _State) -> ElasticAdvice | None:
         has_advice = False
+        print(f"state.num_prefills:{state.num_prefills} state.num_decodes:{state.num_decodes}")
         advice = ElasticAdvice(new_total_prefills=state.num_prefills,
                                new_total_decodes=state.num_decodes)
         if state.ttft_slot == _SLO_EXCEL_SLOT:
