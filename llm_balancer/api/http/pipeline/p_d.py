@@ -21,9 +21,9 @@ class P_D_Pipeline(Pipeline):
                 print("==================== Reallocate Advice ====================")
                 print(f"num endpoints: {len(realloc_advice.switch_endpoints)}")
                 if pd_ep_infos[realloc_advice.switch_endpoints[0]].is_prefill:
-                    print(f"to PREFILL")
-                else:
                     print(f"to DECODE")
+                else:
+                    print(f"to PREFILL")
 
             if elastic_advice:
                 print("==================== Elastic Advice ====================")

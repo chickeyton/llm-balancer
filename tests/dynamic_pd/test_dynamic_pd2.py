@@ -38,9 +38,9 @@ if realloc_advice:
 
     print(f"switch endpoints: {realloc_advice.switch_endpoints}")
     if endpoints[realloc_advice.switch_endpoints[0]].is_prefill:
-        print(f"to PREFILL")
-    else:
         print(f"to DECODE")
+    else:
+        print(f"to PREFILL")
 else:
     print("NO Advice")
 
