@@ -5,8 +5,8 @@ import numpy as np
 dynamic_pd = DynamicPd(slo_config=SloConfig(), stats_config=StatsConfig())
 
 new_reqs = 3000
-ttfts = np.random.uniform(0.01, 0.02, new_reqs)
-tpots = np.random.uniform(10.0, 12.0, new_reqs)
+ttfts = np.random.uniform(10.0, 20.0, new_reqs)
+tpots = np.random.uniform(0.01, 0.02, new_reqs)
 for ttft, tpot in zip(ttfts, tpots):
     dynamic_pd.on_request_finished(ttft, tpot)
 
@@ -14,10 +14,10 @@ endpoints = [
 PdEndpointInfo(is_prefill=True,
                is_switchable=True,
                queue_length=10),
-PdEndpointInfo(is_prefill=True,
+PdEndpointInfo(is_prefill=False,
                is_switchable=True,
                queue_length=100),
-PdEndpointInfo(is_prefill=True,
+PdEndpointInfo(is_prefill=False,
                is_switchable=True,
                queue_length=10),
 PdEndpointInfo(is_prefill=False,
@@ -31,7 +31,7 @@ elastic_advice = dynamic_pd.advise_elastic(endpoints)
 print("==================== Reallocate Advice ====================")
 if realloc_advice:
 
-    print(f"switch endpoints: [{realloc_advice.switch_endpoints}]")
+    print(f"switch endpoints: {realloc_advice.switch_endpoints}")
     if endpoints[realloc_advice.switch_endpoints[0]].is_prefill:
         print(f"to PREFILL")
     else:
