@@ -244,25 +244,27 @@ class _ElasticAdviser:
 
     @staticmethod
     def advise(state: _State) -> ElasticAdvice | None:
-        no_advice = True
+        has_advice = False
         advice = ElasticAdvice()
         if state.ttft_slot == _SLO_EXCEL_SLOT:
             if state.num_droppable_p > 0:
+                # TODO find out how many instances to be dropped
                 advice.drop_prefills = \
-                    [np.argmin([e.queue_length for e in state.endpoints if e.is_prefill])]
-                no_advice = False
+                    np.argmin([e.queue_length for e in state.endpoints if e.is_prefill]).tolist()
+                has_advice = True
         elif state.ttft_slot == _SLO_BAD_SLOT:
             advice.num_add_prefills = 1
-            no_advice = False
+            has_advice = True
         if state.tpot_slot == _SLO_EXCEL_SLOT:
             if state.num_droppable_d > 0:
+                # TODO find out how many instances to be dropped
                 advice.drop_decodes = \
-                    [np.argmin([e.queue_length for e in state.endpoints if not e.is_prefill])]
-                no_advice = False
+                    np.argmin([e.queue_length for e in state.endpoints if not e.is_prefill]).tolist()
+                has_advice = True
         elif state.tpot_slot == _SLO_BAD_SLOT:
             advice.num_add_decodes = 1
-            no_advice = False
-        return None if no_advice else advice
+            has_advice = True
+        return advice if has_advice else None
 
 
 class _CircularList:
