@@ -41,8 +41,8 @@ else:
 
 print("==================== Elastic Advice ====================")
 if elastic_advice:
-    print(f"drop prefills: {len(elastic_advice.drop_prefills)}")
-    print(f"drop decodes: {len(elastic_advice.drop_decodes)}")
+    print(f"drop prefills: {elastic_advice.drop_prefills}")
+    print(f"drop decodes: {elastic_advice.drop_decodes}")
     print(f"add prefills: {elastic_advice.num_add_prefills}")
     print(f"add decodes: {elastic_advice.num_add_decodes}")
     print(f"P/D : {elastic_advice.new_total_prefills}/{elastic_advice.new_total_decodes}")
