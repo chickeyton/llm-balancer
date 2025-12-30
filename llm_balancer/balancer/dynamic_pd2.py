@@ -308,11 +308,11 @@ class DynamicPd:
         self._realloc_adviser = _ReallocAdviser(slo_config)
         self._elastic_adviser = _ElasticAdviser()
 
-    def on_request_finished(self, ttft: float, tpot: float):
+    def on_request_finished(self, ttft: float, tpot: float, time: float = -1):
         if ttft > 0 and tpot > 0:
             self._ttft_hist.append(ttft)
             self._tpot_hist.append(tpot)
-            self._time_hist.append(time.time())
+            self._time_hist.append(time if time > 0 else time.time())
 
     def advise_realloc(self, endpoints: List[PdEndpointInfo]) -> ReallocAdvice | None:
         state = self._gather_state(endpoints)
