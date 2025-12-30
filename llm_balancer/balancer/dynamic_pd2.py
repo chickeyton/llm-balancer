@@ -5,6 +5,13 @@ from typing import List
 import numpy as np
 
 
+_SLO_EXCEL_SLOT: int = 0
+_SLO_GOOD_SLOT: int = 1
+_SLO_BAD_SLOT: int = 2
+_SLO_NUM_SLOTS: int = 3
+_MAX_Q_LEN_THD_PRE_EP_REQ: int = 5
+
+
 @dataclass
 class SloConfig:
     pass_ttft: float = 1.0
@@ -53,13 +60,6 @@ class ElasticAdvice:
     num_add_decodes: int = 0
     new_total_prefills: int = -1
     new_total_decodes: int = -1
-
-
-_SLO_EXCEL_SLOT: int = 0
-_SLO_GOOD_SLOT: int = 1
-_SLO_BAD_SLOT: int = 2
-_SLO_NUM_SLOTS: int = 3
-_MAX_Q_LEN_THD_PRE_EP_REQ: int = 5
 
 
 @dataclass
