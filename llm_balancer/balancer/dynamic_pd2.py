@@ -102,12 +102,12 @@ def _slo_mid_point(excel: float, pass_: float):
     return excel, mid, pass_
 
 
-def _to_slot(self, metric: float, excel: float, pass_: float) -> int:
+def _to_slot(metric: float, excel: float, pass_: float) -> int:
     if metric > pass_:
-        return self._BAD_SLOT
+        return _SLO_BAD_SLOT
     if metric <= excel:
-        return self._EXCEL_SLOT
-    return self._GOOD_SLOT
+        return _SLO_EXCEL_SLOT
+    return _SLO_GOOD_SLOT
 
 
 class _ReallocAdviser:
