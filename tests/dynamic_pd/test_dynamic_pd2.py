@@ -6,7 +6,7 @@ dynamic_pd = DynamicPd(slo_config=SloConfig(), stats_config=StatsConfig())
 
 new_reqs = 3000
 ttfts = np.random.uniform(0.01, 0.02, new_reqs)
-tpots = np.random.uniform(0.01, 0.012, new_reqs)
+tpots = np.random.uniform(10.0, 12,0, new_reqs)
 for ttft, tpot in zip(ttfts, tpots):
     dynamic_pd.on_request_finished(ttft, tpot)
 
@@ -45,6 +45,6 @@ if elastic_advice:
     print(f"drop decodes: {elastic_advice.drop_decodes}")
     print(f"add prefills: {elastic_advice.num_add_prefills}")
     print(f"add decodes: {elastic_advice.num_add_decodes}")
-    print(f"P/D : {elastic_advice.new_total_prefills}/{elastic_advice.new_total_decodes}")
+    print(f"new P/D : {elastic_advice.new_total_prefills}/{elastic_advice.new_total_decodes}")
 else:
     print("NO Advice")
