@@ -162,7 +162,7 @@ class _ReallocAdviser:
         min_length = -1
         switchables = state.switchable_decodes if is_to_prefill else state.switchable_prefills
         for endpoint_i in switchables:
-            length = state.endpoints[endpoint_i].queue_length()
+            length = state.endpoints[endpoint_i].queue_length
             if best == -1 or length < min_length:
                 best = endpoint_i
                 min_length = length
