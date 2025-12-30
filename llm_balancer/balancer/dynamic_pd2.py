@@ -253,7 +253,7 @@ class _ElasticAdviser:
             if state.num_droppable_p > 0:
                 # TODO find out how many instances to be dropped
                 advice.drop_prefills = \
-                    np.argmin([e.queue_length for e in state.endpoints if e.is_prefill]).tolist()
+                    [np.argmin([e.queue_length for e in state.endpoints if e.is_prefill]).tolist()]
                 advice.new_total_prefills -= 1
                 has_advice = True
         elif state.ttft_slot == _SLO_BAD_SLOT:
@@ -264,7 +264,7 @@ class _ElasticAdviser:
             if state.num_droppable_d > 0:
                 # TODO find out how many instances to be dropped
                 advice.drop_decodes = \
-                    np.argmin([e.queue_length for e in state.endpoints if not e.is_prefill]).tolist()
+                    [np.argmin([e.queue_length for e in state.endpoints if not e.is_prefill]).tolist()]
                 advice.new_total_decodes -= 1
                 has_advice = True
         elif state.tpot_slot == _SLO_BAD_SLOT:

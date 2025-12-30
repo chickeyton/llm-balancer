@@ -31,7 +31,7 @@ elastic_advice = dynamic_pd.advise_elastic(endpoints)
 print("==================== Reallocate Advice ====================")
 if realloc_advice:
 
-    print(f"switch endpoints: {realloc_advice.switch_endpoints}")
+    print(f"switch endpoints: [{realloc_advice.switch_endpoints}]")
     if endpoints[realloc_advice.switch_endpoints[0]].is_prefill:
         print(f"to PREFILL")
     else:
