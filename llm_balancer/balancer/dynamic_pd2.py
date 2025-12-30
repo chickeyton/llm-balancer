@@ -276,7 +276,7 @@ class _ElasticAdviser:
 
 class _CircularList:
 
-    def __init__(self, max_len, dtype=np.float):
+    def __init__(self, max_len, dtype=np.float32):
         self.ary = np.empty(max_len, dtype=dtype)
         self.max_len = max_len
         self.position = -1
