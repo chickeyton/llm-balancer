@@ -6,7 +6,7 @@ dynamic_pd = DynamicPd(slo_config=SloConfig(), stats_config=StatsConfig())
 
 new_reqs = 3000
 ttfts = np.random.uniform(0.01, 0.02, new_reqs)
-tpots = np.random.uniform(10.0, 12,0, new_reqs)
+tpots = np.random.uniform(10.0, 12.0, new_reqs)
 for ttft, tpot in zip(ttfts, tpots):
     dynamic_pd.on_request_finished(ttft, tpot)
 
