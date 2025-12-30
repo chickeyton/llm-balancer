@@ -29,8 +29,9 @@ class P_D_Pipeline(Pipeline):
                 print("==================== Elastic Advice ====================")
                 print(f"drop prefills: {len(elastic_advice.drop_prefills)}")
                 print(f"drop decodes: {len(elastic_advice.drop_decodes)}")
-                print(f"num add prefills: {elastic_advice.num_add_prefills}")
-                print(f"num add decodes: {elastic_advice.num_add_decodes}")
+                print(f"add prefills: {elastic_advice.num_add_prefills}")
+                print(f"add decodes: {elastic_advice.num_add_decodes}")
+                print(f"P/D : {elastic_advice.new_total_prefills}:{elastic_advice.new_total_decodes}")
 
         # if need to re-balance P/D ratio by external mechanisms, then set advice_only = True
         # and obtain the suggested endpoint and stage by advice.best_switchable, advice.switchables

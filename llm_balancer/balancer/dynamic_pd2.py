@@ -51,6 +51,8 @@ class ElasticAdvice:
     drop_decodes: List[int] = None
     num_add_prefills: int = 0
     num_add_decodes: int = 0
+    new_total_prefills: int = -1
+    new_total_decodes: int = -1
 
 
 _SLO_EXCEL_SLOT: int = 0
@@ -245,24 +247,29 @@ class _ElasticAdviser:
     @staticmethod
     def advise(state: _State) -> ElasticAdvice | None:
         has_advice = False
-        advice = ElasticAdvice()
+        advice = ElasticAdvice(new_total_prefills=state.num_prefills,
+                               new_total_decodes=state.num_decodes)
         if state.ttft_slot == _SLO_EXCEL_SLOT:
             if state.num_droppable_p > 0:
                 # TODO find out how many instances to be dropped
                 advice.drop_prefills = \
                     np.argmin([e.queue_length for e in state.endpoints if e.is_prefill]).tolist()
+                advice.new_total_prefills -= 1
                 has_advice = True
         elif state.ttft_slot == _SLO_BAD_SLOT:
             advice.num_add_prefills = 1
+            advice.new_total_prefills += 1
             has_advice = True
         if state.tpot_slot == _SLO_EXCEL_SLOT:
             if state.num_droppable_d > 0:
                 # TODO find out how many instances to be dropped
                 advice.drop_decodes = \
                     np.argmin([e.queue_length for e in state.endpoints if not e.is_prefill]).tolist()
+                advice.new_total_decodes -= 1
                 has_advice = True
         elif state.tpot_slot == _SLO_BAD_SLOT:
             advice.num_add_decodes = 1
+            advice.new_total_decodes += 1
             has_advice = True
         return advice if has_advice else None
 
