@@ -314,13 +314,13 @@ class DynamicPd:
             self._tpot_hist.append(tpot)
             self._time_hist.append(time.time())
 
-    def advice_realloc(self, endpoints: List[PdEndpointInfo]) -> ReallocAdvice | None:
+    def advise_realloc(self, endpoints: List[PdEndpointInfo]) -> ReallocAdvice | None:
         state = self._gather_state(endpoints)
         if state is None:
             return None
         return self._realloc_adviser.advise(state)
 
-    def advice_elastic(self, endpoints: List[PdEndpointInfo]) -> ElasticAdvice | None:
+    def advise_elastic(self, endpoints: List[PdEndpointInfo]) -> ElasticAdvice | None:
         state = self._gather_state(endpoints)
         if state is None:
             return None
