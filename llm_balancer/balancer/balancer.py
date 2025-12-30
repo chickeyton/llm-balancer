@@ -5,7 +5,7 @@ from typing import List, Dict, Optional
 
 from .logger import Logger, NullLogger
 from .router.batch_routing import BatchRouteOptimizer, GreedyBatchRoute
-from .task_handle import TaskHandle
+from .task_handle import TaskHandle, DecodeHandle
 from .common import Stage, ServiceLevelObj
 from .connector.kv_connector import KvConnector
 from .dynamic_pd import DynamicPd
@@ -36,7 +36,8 @@ class Balancer(EndpointTrackerListener, EndpointListener):
                  routers: Dict[Stage, Router],
                  kv_connector: Optional[KvConnector] = None,
                  batch_route_optimizer: Optional[BatchRouteOptimizer] = None,
-                 logger: Logger = None):
+                 logger: Logger = None,
+                 dynamic_pd = None):
         self.config = config
         self._tracker = tracker
         self._tracker.add_listener(self)
@@ -44,7 +45,7 @@ class Balancer(EndpointTrackerListener, EndpointListener):
         self._batch_route_optimizer = \
             GreedyBatchRoute() if batch_route_optimizer is None else batch_route_optimizer
         self._routers = routers
-        self._dynamic_pd = DynamicPd(self)
+        self._dynamic_pd = dynamic_pd
         self._logger = NullLogger() if logger is None else logger
 
         for stage, router in self._routers.items():
@@ -64,7 +65,7 @@ class Balancer(EndpointTrackerListener, EndpointListener):
         return self._kv_connector
 
     @property
-    def dynamic_pd(self) -> DynamicPd:
+    def dynamic_pd(self):
         return self._dynamic_pd
 
     @property
@@ -109,5 +110,6 @@ class Balancer(EndpointTrackerListener, EndpointListener):
             endpoint.set_listener(self)
 
     def on_task_ended(self, handle: TaskHandle):
-        self._dynamic_pd.on_task_ended(handle)
+        if isinstance(handle, DecodeHandle):
+            self._dynamic_pd.on_request_finished(handle.request_meta.ttft, handle.request_meta.tpot)
         self._logger.task_ended(handle)

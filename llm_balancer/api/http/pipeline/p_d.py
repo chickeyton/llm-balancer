@@ -11,7 +11,27 @@ class P_D_Pipeline(Pipeline):
     async def handle_chat_completions(self, request, _):
         request_json = await request.json()
         prefill_task = to_prefill_task(self._tokenizer, request, request_json)
-        advice = self._balancer.dynamic_pd.update(advice_only=False)
+        # advice = self._balancer.dynamic_pd.update(advice_only=False)
+
+        if self._balancer.dynamic_pd is not None:
+            pd_ep_infos = self._get_pd_ep_infos()
+            realloc_advice = self._balancer.dynamic_pd.advise_realloc(pd_ep_infos)
+            elastic_advice = self._balancer.dynamic_pd.advise_elastic(pd_ep_infos)
+            if realloc_advice:
+                print("==================== Reallocate Advice ====================")
+                print(f"num endpoints: {len(realloc_advice.switch_endpoints)}")
+                if pd_ep_infos[realloc_advice.switch_endpoints[0]].is_prefill:
+                    print(f"switch to PREFILL")
+                else:
+                    print(f"switch to DECODE")
+
+            if elastic_advice:
+                print("==================== Elastic Advice ====================")
+                print(f"drop prefills: {len(elastic_advice.drop_prefills)}")
+                print(f"drop decodes: {len(elastic_advice.drop_decodes)}")
+                print(f"num add prefills: {elastic_advice.num_add_prefills}")
+                print(f"num add decodes: {elastic_advice.num_add_decodes}")
+
         # if need to re-balance P/D ratio by external mechanisms, then set advice_only = True
         # and obtain the suggested endpoint and stage by advice.best_switchable, advice.switchables
         # ,advice.new_stage, advice.new_num_prefills, advice.new_num_decodes, if advice is None
@@ -25,6 +45,8 @@ class P_D_Pipeline(Pipeline):
         async for resp in async_send_stream_decode(request_json, handle, yield_headers=True):
             yield resp
         yield STREAM_DONE
+
+
 
 
 class P_D_BatchedPipeline(BatchedPipeline):

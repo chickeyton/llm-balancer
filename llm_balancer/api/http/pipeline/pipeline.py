@@ -3,7 +3,8 @@ import time
 
 from fastapi import BackgroundTasks, Request
 
-from llm_balancer.balancer import Balancer
+from llm_balancer.balancer import Balancer, Stage
+from llm_balancer.balancer.dynamic_pd2 import PdEndpointInfo
 
 
 class Pipeline:
@@ -14,6 +15,13 @@ class Pipeline:
 
     async def handle_chat_completions(self, request: Request, background_tasks: BackgroundTasks):
         raise NotImplementedError
+
+    def _get_pd_ep_infos(self):
+        endpoints = self._balancer.get_up_endpoints()
+        return [PdEndpointInfo(is_prefill=(e.stage == Stage.PREFILL),
+                               is_switchable=e.is_dynamic_pd,
+                               queue_length=e.queue_length())
+                for e in endpoints if e.stage in (Stage.PREFILL, Stage.DECODE)]
 
 
 class BatchedPipeline(Pipeline):
@@ -68,8 +76,8 @@ class BatchedPipeline(Pipeline):
 
     def _fetch_route(self, batch, request_id):
         if batch.size >= self._max_batch_size:
-            if self._is_dynamic_pd:
-                self._balancer.dynamic_pd.update()
+            if self._balancer.dynamic_pd is not None:
+                advice = self._balancer.dynamic_pd.advise_realloc()
             routes = self._balancer.batch_route(batch.tasks)
             batch.on_routed(routes)
         elif batch.size > 0:

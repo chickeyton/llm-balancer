@@ -14,6 +14,7 @@ from llm_balancer.balancer.router import DecodeRouter, PrefillRouter, KvawareRou
 from llm_balancer.balancer.router.encode import EncodeRouter
 # from llm_balancer.connectors.lmcache import LMCacheKvConnector
 from llm_balancer.connectors.vllm import VllmEndpoint
+from llm_balancer.balancer.dynamic_pd2 import DynamicPd, SloConfig, StatsConfig
 
 app = FastAPI()
 app.include_router(api_router)
@@ -67,7 +68,9 @@ def main():
                         tracker=tracker,
                         routers=routers,
                         logger=logger,
-                        kv_connector=None)
+                        kv_connector=None,
+                        dynamic_pd=DynamicPd(slo_config=SloConfig(),
+                                             stats_config=StatsConfig()))
     #kv_connector.start()
 
     tokenizer = AutoTokenizer.from_pretrained(app_config.tokenizer)

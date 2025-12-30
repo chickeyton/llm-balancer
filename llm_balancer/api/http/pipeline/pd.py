@@ -23,8 +23,8 @@ class PD_Pipeline(Pipeline):
 
 class PD_BatchedPipeline(BatchedPipeline):
 
-    def __init__(self, tokenizer, balancer: Balancer, max_batch_size, max_batch_time):
-        super().__init__(tokenizer, balancer, max_batch_size, max_batch_time, is_dynamic_pd=False)
+    def __init__(self, tokenizer, balancer: Balancer, dynamic_pd, max_batch_size, max_batch_time):
+        super().__init__(tokenizer, balancer, dynamic_pd, max_batch_size, max_batch_time, is_dynamic_pd=False)
 
     async def handle_chat_completions(self, request, _):
         request_json = await request.json()
