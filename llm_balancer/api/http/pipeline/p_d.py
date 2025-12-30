@@ -21,9 +21,9 @@ class P_D_Pipeline(Pipeline):
                 print("==================== Reallocate Advice ====================")
                 print(f"num endpoints: {len(realloc_advice.switch_endpoints)}")
                 if pd_ep_infos[realloc_advice.switch_endpoints[0]].is_prefill:
-                    print(f"switch to PREFILL")
+                    print(f"to PREFILL")
                 else:
-                    print(f"switch to DECODE")
+                    print(f"to DECODE")
 
             if elastic_advice:
                 print("==================== Elastic Advice ====================")
@@ -31,7 +31,7 @@ class P_D_Pipeline(Pipeline):
                 print(f"drop decodes: {len(elastic_advice.drop_decodes)}")
                 print(f"add prefills: {elastic_advice.num_add_prefills}")
                 print(f"add decodes: {elastic_advice.num_add_decodes}")
-                print(f"P/D : {elastic_advice.new_total_prefills}:{elastic_advice.new_total_decodes}")
+                print(f"P/D : {elastic_advice.new_total_prefills}/{elastic_advice.new_total_decodes}")
 
         # if need to re-balance P/D ratio by external mechanisms, then set advice_only = True
         # and obtain the suggested endpoint and stage by advice.best_switchable, advice.switchables
