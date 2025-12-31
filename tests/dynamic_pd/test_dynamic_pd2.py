@@ -6,7 +6,7 @@ dynamic_pd = DynamicPd(slo_config=SloConfig(pass_ttft=1.0,
                                             pass_tpot=0.25,
                                             excel_ttft=-1,
                                             excel_tpot=-1,
-                                            p_quantile=0.99,),
+                                            p_quantile=0.99),
                        stats_config=StatsConfig(max_history=1000,
                                                 min_history=100,
                                                 time_window=5 * 60))
