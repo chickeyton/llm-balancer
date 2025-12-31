@@ -76,8 +76,8 @@ class BatchedPipeline(Pipeline):
 
     def _fetch_route(self, batch, request_id):
         if batch.size >= self._max_batch_size:
-            if self._balancer.dynamic_pd is not None:
-                advice = self._balancer.dynamic_pd.advise_realloc()
+            #if self._balancer.dynamic_pd is not None:
+            #    advice = self._balancer.dynamic_pd.advise_switch()
             routes = self._balancer.batch_route(batch.tasks)
             batch.on_routed(routes)
         elif batch.size > 0:

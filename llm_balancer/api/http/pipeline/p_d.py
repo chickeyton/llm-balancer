@@ -15,12 +15,12 @@ class P_D_Pipeline(Pipeline):
 
         if self._balancer.dynamic_pd is not None:
             pd_ep_infos = self._get_pd_ep_infos()
-            realloc_advice = self._balancer.dynamic_pd.advise_realloc(pd_ep_infos)
+            switch_advice = self._balancer.dynamic_pd.advise_switch(pd_ep_infos)
             elastic_advice = self._balancer.dynamic_pd.advise_elastic(pd_ep_infos)
-            if realloc_advice:
+            if switch_advice:
                 print("==================== Reallocate Advice ====================")
-                print(f"num endpoints: {len(realloc_advice.switch_endpoints)}")
-                if pd_ep_infos[realloc_advice.switch_endpoints[0]].is_prefill:
+                print(f"num endpoints: {len(switch_advice.switch_endpoints)}")
+                if pd_ep_infos[switch_advice.switch_endpoints[0]].is_prefill:
                     print(f"to DECODE")
                 else:
                     print(f"to PREFILL")

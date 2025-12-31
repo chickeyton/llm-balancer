@@ -11,6 +11,12 @@ dynamic_pd = DynamicPd(slo_config=SloConfig(pass_ttft=1.0,
                                                 min_history=100,
                                                 time_window=5 * 60))
 
+
+# or simply
+# dynamic_pd = DynamicPd(slo_config=SloConfig(),
+#                        stats_config=StatsConfig())
+
+
 new_reqs = 3000
 ttfts = np.random.uniform(10.0, 20.0, new_reqs)
 tpots = np.random.uniform(0.01, 0.02, new_reqs)
@@ -32,14 +38,13 @@ PdEndpointInfo(is_prefill=False,
                queue_length=100),
 ]
 
-realloc_advice = dynamic_pd.advise_realloc(endpoints)
+switch_advice = dynamic_pd.advise_switch(endpoints)
 elastic_advice = dynamic_pd.advise_elastic(endpoints)
 
 print("==================== Reallocate Advice ====================")
-if realloc_advice:
-
-    print(f"switch endpoints: {realloc_advice.switch_endpoints}")
-    if endpoints[realloc_advice.switch_endpoints[0]].is_prefill:
+if switch_advice:
+    print(f"switch endpoints: {switch_advice.switch_endpoints}")
+    if endpoints[switch_advice.switch_endpoints[0]].is_prefill:
         print(f"to DECODE")
     else:
         print(f"to PREFILL")

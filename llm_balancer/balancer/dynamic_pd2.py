@@ -48,7 +48,7 @@ class PdEndpointInfo:
 
 
 @dataclass
-class ReallocAdvice:
+class SwitchAdvice:
     switch_endpoints: List[int] = None
 
 
@@ -110,7 +110,7 @@ def _to_slot(metric: float, excel: float, pass_: float) -> int:
     return _SLO_GOOD_SLOT
 
 
-class _ReallocAdviser:
+class _SwitchAdviser:
 
     class _Action(Enum):
         NO_ACTION = 0
@@ -134,7 +134,7 @@ class _ReallocAdviser:
         self._decision_matrix[_SLO_BAD_SLOT][_SLO_EXCEL_SLOT] = self._decide_bad_ttft_excel_tpot
         self._last_action = self._Action.NO_ACTION
 
-    def advise(self, state: _State) -> ReallocAdvice | None:
+    def advise(self, state: _State) -> SwitchAdvice | None:
         action = self._decision_matrix[state.ttft_slot][state.tpot_slot](state)
         advice = self._get_advice(state, action)
         self._last_action = action
@@ -154,7 +154,7 @@ class _ReallocAdviser:
         else:
             raise ValueError(f"Unsupported action: {action}")
         switch_endpoints = [self._find_best_switchable(state, is_to_prefill)]
-        return ReallocAdvice(switch_endpoints=switch_endpoints)
+        return SwitchAdvice(switch_endpoints=switch_endpoints)
 
     @staticmethod
     def _find_best_switchable(state, is_to_prefill):
@@ -305,7 +305,7 @@ class DynamicPd:
         self._ttft_hist = _CircularList(stats_config.max_history)
         self._tpot_hist = _CircularList(stats_config.max_history)
         self._time_hist = _CircularList(stats_config.max_history)
-        self._realloc_adviser = _ReallocAdviser(slo_config)
+        self._switch_adviser = _SwitchAdviser(slo_config)
         self._elastic_adviser = _ElasticAdviser()
 
     def on_request_finished(self, ttft: float, tpot: float, finish_time: float = -1):
@@ -314,11 +314,11 @@ class DynamicPd:
             self._tpot_hist.append(tpot)
             self._time_hist.append(finish_time if finish_time > 0 else time.time())
 
-    def advise_realloc(self, endpoints: List[PdEndpointInfo]) -> ReallocAdvice | None:
+    def advise_switch(self, endpoints: List[PdEndpointInfo]) -> SwitchAdvice | None:
         state = self._gather_state(endpoints)
         if state is None:
             return None
-        return self._realloc_adviser.advise(state)
+        return self._switch_adviser.advise(state)
 
     def advise_elastic(self, endpoints: List[PdEndpointInfo]) -> ElasticAdvice | None:
         state = self._gather_state(endpoints)
