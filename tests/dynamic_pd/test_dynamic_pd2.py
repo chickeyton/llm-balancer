@@ -41,7 +41,7 @@ PdEndpointInfo(is_prefill=False,
 switch_advice = dynamic_pd.advise_switch(endpoints)
 elastic_advice = dynamic_pd.advise_elastic(endpoints)
 
-print("==================== Reallocate Advice ====================")
+print("==================== Switch Advice ====================")
 if switch_advice:
     print(f"switch endpoints: {switch_advice.switch_endpoints}")
     if endpoints[switch_advice.switch_endpoints[0]].is_prefill:
